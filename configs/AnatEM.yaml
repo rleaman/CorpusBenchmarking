@@ -1,0 +1,11 @@
+name: AnatEM
+
+loader:
+  name: bioc_xml
+  params:
+    paths:
+      train: corpora/AnatEM/trainData_allEntities.xml 
+      dev: corpora/AnatEM/develData_allEntities.xml 
+      test: corpora/AnatEM/testData_allEntities.xml 
+    label_infon_key: type
+

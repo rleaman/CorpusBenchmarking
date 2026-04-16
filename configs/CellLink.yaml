@@ -1,0 +1,29 @@
+name: CellLink
+
+loader:
+  name: bioc_xml
+  params:
+    paths:
+      train: corpora/CellLink/train.xml 
+      dev: corpora/CellLink/val.xml 
+      test: corpora/CellLink/test.xml 
+    label_infon_key: type
+    id_format_list: [[";", "distributive", "True"], [",", "related_set", "True"]]
+    qualifier_map: {"(skos:exact)": "exact", "(skos:related)": "related"}
+    nil_labels: { "-" }
+
+filters:
+    cell_phenotype_exact_single:
+        labels: ["cell_phenotype"]
+        link_relations: [] # No composite links allowed
+        match_types: ["exact"]
+    cell_phenotype_related_single:
+        labels: ["cell_phenotype"]
+        link_relations: [] # No composite links allowed
+        match_types: ["related"]
+    cell_hetero_single:
+        labels: ["cell_hetero"]
+        link_relations: [] # No composite links allowed
+        match_types: ["exact", "related"]
+       
+

@@ -1,0 +1,12 @@
+name: NCBI_Disease
+
+loader:
+  name: pubtator
+  params:
+    paths:
+      train: corpora/NCBI_Disease/NCBItrainset_corpus.txt
+      dev: corpora/NCBI_Disease/NCBIdevelopset_corpus.txt
+      test: corpora/NCBI_Disease/NCBItestset_corpus.txt
+    id_format_list: [["+", "intersective", "False"], ["|", "distributive", "False"]]
+    label_map: {"SpecificDisease": "Disease", "DiseaseClass": "Disease", "Modifier": "Disease", "CompositeMention": "Disease"}
+

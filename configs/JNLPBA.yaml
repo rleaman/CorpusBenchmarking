@@ -1,0 +1,9 @@
+name: JNLPBA
+
+loader:
+  name: bioc_xml
+  params:
+    paths:
+      train: corpora/JNLPBA/traindata_allentities.xml 
+      test: corpora/JNLPBA/testData_allEntities.xml 
+    label_infon_key: type

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corpus-benchmark-minimal"
+version = "0.1.0"
+description = "Minimal configuration-driven corpus benchmarking framework"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "bioc>=2.1",
+  "PyYAML>=6.0",
+]
+
+[project.scripts]
+corpus-benchmark = "corpus_benchmark.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
