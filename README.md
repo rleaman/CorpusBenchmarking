@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 # CorpusBenchmarking
-A framework for analyzing structural properties of biomedical NER and entity linking corpora and their impact on benchmark behavior.
-=======
-# corpus_benchmark_minimal
 
-A minimal, configuration-driven Python project for benchmarking annotated corpora.
+A Python framework for analyzing structural properties of biomedical NER and entity linking corpora and their impact on benchmark behavior.
 
 ## Features
 
@@ -18,13 +14,7 @@ A minimal, configuration-driven Python project for benchmarking annotated corpor
 ## Install
 
 ```bash
-pip install -e .
-```
-
-Or, if you only want the core runtime dependencies:
-
-```bash
-pip install bioc pyyaml
+pip install -r requirements.txt
 ```
 
 ## Example usage
@@ -47,5 +37,3 @@ metrics:
   - name: document_count
   - name: mention_count
   - name: label_distribution
-```
->>>>>>> 18b8cf3 (Initial commit)
