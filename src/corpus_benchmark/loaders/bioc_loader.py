@@ -22,6 +22,7 @@ from corpus_benchmark.parsing import parse_identifier_format_list, parse_qualifi
 @register_loader("bioc_xml")
 def load_bioc_xml(
     paths: dict[str, str],
+    doc_id_map: dict[str, str] = {},
     passage_id_infon_key: str | None = None,
     label_infon_key: str = "type",
     id_infon_key: str = "identifier",
@@ -30,6 +31,7 @@ def load_bioc_xml(
     qualifier_map: dict[str, str] = {},
     nil_labels: set[str] = set(),
     resource_delimiter: str = ":",
+    **kwargs,
 ) -> BenchmarkCorpus:
     """
     Load a BioC XML file and convert it into the internal corpus model.
@@ -39,6 +41,7 @@ def load_bioc_xml(
     - If your corpus uses discontinuous spans, extend this representation before production use.
     """
     loader = BioCXMLLoader(
+        doc_id_map,
         passage_id_infon_key,
         label_infon_key,
         id_infon_key,
@@ -47,6 +50,7 @@ def load_bioc_xml(
         parse_qualifier_map(qualifier_map),
         nil_labels,
         resource_delimiter,
+        **kwargs,
     )
     subsets = dict()
     for subset_name, subset_path in paths.items():
@@ -98,10 +102,10 @@ class Loader:
         match_type = None
         # print(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; identifier_format.qualifier_allowed = \"{identifier_format.qualifier_allowed}\" type(identifier_format.qualifier_allowed) = \"{type(identifier_format.qualifier_allowed)}\"")
         if identifier_format.qualifier_allowed:
-            mapping_debug = [
-                (qualifier_text, match_type, identifier_text.startswith(qualifier_text))
-                for qualifier_text, match_type in self.qualifier_map.items()
-            ]
+            #mapping_debug = [
+            #    (qualifier_text, match_type, identifier_text.startswith(qualifier_text))
+            #    for qualifier_text, match_type in self.qualifier_map.items()
+            #]
             # print(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; mapping_debug = \"{mapping_debug}\"")
             mapping = [
                 (len(qualifier_text), match_type)
@@ -130,7 +134,10 @@ class Loader:
         if identifier_text in self.nil_labels:
             return NIL
         if self.resource_delimiter in identifier_text:
-            resource, accession = identifier_text.split(self.resource_delimiter)
+            fields = identifier_text.split(self.resource_delimiter)
+            if len(fields) != 2:
+                raise ValueError(f"Identifier \"{identifier_text}\" cannot be split into exactly 2 fields using the configured delimiter \"{self.resource_delimiter}\"")
+            resource, accession = fields
         elif not self.default_resource is None:
             resource = self.default_resource
             accession = identifier_text
@@ -144,6 +151,7 @@ class BioCXMLLoader(Loader):
 
     def __init__(
         self,
+        doc_id_map: dict[str, str] = {},
         passage_id_infon_key: str | None = None,
         label_infon_key: str = "type",
         id_infon_key: str = "identifier",
@@ -152,8 +160,10 @@ class BioCXMLLoader(Loader):
         qualifier_map: dict[str, MatchType] = {},
         nil_labels: set[str] = set(),
         resource_delimiter=":",
+        **kwargs,
     ):
         super().__init__(label_map, id_format_list, qualifier_map, nil_labels, None, resource_delimiter)
+        self.doc_id_map = doc_id_map
         self.passage_id_infon_key = passage_id_infon_key
         self.label_infon_key = label_infon_key
         self.id_infon_key = id_infon_key
@@ -169,6 +179,17 @@ class BioCXMLLoader(Loader):
         documents: dict[str, Document] = {}
 
         for doc in collection.documents:
+            # Copy identifiers into the doc infons
+            doc_infons = {k: str(v) for k, v in doc.infons.items()}
+            for id_type, location in self.doc_id_map.items():
+                if location == "__DOCUMENT_ID__":
+                    # Strategy 2: Document ID
+                    doc_infons[id_type] = str(doc.id)
+                elif len(doc.passages) > 0:
+                    # Strategy 1: Specific infon key in the header (first passage)
+                    val = doc.passages[0].infons.get(location)
+                    if val:
+                        doc_infons[id_type] = str(val)
             passages: list[Passage] = []
 
             for passage_index, passage in enumerate(doc.passages):
@@ -177,7 +198,7 @@ class BioCXMLLoader(Loader):
                     text=passage.text,
                     offset=int(passage.offset),
                     annotations=[],
-                    infons={k: str(v) for k, v in passage.infons.items()},
+                    infons=doc_infons,
                 )
                 for ann in passage.annotations:
                     mention = self.get_mention(ann)
@@ -189,7 +210,7 @@ class BioCXMLLoader(Loader):
             documents[document_id] = Document(
                 document_id=str(doc.id),
                 passages=passages,
-                infons={k: str(v) for k, v in doc.infons.items()},
+                infons=doc_infons,
             )
         return CorpusSubset(name=subset_name, documents=list(documents.values()))
 
@@ -277,7 +298,7 @@ class BioCPubtatorLoader(Loader):
         documents: list[Document] = []
 
         for doc in collection:
-            pmid = doc.pmid
+            pmid = str(doc.pmid)
             title_passage = Passage(
                 passage_id=f"{pmid}_t",
                 text=doc.title,
@@ -313,8 +334,9 @@ class BioCPubtatorLoader(Loader):
                     abstract_passage.annotations.append(mention)
             documents.append(
                 Document(
-                    document_id=str(doc.pmid),
+                    document_id=pmid,
                     passages=[title_passage, abstract_passage],
+                    infons={"pmid": pmid}
                 )
             )
         return CorpusSubset(name=subset_name, documents=documents)

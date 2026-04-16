@@ -9,4 +9,3 @@ loader:
       test: corpora/NCBI_Disease/NCBItestset_corpus.txt
     id_format_list: [["+", "intersective", "False"], ["|", "distributive", "False"]]
     label_map: {"SpecificDisease": "Disease", "DiseaseClass": "Disease", "Modifier": "Disease", "CompositeMention": "Disease"}
-

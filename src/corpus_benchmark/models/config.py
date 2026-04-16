@@ -38,6 +38,7 @@ class MetricSpec:
     comparison_suite: str | None = None
     
     enabled: bool = True
+    params: dict[str, Any] = field(default_factory=dict)
     
     def __post_init__(self):
         if self.result_name is None:

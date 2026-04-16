@@ -9,4 +9,6 @@ loader:
       test: corpora/CHEMDNER/BC7T2-CHEMDNER-corpus-evaluation.BioC.xml
     label_infon_key: type
     label_map: {"Chemical": "Chemical", "MeSH_Indexing_Chemical": null}
+    doc_id_map:
+        pmid: "__DOCUMENT_ID__"
 

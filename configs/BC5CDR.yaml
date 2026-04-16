@@ -12,4 +12,6 @@ loader:
     id_format_list: [["|", "distributive", "False"]]
     qualifier_map: {}
     nil_labels: { -1 }
+    doc_id_map:
+        pmid: "__DOCUMENT_ID__"
 

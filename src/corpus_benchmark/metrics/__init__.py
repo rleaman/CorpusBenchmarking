@@ -50,6 +50,11 @@ from src.corpus_benchmark.metrics.overlaps import (
     identifier_overlap,
 )
 
+from src.corpus_benchmark.metrics.metadata_distribution import (
+    journal_distribution,
+    publication_year_distribution,
+)
+
 
 __all__ = [
     "document_count",
@@ -89,4 +94,6 @@ __all__ = [
     "mention_overlap",
     "mention_token_overlap",
     "identifier_overlap",
+    "journal_distribution",
+    "publication_year_distribution",
 ]

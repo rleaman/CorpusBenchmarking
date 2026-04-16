@@ -8,4 +8,5 @@ loader:
       dev: corpora/AnatEM/develData_allEntities.xml 
       test: corpora/AnatEM/testData_allEntities.xml 
     label_infon_key: type
-
+    doc_id_map:
+        pmcid: "article-id_pmc"

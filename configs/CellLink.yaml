@@ -11,6 +11,8 @@ loader:
     id_format_list: [[";", "distributive", "True"], [",", "related_set", "True"]]
     qualifier_map: {"(skos:exact)": "exact", "(skos:related)": "related"}
     nil_labels: { "-" }
+    doc_id_map:
+        pmid: "article-id_pmid"
 
 filters:
     cell_phenotype_exact_single:

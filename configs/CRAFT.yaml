@@ -8,4 +8,6 @@ loader:
       dev: corpora/CRAFT/CRAFT-dev.BioC.xml 
       test: corpora/CRAFT/CRAFT-test.BioC.xml  
     label_infon_key: type
+    doc_id_map:
+        pmid: "__DOCUMENT_ID__"
 

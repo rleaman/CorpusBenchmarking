@@ -11,6 +11,8 @@ loader:
     id_format_list: [[",", "distributive", "False"]]
     nil_labels: { "-" }
     label_map: {"Chemical": "Chemical", "MeSH_Indexing_Chemical": null}
+    doc_id_map:
+        pmid: "article-id_pmid"
 
 
 

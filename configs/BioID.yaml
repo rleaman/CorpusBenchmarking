@@ -8,4 +8,6 @@ loader:
       dev: corpora/BioID/holdout.xml 
     label_infon_key: type
     id_format_list: [[",", "distributive", "False"]]
+    doc_id_map:
+        pmcid: "pmc_id"
 
