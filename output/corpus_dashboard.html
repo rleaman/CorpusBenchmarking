@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corpus Statistics Dashboard</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;
+        color:#1a1a1a;background:#f8f7f4;padding:2rem}
+  h1{font-size:20px;font-weight:500;margin-bottom:.25rem}
+  .sub-h{font-size:13px;color:#666;margin-bottom:1.5rem}
+  .mg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+  .mc{background:#fff;border:.5px solid #ddd;border-radius:8px;padding:12px 14px}
+  .ml{font-size:12px;color:#666;margin-bottom:4px} .mv{font-size:21px;font-weight:500}
+  .ms{font-size:11px;color:#aaa;margin:2px 0 0}
+  .leg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .li{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
+  .lc{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+  .tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid #ddd;margin-bottom:1.5rem}
+  .tab{padding:8px 14px;font-size:13px;cursor:pointer;border:none;background:none;
+         color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;
+         font-family:system-ui,-apple-system,sans-serif}
+  .tab.sel{color:#111;border-bottom-color:#7F77DD;font-weight:500}
+  .panel{display:none}.panel.sel{display:block}
+  .cw{position:relative;width:100%}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  .sec{font-size:13px;font-weight:500;margin-bottom:10px;color:#111}
+  .note{font-size:12px;color:#666;margin-top:10px;line-height:1.6;
+          border-left:2px solid #ddd;padding-left:10px}
+  .pill{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:500}
+  .p-yes{background:#d4edda;color:#155724} .p-part{background:#fff3cd;color:#856404}
+  .p-no{background:#f8d7da;color:#721c24}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;
+          border-radius:8px;overflow:hidden;border:.5px solid #ddd}
+  thead tr{border-bottom:1.5px solid #ccc;background:#f1efe8}
+  th{padding:8px 10px;font-weight:500;color:#555;white-space:nowrap;vertical-align:bottom;line-height:1.4}
+  th.l{text-align:left} th.r{text-align:right}
+  th .sub{display:block;font-size:10px;font-weight:400;color:#aaa;margin-top:2px}
+  tbody tr{border-bottom:.5px solid #eee} tbody tr:hover{background:#fafafa}
+  tfoot tr{border-top:1.5px solid #ccc;background:#f8f7f4}
+  td{padding:7px 10px;white-space:nowrap}
+  td.l{text-align:left} td.r{text-align:right;font-variant-numeric:tabular-nums}
+  td.na{color:#aaa;text-align:center}
+  .bar-cell{padding:6px 10px;vertical-align:middle;min-width:100px}
+  .bar-wrap{display:flex;align-items:center;gap:6px}
+  .bar-bg{flex:1;background:#e5e3dc;border-radius:2px;height:6px;overflow:hidden}
+  .bar-fill{height:6px;border-radius:2px}
+  .bar-val{font-size:11.5px;min-width:36px;text-align:right;font-variant-numeric:tabular-nums;color:#333}
+  .fn{font-size:11.5px;color:#666;margin-top:1rem;line-height:1.7;
+        border-top:.5px solid #ddd;padding-top:.75rem}
+  .fn sup{font-size:9px;vertical-align:super}
+  @media(prefers-color-scheme:dark){
+    body{color:#e8e6e0;background:#1c1c1a}
+    .mc{background:#2a2a28;border-color:#3a3a38} .mv{color:#e8e6e0} .ms,.ml{color:#888}
+    .li{color:#aaa} .sec{color:#e8e6e0} .tab{color:#888} .tab.sel{color:#e8e6e0}
+    table{background:#2a2a28;border-color:#3a3a38} thead tr{background:#333330} th{color:#aaa}
+    tfoot tr{background:#2a2a28}
+    tbody tr:hover{background:#333330} .tabs{border-color:#3a3a38}
+    .note{border-left-color:#444;color:#aaa} .fn{color:#aaa;border-top-color:#3a3a38}
+    td.na{color:#555} .bar-bg{background:#3a3a38} .bar-val{color:#ccc}
+    .p-yes{background:#0f3d1e;color:#6fcf97} .p-part{background:#3d2e00;color:#f0c040}
+    .p-no{background:#3d0f0f;color:#e57373}
+  }
+</style>
+</head>
+<body>
+<h1>Corpus Statistics Dashboard</h1>
+<p class="sub-h">Biomedical named entity annotation corpora — comparative analysis</p>
+
+<div class="mg">
+  <div class="mc"><p class="ml">Corpora analyzed</p><p class="mv">9</p></div>
+  <div class="mc"><p class="ml">With concept identifiers</p><p class="mv">5 / 9</p></div>
+  <div class="mc"><p class="ml">Ann/doc range</p><p class="mv">7.0 – 255.6</p></div>
+  <div class="mc"><p class="ml">Ambiguity range</p><p class="mv">1.00 – 1.36</p></div>
+</div>
+
+<div class="leg"><span class="li"><span class="lc" style="background:#7F77DD"></span>AnatEM</span><span class="li"><span class="lc" style="background:#378ADD"></span>BC5CDR</span><span class="li"><span class="lc" style="background:#1D9E75"></span>BioID</span><span class="li"><span class="lc" style="background:#D85A30"></span>CHEMDNER</span><span class="li"><span class="lc" style="background:#639922"></span>CRAFT</span><span class="li"><span class="lc" style="background:#D4537E"></span>CellLink</span><span class="li"><span class="lc" style="background:#BA7517"></span>JNLPBA</span><span class="li"><span class="lc" style="background:#E24B4A"></span>NCBI-Disease</span><span class="li"><span class="lc" style="background:#888780"></span>NLM-Chem</span></div>
+
+<div class="tabs" id="tabs">
+  <button class="tab sel" data-p="p1">Annotation density</button>
+  <button class="tab" data-p="p2">Identifier coverage</button>
+  <button class="tab" data-p="p3">Difficulty indicators</button>
+  <button class="tab" data-p="p4">Entity type profile</button>
+  <button class="tab" data-p="p5">Summary table</button>
+  
+  <button class="tab" data-p="p6">Train-test overlap</button>
+  <button class="tab" data-p="p7">Cascade view</button>
+  <button class="tab" data-p="p8">Journal metadata</button>
+  <button class="tab" data-p="p9">Temporal coverage</button>
+  <button class="tab" data-p="p10">Journal topics</button>
+</div>
+
+<div class="panel sel" id="p1">
+  <div class="cw" style="height:440px">
+    <canvas id="c1" role="img" aria-label="Mean annotations per document, log scale.">
+      Annotation density varies widely across corpora.
+    </canvas>
+  </div>
+  <p class="note">Log scale. NLM-Chem annotates full-text articles; BioID uses figure captions.</p>
+</div>
+
+<div class="panel" id="p2">
+  <div style="margin-bottom:12px;font-size:13px"><span style="margin-right:10px"><strong>AnatEM</strong> <span class="pill p-no">none</span></span><span style="margin-right:10px"><strong>BC5CDR</strong> <span class="pill p-no">none</span></span><span style="margin-right:10px"><strong>BioID</strong> <span class="pill p-part">CHEBI, Uniprot, molecule, PubChem, subcellular, NCBI gene, NCBI taxon, protein, gene, CL, Uberon, tissue, organism (partial)</span></span><span style="margin-right:10px"><strong>CHEMDNER</strong> <span class="pill p-no">none</span></span><span style="margin-right:10px"><strong>CRAFT</strong> <span class="pill p-yes">CL</span></span><span style="margin-right:10px"><strong>CellLink</strong> <span class="pill p-part">CL (partial)</span></span><span style="margin-right:10px"><strong>JNLPBA</strong> <span class="pill p-no">none</span></span><span style="margin-right:10px"><strong>NCBI-Disease</strong> <span class="pill p-part">OMIM, MESH (partial)</span></span><span style="margin-right:10px"><strong>NLM-Chem</strong> <span class="pill p-yes">MESH</span></span></div>
+  <div class="cw" style="height:440px">
+    <canvas id="c2" role="img" aria-label="Unique identifiers per document.">
+      Three corpora have no concept identifiers.
+    </canvas>
+  </div>
+  <p class="note">Faded bars — zero or negligible identifier coverage. These corpora can only
+  benchmark span detection, not entity normalization.</p>
+</div>
+
+<div class="panel" id="p3">
+  <div class="two">
+    <div>
+      <p class="sec">Ambiguity — identifiers per mention</p>
+      <div class="cw" style="height:320px">
+        <canvas id="c3" role="img" aria-label="Ambiguity scores per corpus.">
+          Ambiguity is low and uniform across all corpora.
+        </canvas>
+      </div>
+    </div>
+    <div>
+      <p class="sec">Variation — surface forms per concept</p>
+      <div class="cw" style="height:320px">
+        <canvas id="c4" role="img" aria-label="Variation scores for corpora with concept identifiers.">
+          CellLink highest; BC5CDR and NLM-Chem lowest.
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note">Ambiguity near 1.0 indicates low polysemy. Variation shown only for
+  corpora with concept-level identifiers.</p>
+</div>
+
+<div class="panel" id="p4">
+  <div class="two">
+    <div>
+      <p class="sec">Distinct entity type labels</p>
+      <div class="cw" style="height:320px">
+        <canvas id="c5" role="img" aria-label="Number of distinct entity type labels per corpus.">
+          AnatEM has 12 types; four corpora annotate a single entity type.
+        </canvas>
+      </div>
+    </div>
+    <div>
+      <p class="sec">Label entropy (bits)</p>
+      <div class="cw" style="height:320px">
+        <canvas id="c6" role="img" aria-label="Shannon entropy of label distributions.">
+          Single-entity corpora have 0 bits; AnatEM highest at 2.84 bits.
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note">Entropy = 0 for single-entity corpora. Higher entropy indicates more
+  balanced coverage across entity types.</p>
+</div>
+
+<div class="panel" id="p5">
+  <div style="overflow-x:auto">
+  <table>
+  <thead>
+    <tr>
+      <th class="l">Corpus</th>
+      <th class="r">Docs</th><th class="r">Tokens</th><th class="r">Types</th>
+      <th class="r">Total ann.</th><th class="r">Ann/doc</th>
+      <th class="r">Men/doc</th><th class="r">IDs/doc</th>
+      <th>ID vocabulary</th>
+      <th class="r">Ambiguity<sup>a</sup></th>
+      <th class="r">Variation<sup>b</sup></th>
+      <th class="r">Entropy<sup>c</sup></th>
+    </tr>
+  </thead>
+  <tbody><tr><td class='l'><strong>AnatEM</strong></td><td class='r'>1,212</td><td class='r'>259,510</td><td class='r'>12</td><td class='r'>13,701</td><td class='r'>11.3</td><td class='r'>7.2</td><td class='r'><span style="color:#aaa">—</span></td><td><span class='pill p-no'>none</span></td><td class='r'>1.028</td><td class='r'>346.92</td><td class='r'>2.84</td></tr>
+<tr><td class='l'><strong>BC5CDR</strong></td><td class='r'>1,500</td><td class='r'>297,019</td><td class='r'>2</td><td class='r'>29,271</td><td class='r'>19.5</td><td class='r'>9.4</td><td class='r'><span style="color:#aaa">—</span></td><td><span class='pill p-no'>none</span></td><td class='r'>1.018</td><td class='r'>2.47</td><td class='r'>0.99</td></tr>
+<tr><td class='l'><strong>BioID</strong></td><td class='r'>13,697</td><td class='r'>771,248</td><td class='r'>6</td><td class='r'>95,278</td><td class='r'>7.0</td><td class='r'>4.5</td><td class='r'>4.77</td><td><span class='pill p-part'>CHEBI, Uniprot, molecule, PubChem, subcellular, NCBI gene, NCBI taxon, protein, gene, CL, Uberon, tissue, organism (partial)</span></td><td class='r'>1.362</td><td class='r'>1.44</td><td class='r'>1.82</td></tr>
+<tr><td class='l'><strong>CHEMDNER</strong></td><td class='r'>10,000</td><td class='r'>2,092,491</td><td class='r'>1</td><td class='r'>84,331</td><td class='r'>8.4</td><td class='r'>4.6</td><td class='r'><span style="color:#aaa">—</span></td><td><span class='pill p-no'>none</span></td><td class='r'>1.000</td><td class='r'>19803.00</td><td class='r'>-0.00</td></tr>
+<tr><td class='l'><strong>CRAFT</strong></td><td class='r'>97</td><td class='r'>652,168</td><td class='r'>1</td><td class='r'>5,792</td><td class='r'>59.7</td><td class='r'>17.4</td><td class='r'>8.60</td><td><span class='pill p-yes'>CL</span></td><td class='r'>1.011</td><td class='r'>3.42</td><td class='r'>-0.00</td></tr>
+<tr><td class='l'><strong>CellLink</strong></td><td class='r'>3,005</td><td class='r'>338,445</td><td class='r'>3</td><td class='r'>22,362</td><td class='r'>7.4</td><td class='r'>6.0</td><td class='r'>4.11</td><td><span class='pill p-part'>CL (partial)</span></td><td class='r'>1.073</td><td class='r'>4.08</td><td class='r'>0.83</td></tr>
+<tr><td class='l'><strong>JNLPBA</strong></td><td class='r'>2,404</td><td class='r'>564,660</td><td class='r'>5</td><td class='r'>59,963</td><td class='r'>24.9</td><td class='r'>16.5</td><td class='r'><span style="color:#aaa">—</span></td><td><span class='pill p-no'>none</span></td><td class='r'>1.020</td><td class='r'>4450.20</td><td class='r'>1.67</td></tr>
+<tr><td class='l'><strong>NCBI-Disease</strong></td><td class='r'>793</td><td class='r'>169,561</td><td class='r'>1</td><td class='r'>6,892</td><td class='r'>8.7</td><td class='r'>5.1</td><td class='r'>3.17</td><td><span class='pill p-part'>OMIM, MESH (partial)</span></td><td class='r'>1.014</td><td class='r'>2.75</td><td class='r'>-0.00</td></tr>
+<tr><td class='l'><strong>NLM-Chem</strong></td><td class='r'>150</td><td class='r'>789,532</td><td class='r'>1</td><td class='r'>38,339</td><td class='r'>255.6</td><td class='r'>54.3</td><td class='r'>34.07</td><td><span class='pill p-yes'>MESH</span></td><td class='r'>1.024</td><td class='r'>2.42</td><td class='r'>-0.00</td></tr></tbody>
+  </table>
+  </div>
+  <div class="fn">
+    <sup>a</sup> Mean concept identifiers per unique mention string. &nbsp;
+    <sup>b</sup> Mean surface forms per concept identifier; only for corpora with IDs. &nbsp;
+    <sup>c</sup> Shannon entropy of label distribution in bits; 0 = single entity type.
+  </div>
+</div>
+
+<div class="panel" id="p6"><div class="leg"><span class="li"><span class="lc" style="background:#888780"></span>Token vocabulary</span><span class="li"><span class="lc" style="background:#1D9E75"></span>Mention tokens</span><span class="li"><span class="lc" style="background:#D85A30"></span>Mention strings</span><span class="li"><span class="lc" style="background:#7F77DD"></span>Identifiers</span></div><div style="overflow-x:auto"><table><thead><tr><th class="l">Corpus</th><th>Split<span class="sub">train → test tokens</span></th><th>Token vocab<span class="sub">Jaccard</span></th><th>Mention tokens<span class="sub">Jaccard</span></th><th>Mention strings<span class="sub">Jaccard</span></th><th>Identifiers<span class="sub">Jaccard</span></th><th>ID vocab</th></tr></thead><tbody><tr><td class='l'><strong>BC5CDR</strong></td><td>8,721 → 8,850</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:64%;background:#888780'></div></div><span class='bar-val'>41.9%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:48%;background:#1D9E75'></div></div><span class='bar-val'>31.5%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:31%;background:#D85A30'></div></div><span class='bar-val'>19.9%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:55%;background:#7F77DD'></div></div><span class='bar-val'>35.9%</span></div></td><td><span class='pill p-no'>none</span></td></tr><tr><td class='l'><strong>CellLink</strong></td><td>14,685 → 11,487</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:60%;background:#888780'></div></div><span class='bar-val'>39.0%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:55%;background:#1D9E75'></div></div><span class='bar-val'>35.7%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:20%;background:#D85A30'></div></div><span class='bar-val'>12.7%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:86%;background:#7F77DD'></div></div><span class='bar-val'>55.9%</span></div></td><td><span class='pill p-part'>CL (partial)</span></td></tr><tr><td class='l'><strong>CHEMDNER</strong></td><td>34,451 → 31,892</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:59%;background:#888780'></div></div><span class='bar-val'>38.4%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:40%;background:#1D9E75'></div></div><span class='bar-val'>26.1%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:23%;background:#D85A30'></div></div><span class='bar-val'>15.0%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:0%;background:#7F77DD'></div></div><span class='bar-val'>0.0%</span></div></td><td><span class='pill p-no'>none</span></td></tr><tr><td class='l'><strong>AnatEM</strong></td><td>11,900 → 9,527</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:55%;background:#888780'></div></div><span class='bar-val'>36.0%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:50%;background:#1D9E75'></div></div><span class='bar-val'>32.5%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:23%;background:#D85A30'></div></div><span class='bar-val'>15.2%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:0%;background:#7F77DD'></div></div><span class='bar-val'>0.0%</span></div></td><td><span class='pill p-no'>none</span></td></tr><tr><td class='l'><strong>JNLPBA</strong></td><td>13,814 → 7,041</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:55%;background:#888780'></div></div><span class='bar-val'>35.9%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:42%;background:#1D9E75'></div></div><span class='bar-val'>27.5%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:10%;background:#D85A30'></div></div><span class='bar-val'>6.6%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:0%;background:#7F77DD'></div></div><span class='bar-val'>0.0%</span></div></td><td><span class='pill p-no'>none</span></td></tr><tr><td class='l'><strong>CRAFT</strong></td><td>17,536 → 11,740</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:53%;background:#888780'></div></div><span class='bar-val'>34.2%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:44%;background:#1D9E75'></div></div><span class='bar-val'>28.6%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:21%;background:#D85A30'></div></div><span class='bar-val'>13.9%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:48%;background:#7F77DD'></div></div><span class='bar-val'>31.0%</span></div></td><td><span class='pill p-yes'>CL</span></td></tr><tr><td class='l'><strong>NLM-Chem</strong></td><td>19,315 → 14,467</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:51%;background:#888780'></div></div><span class='bar-val'>33.2%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:32%;background:#1D9E75'></div></div><span class='bar-val'>20.5%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:17%;background:#D85A30'></div></div><span class='bar-val'>11.0%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:37%;background:#7F77DD'></div></div><span class='bar-val'>23.8%</span></div></td><td><span class='pill p-yes'>MESH</span></td></tr><tr><td class='l'><strong>NCBI-Disease</strong></td><td>8,363 → 3,308</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:43%;background:#888780'></div></div><span class='bar-val'>28.2%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:34%;background:#1D9E75'></div></div><span class='bar-val'>21.8%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:14%;background:#D85A30'></div></div><span class='bar-val'>9.0%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:30%;background:#7F77DD'></div></div><span class='bar-val'>19.6%</span></div></td><td><span class='pill p-part'>OMIM, MESH (partial)</span></td></tr><tr><td class='l'><strong>BioID</strong></td><td>20,940 → 9,112</td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:39%;background:#888780'></div></div><span class='bar-val'>25.2%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:29%;background:#1D9E75'></div></div><span class='bar-val'>18.8%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:20%;background:#D85A30'></div></div><span class='bar-val'>12.7%</span></div></td><td class='bar-cell'><div class='bar-wrap'><div class='bar-bg'><div class='bar-fill' style='width:21%;background:#7F77DD'></div></div><span class='bar-val'>13.6%</span></div></td><td><span class='pill p-part'>CHEBI, Uniprot, molecule, PubChem, subcellular, NCBI gene, NCBI taxon, protein, gene, CL, Uberon, tissue, organism (partial)</span></td></tr></tbody></table></div><div class="fn">All values are Jaccard similarity (intersection / union) between splits.</div></div>
+<div class="panel" id="p7"><div class="leg" id="cascLeg"></div><div class="cw" style="height:380px"><canvas id="c7" role="img" aria-label="Overlap cascade across four abstraction levels.">Overlap cascade from token vocabulary to identifier level.</canvas></div><p class="note">Each line traces one corpus across four abstraction levels. Lines that terminate before the identifier level indicate corpora without concept normalization.</p></div>
+
+<div class="panel" id="p8">
+  <div class="two">
+    <div>
+      <p class="sec">Unique journal count</p>
+      <div class="cw" style="height:340px">
+        <canvas id="mc1" role="img" aria-label="Unique journal counts per corpus.">
+          Journal diversity from 25 to over 300 unique journals.
+        </canvas>
+      </div>
+    </div>
+    <div>
+      <p class="sec">Journal concentration</p>
+      <div class="leg">
+        <span class="li"><span class="lc" style="background:#555;opacity:.9"></span>Top-1 journal</span>
+        <span class="li"><span class="lc" style="background:#555;opacity:.35"></span>Top-3 journals</span>
+      </div>
+      <div class="cw" style="height:300px">
+        <canvas id="mc2" role="img" aria-label="Top-1 and top-3 journal share.">
+          CRAFT most concentrated; BC5CDR most distributed.
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note">6 of 9 corpora have journal metadata. Unique journal count
+  measures language diversity. Concentration reveals whether the corpus is dominated by a small
+  number of sources. Faded bars indicate corpora with no metadata.</p>
+</div>
+
+<div class="panel" id="p9">
+  <p class="sec">Publication year range</p>
+  <div class="cw" style="height:230px">
+    <canvas id="mc3" role="img" aria-label="Year range per corpus.">
+      Year ranges span from 1968 to 2025.
+    </canvas>
+  </div>
+  <div class="two" style="margin-top:1.5rem">
+    <div>
+      <p class="sec">Decade share per corpus</p>
+      <div class="cw" style="height:280px">
+        <canvas id="mc4" role="img" aria-label="Stacked bar: decade share per corpus.">
+          Decade distribution across corpora.
+        </canvas>
+      </div>
+    </div>
+    <div>
+      <p class="sec">Year-by-year: oldest vs most recent</p>
+      <div class="cw" style="height:280px">
+        <canvas id="mc5" role="img" aria-label="Year-by-year article counts.">
+          Article distribution per year.
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note">Hover range bars for the mode year. Corpora anchored in pre-2000 literature
+  risk reduced performance on contemporary terminology.</p>
+</div>
+
+<div class="panel" id="p10">
+  <p class="sec">Journal topic distribution per corpus (%)</p>
+  
+<div style="overflow-x:auto">
+<table>
+<thead>
+  <tr><th class="l">Topic</th><th class="r">BC5CDR</th><th class="r">CHEMDNER</th><th class="r">CRAFT</th><th class="r">CellLink</th><th class="r">NCBI-Disease</th><th class="r">NLM-Chem</th></tr>
+</thead>
+<tbody>
+  <tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#7F77DD;margin-right:6px;vertical-align:middle"></span>Genetics & Genomics</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">1%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">30%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">61%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">2%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#1D9E75;margin-right:6px;vertical-align:middle"></span>Pharmacology & Toxicology</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">16%</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">29%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#AFA9EC;margin-right:6px;vertical-align:middle"></span>Multidisciplinary</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">31%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">34%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">12%</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">35%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#D85A30;margin-right:6px;vertical-align:middle"></span>Chemistry & Materials</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">34%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">14%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#378ADD;margin-right:6px;vertical-align:middle"></span>Neuroscience</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">18%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">9%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">5%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">3%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">3%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#BA7517;margin-right:6px;vertical-align:middle"></span>Biochemistry & Mol Bio</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">2%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">9%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">7%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">3%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">3%</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">15%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#5DCAA5;margin-right:6px;vertical-align:middle"></span>Clinical Medicine</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">24%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">7%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">1%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">5%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">12%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#639922;margin-right:6px;vertical-align:middle"></span>Cell & Dev Biology</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">13%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">9%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">2%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#E24B4A;margin-right:6px;vertical-align:middle"></span>Oncology</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">5%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">2%</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">6%</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#888780;margin-right:6px;vertical-align:middle"></span>Cardiology & Vasc</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">6%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#D4537E;margin-right:6px;vertical-align:middle"></span>Immunology</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">11%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">1%</td><td class="r" style="font-weight:400;color:var(--color-text-tertiary)">—</td></tr><tr><td class="l"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#D3D1C7;margin-right:6px;vertical-align:middle"></span>Other</td><td class="r" style="font-weight:600;color:var(--color-text-primary)">26%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">15%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">23%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">4%</td><td class="r" style="font-weight:400;color:var(--color-text-primary)">19%</td></tr>
+</tbody>
+<tfoot>
+  <tr style="border-top:1.5px solid var(--color-border-primary)">
+    <td class="l" style="font-weight:600;color:var(--color-text-secondary);font-size:11px">
+      Total shown</td>
+    <td class="r" style="font-weight:600">100%</td><td class="r" style="font-weight:600">100%</td><td class="r" style="font-weight:600">100%</td><td class="r" style="font-weight:600">100%</td><td class="r" style="font-weight:600">100%</td><td class="r" style="font-weight:600">100%</td>
+  </tr>
+</tfoot>
+</table>
+</div>
+  <div class="fn">
+    Topics assigned by matching journal names against a priority-ordered keyword ruleset,
+    with exact-match lookup for common ambiguous journals (e.g. "Nature" → Multidisciplinary,
+    "Cell" → Cell &amp; Dev Biology). The first matching rule wins; "Other" catches journals
+    that matched no rule. Only topics with ≥ 1% share in at least one corpus are shown.
+    Dominant value per row is bold. Percentages may not sum to exactly 100 due to rounding.
+    Corpora without journal metadata are excluded.
+  </div>
+</div>
+
+<script>
+(function() {
+  const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+  const tc = dk ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)';
+  const gc = dk ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)';
+
+  const M = {
+    jdivLabels:   ["BC5CDR", "CellLink", "CHEMDNER", "NCBI-Disease", "NLM-Chem", "CRAFT", "AnatEM", "BioID", "JNLPBA"],
+    jdivData:     [704, 467, 203, 98, 60, 25, 0, 0, 0],
+    jdivBg:       ["#378ADDcc", "#D4537Ecc", "#D85A30cc", "#E24B4Acc", "#888780cc", "#639922cc", "#7F77DD22", "#1D9E7522", "#BA751722"],
+    yrLabels:     ["BC5CDR", "NCBI-Disease", "CRAFT", "NLM-Chem", "CHEMDNER", "CellLink"],
+    yrRanges:     [[1968, 2016], [1975, 2000], [2001, 2007], [2004, 2018], [2013, 2017], [2019, 2025]],
+    yrModes:      [2014, 1999, 2005, 2017, 2013, 2023],
+    yrBg:         ["#378ADDbb", "#E24B4Abb", "#639922bb", "#888780bb", "#D85A30bb", "#D4537Ebb"],
+    concLabels:   ["CRAFT", "NLM-Chem", "NCBI-Disease", "CellLink", "CHEMDNER", "BC5CDR"],
+    concTop1:     [19.6, 17.3, 13.9, 9.3, 6.7, 1.2],
+    concTop3:     [51.5, 37.3, 31.8, 23.8, 13.2, 3.1],
+    concBg1:      ["#639922dd", "#888780dd", "#E24B4Add", "#D4537Edd", "#D85A30dd", "#378ADDdd"],
+    concBg3:      ["#63992244", "#88878044", "#E24B4A44", "#D4537E44", "#D85A3044", "#378ADD44"],
+    decadeDs:     [{"label": "\u22641969", "data": [0.1, 0, 0, 0, 0, 0], "backgroundColor": "#55534ecc", "borderWidth": 0, "borderRadius": 0}, {"label": "\u22641979", "data": [5.2, 4.0, 0, 0, 0, 0], "backgroundColor": "#888780cc", "borderWidth": 0, "borderRadius": 0}, {"label": "1980s", "data": [20.9, 13.4, 0, 0, 0, 0], "backgroundColor": "#B4B2A9cc", "borderWidth": 0, "borderRadius": 0}, {"label": "1990s", "data": [25.8, 73.5, 0, 0, 0, 0], "backgroundColor": "#7F77DDcc", "borderWidth": 0, "borderRadius": 0}, {"label": "2000s", "data": [37.1, 9.2, 100.0, 11.4, 0, 0], "backgroundColor": "#378ADDcc", "borderWidth": 0, "borderRadius": 0}, {"label": "2010s", "data": [11.0, 0, 0, 88.7, 99.9, 12.6], "backgroundColor": "#D4537Ecc", "borderWidth": 0, "borderRadius": 0}, {"label": "2020s", "data": [0, 0, 0, 0, 0, 87.4], "backgroundColor": "#D85A30cc", "borderWidth": 0, "borderRadius": 0}],
+    decadeLabels: ["BC5CDR", "NCBI-Disease", "CRAFT", "NLM-Chem", "CHEMDNER", "CellLink"],
+    ybyDs:        [{"label": "BC5CDR", "data": [{"x": 1968, "y": 0.07}, {"x": 1972, "y": 0.07}, {"x": 1974, "y": 0.07}, {"x": 1975, "y": 0.8}, {"x": 1976, "y": 0.93}, {"x": 1977, "y": 1.13}, {"x": 1978, "y": 0.93}, {"x": 1979, "y": 1.27}, {"x": 1980, "y": 1.33}, {"x": 1981, "y": 1.47}, {"x": 1982, "y": 1.67}, {"x": 1983, "y": 1.47}, {"x": 1984, "y": 2.13}, {"x": 1985, "y": 2.13}, {"x": 1986, "y": 2.6}, {"x": 1987, "y": 2.87}, {"x": 1988, "y": 2.47}, {"x": 1989, "y": 2.73}, {"x": 1990, "y": 2.2}, {"x": 1991, "y": 2.27}, {"x": 1992, "y": 3.27}, {"x": 1993, "y": 2.27}, {"x": 1994, "y": 1.93}, {"x": 1995, "y": 2.33}, {"x": 1996, "y": 3.0}, {"x": 1997, "y": 2.93}, {"x": 1998, "y": 3.07}, {"x": 1999, "y": 2.47}, {"x": 2000, "y": 3.13}, {"x": 2001, "y": 3.67}, {"x": 2002, "y": 3.33}, {"x": 2003, "y": 3.87}, {"x": 2004, "y": 3.0}, {"x": 2005, "y": 3.27}, {"x": 2006, "y": 3.73}, {"x": 2007, "y": 4.13}, {"x": 2008, "y": 4.33}, {"x": 2009, "y": 4.67}, {"x": 2010, "y": 3.87}, {"x": 2011, "y": 0.47}, {"x": 2013, "y": 0.07}, {"x": 2014, "y": 5.73}, {"x": 2015, "y": 0.73}, {"x": 2016, "y": 0.13}], "backgroundColor": "#378ADD88", "borderWidth": 0, "borderRadius": 1}, {"label": "CellLink", "data": [{"x": 2019, "y": 12.58}, {"x": 2020, "y": 14.61}, {"x": 2021, "y": 18.34}, {"x": 2022, "y": 18.1}, {"x": 2023, "y": 19.17}, {"x": 2024, "y": 17.17}, {"x": 2025, "y": 0.03}], "backgroundColor": "#D4537E88", "borderWidth": 0, "borderRadius": 1}],
+    yrXMin:       1963,
+    yrXMax:       2028,
+  };
+
+  function hb(id, labels, data, bg, xLabel, xOpts) {
+    return new Chart(id, {
+      type:'bar',
+      data:{ labels, datasets:[{ data, backgroundColor:bg, borderWidth:0, borderRadius:3 }] },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{display:false},
+          tooltip:{ callbacks:{ label: ctx => ` ${ctx.parsed.x.toFixed(1)}` } } },
+        scales:{
+          x:{ ...(xOpts||{}),
+               title:{display:true,text:xLabel,color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11}}, grid:{color:gc} },
+          y:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+        }
+      }
+    });
+  }
+
+  window.initMeta1 = function() {
+    hb('mc1', M.jdivLabels, M.jdivData, M.jdivBg, 'Unique journals (approx.)');
+    if (!M.concLabels.length) return;
+    new Chart('mc2', {
+      type:'bar',
+      data:{ labels:M.concLabels, datasets:[
+        { label:'Top-1 (%)', data:M.concTop1, backgroundColor:M.concBg1, borderWidth:0, borderRadius:2 },
+        { label:'Top-3 (%)', data:M.concTop3, backgroundColor:M.concBg3, borderWidth:0, borderRadius:2 }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{display:false},
+          tooltip:{ callbacks:{ label: ctx =>
+            ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` } } },
+        scales:{
+          x:{ min:0, max:65,
+               title:{display:true,text:'Share of corpus (%)',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} },
+          y:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+
+  window.initMeta2 = function() {
+    if (M.yrLabels.length) {
+      new Chart('mc3', {
+        type:'bar',
+        data:{ labels:M.yrLabels,
+                datasets:[{ data:M.yrRanges, backgroundColor:M.yrBg,
+                             borderWidth:0, borderRadius:3 }] },
+        options:{
+          responsive:true, maintainAspectRatio:false, indexAxis:'y',
+          plugins:{ legend:{display:false},
+            tooltip:{ callbacks:{ label: ctx => {
+              const [mn,mx] = ctx.raw;
+              return ` ${mn}–${mx}  |  mode: ${M.yrModes[ctx.dataIndex]}`;
+            } } } },
+          scales:{
+            x:{ min:1960, max:2030,
+                 title:{display:true,text:'Publication year',color:tc,font:{size:11}},
+                 ticks:{color:tc,font:{size:11},stepSize:10}, grid:{color:gc} },
+            y:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+          }
+        }
+      });
+      new Chart('mc4', {
+        type:'bar',
+        data:{ labels:M.decadeLabels, datasets:M.decadeDs },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{
+            display:true, position:'top', align:'end',
+            labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc }
+          },
+            tooltip:{ mode:'index', intersect:false,
+              callbacks:{ label: ctx =>
+                ctx.parsed.y > 0 ? ` ${ctx.dataset.label}: ${ctx.parsed.y}%` : null
+              } } },
+          scales:{
+            x:{ stacked:true, ticks:{color:tc,font:{size:11}}, grid:{color:gc} },
+            y:{ stacked:true, min:0, max:100,
+                 title:{display:true,text:'Share (%)',color:tc,font:{size:11}},
+                 ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} }
+          }
+        }
+      });
+    }
+    if (M.ybyDs.length) {
+      new Chart('mc5', {
+        type:'bar', data:{ datasets:M.ybyDs },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{
+            display:true, position:'top', align:'end',
+            labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc }
+          },
+            tooltip:{ callbacks:{ label: ctx =>
+              ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}% of corpus`
+            } } },
+          scales:{
+            x:{ type:'linear', min:M.yrXMin, max:M.yrXMax,
+                 title:{display:true,text:'Year',color:tc,font:{size:11}},
+                 ticks:{color:tc,font:{size:11},stepSize:10}, grid:{color:gc} },
+            y:{ title:{display:true,text:'% of corpus',color:tc,font:{size:11}},
+                 ticks:{color:tc,font:{size:11}}, grid:{color:gc} }
+          }
+        }
+      });
+    }
+  };
+})();
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+const tc = dk ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)';
+const gc = dk ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)';
+
+function hbar(el, labels, data, bg, xLabel, xOpts={}) {
+  return new Chart(el, {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:bg, borderWidth:0, borderRadius:3 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: ctx => ` ${ctx.parsed.x.toFixed(2)}` } } },
+      scales:{
+        x:{ ...xOpts,
+              title:{display:true,text:xLabel,color:tc,font:{size:11}},
+              ticks:{color:tc,font:{size:11}}, grid:{color:gc} },
+        y:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+      }
+    }
+  });
+}
+
+new Chart('c1', {
+  type:'bar',
+  data:{ labels:["NLM-Chem", "CRAFT", "JNLPBA", "BC5CDR", "AnatEM", "NCBI-Disease", "CHEMDNER", "CellLink", "BioID"], datasets:[{ data:[255.59, 59.71, 24.94, 19.51, 11.3, 8.69, 8.43, 7.44, 6.96], backgroundColor:["#888780", "#639922", "#BA7517", "#378ADD", "#7F77DD", "#E24B4A", "#D85A30", "#D4537E", "#1D9E75"],
+    borderWidth:0, borderRadius:3 }] },
+  options:{
+    responsive:true, maintainAspectRatio:false, indexAxis:'y',
+    plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{ label: ctx=>` ${ctx.parsed.x.toFixed(1)}` } } },
+    scales:{
+      x:{ type:'logarithmic',
+           title:{display:true,text:'Mean annotations per document (log scale)',color:tc,font:{size:11}},
+           ticks:{color:tc,font:{size:11},callback:v=>[0.1,1,10,100,1000].includes(v)?v:''},
+           grid:{color:gc} },
+      y:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+    }
+  }
+});
+
+const inited={};
+function initC2(){ hbar('c2',["NLM-Chem", "CRAFT", "BC5CDR", "BioID", "CellLink", "NCBI-Disease", "AnatEM", "CHEMDNER", "JNLPBA"],[34.07, 8.6, 6.88, 4.77, 4.11, 3.17, 0, 0, 0],["#888780", "#639922", "#378ADD", "#1D9E75", "#D4537E", "#E24B4A", "#7F77DD33", "#D85A3033", "#BA751733"],'Mean unique identifiers per document'); }
+function initC3(){
+  new Chart('c3', {
+    type:'bar',
+    data:{ labels:["AnatEM", "BC5CDR", "BioID", "CHEMDNER", "CRAFT", "CellLink", "JNLPBA", "NCBI-Disease", "NLM-Chem"], datasets:[{ data:[1.028, 1.018, 1.362, 1, 1.011, 1.073, 1.02, 1.014, 1.024], backgroundColor:["#7F77DD", "#378ADD", "#1D9E75", "#D85A30", "#639922", "#D4537E", "#BA7517", "#E24B4A", "#888780"],
+      borderWidth:0, borderRadius:3 }] },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: ctx=>` ${ctx.parsed.x.toFixed(3)}` } } },
+      scales:{ x:{ min:0.98, max:1.38,
+        title:{display:true,text:'Mean identifiers per mention',color:tc,font:{size:11}},
+        ticks:{color:tc,font:{size:11},callback:v=>v.toFixed(2)}, grid:{color:gc} },
+        y:{ ticks:{color:tc,font:{size:11}}, grid:{color:gc} }
+      }
+    }
+  });
+}
+function initC4(){ hbar('c4',["CHEMDNER", "JNLPBA", "AnatEM", "CellLink", "CRAFT", "NCBI-Disease", "BC5CDR", "NLM-Chem", "BioID"],[19803, 4450.2, 346.92, 4.08, 3.42, 2.75, 2.47, 2.42, 1.44],["#D85A30", "#BA7517", "#7F77DD", "#D4537E", "#639922", "#E24B4A", "#378ADD", "#888780", "#1D9E75"],'Mean surface forms per concept'); }
+function initC5(){ hbar('c5',["AnatEM", "BioID", "JNLPBA", "CellLink", "BC5CDR", "CHEMDNER", "CRAFT", "NCBI-Disease", "NLM-Chem"],[12, 6, 5, 3, 2, 1, 1, 1, 1],["#7F77DD", "#1D9E75", "#BA7517", "#D4537E", "#378ADD", "#D85A30", "#639922", "#E24B4A", "#888780"],'Distinct entity type labels',
+  {ticks:{stepSize:1,color:tc,font:{size:11}}}); }
+function initC6(){ hbar('c6',["AnatEM", "BioID", "JNLPBA", "BC5CDR", "CellLink", "CHEMDNER", "CRAFT", "NCBI-Disease", "NLM-Chem"],[2.84, 1.82, 1.67, 0.99, 0.83, -0.0, -0.0, -0.0, -0.0],["#7F77DD", "#1D9E75", "#BA7517", "#378ADD", "#D4537E", "#D85A3033", "#63992233", "#E24B4A33", "#88878033"],'Shannon entropy (bits)'); }
+
+const cascadeDatasets = [{label:"AnatEM",data:[36.0, 32.5, 15.2, 0.0],borderColor:"#7F77DD",backgroundColor:"#7F77DD",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"BC5CDR",data:[41.9, 31.5, 19.9, 35.9],borderColor:"#378ADD",backgroundColor:"#378ADD",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"BioID",data:[25.2, 18.8, 12.7, 13.6],borderColor:"#1D9E75",backgroundColor:"#1D9E75",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"CHEMDNER",data:[38.4, 26.1, 15.0, 0.0],borderColor:"#D85A30",backgroundColor:"#D85A30",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"CRAFT",data:[34.2, 28.6, 13.9, 31.0],borderColor:"#639922",backgroundColor:"#639922",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"CellLink",data:[39.0, 35.7, 12.7, 55.9],borderColor:"#D4537E",backgroundColor:"#D4537E",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"JNLPBA",data:[35.9, 27.5, 6.6, 0.0],borderColor:"#BA7517",backgroundColor:"#BA7517",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"NCBI-Disease",data:[28.2, 21.8, 9.0, 19.6],borderColor:"#E24B4A",backgroundColor:"#E24B4A",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1},
+{label:"NLM-Chem",data:[33.2, 20.5, 11.0, 23.8],borderColor:"#888780",backgroundColor:"#888780",pointRadius:[4, 4, 4, 4],pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1}];
+function initC7(){
+  if (!cascadeDatasets.length) return;
+  const leg=document.getElementById('cascLeg');
+  if(leg) leg.innerHTML=cascadeDatasets.map(d=>
+    `<span class="li"><span class="lc" style="background:${d.borderColor}"></span>${d.label}</span>`
+  ).join('');
+  new Chart('c7', {
+    type:'line',
+    data:{ labels:['Token vocab','Mention tokens','Mention strings','Identifiers'],
+             datasets:cascadeDatasets },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: ctx=>
+          ` ${ctx.dataset.label}: ${ctx.parsed.y!==null?ctx.parsed.y.toFixed(1)+'%':'n/a'}` } } },
+      scales:{ x:{ ticks:{color:tc,font:{size:12}}, grid:{color:gc} },
+        y:{ min:0, max:65,
+          title:{display:true,text:'Jaccard overlap (%)',color:tc,font:{size:11}},
+          ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} }
+      }
+    }
+  });
+}
+const panels={
+  p2:initC2, p3:()=>{initC3();initC4();}, p4:()=>{initC5();initC6();}, p7:initC7,
+  p8:window.initMeta1,
+  p9:window.initMeta2,
+};
+
+document.getElementById('tabs').addEventListener('click', e=>{
+  const btn=e.target.closest('.tab');
+  if(!btn) return;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('sel'));
+  btn.classList.add('sel');
+  const pid=btn.dataset.p;
+  document.getElementById(pid).classList.add('sel');
+  if(panels[pid]&&!inited[pid]){inited[pid]=true;panels[pid]();}
+});
+</script>
+</body>
+</html>
