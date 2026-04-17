@@ -779,7 +779,7 @@ HTML = """\
 
 <div class="tabs" id="tabs">
   <button class="tab sel" data-p="p1">Annotation density</button>
-  <button class="tab" data-p="p2">Identifier coverage</button>
+  <button class="tab" data-p="p2">Identifier density</button>
   <button class="tab" data-p="p3">Difficulty indicators</button>
   <button class="tab" data-p="p4">Entity type profile</button>
   <button class="tab" data-p="p5">Summary table</button>
@@ -802,7 +802,7 @@ HTML = """\
       Three corpora have no concept identifiers.
     </canvas>
   </div>
-  <p class="note">Faded bars — zero or negligible identifier coverage. These corpora can only
+  <p class="note">Faded bars — zero or negligible identifier density. These corpora can only
   benchmark span detection, not entity normalization.</p>
 </div>
 
