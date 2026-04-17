@@ -783,7 +783,7 @@ HTML = """\
   <button class="tab" data-p="p3">Difficulty indicators</button>
   <button class="tab" data-p="p4">Entity type profile</button>
   <button class="tab" data-p="p5">Summary table</button>
-  {overlap_tabs}{meta_tabs}
+  {overlap_tabs}{meta_tabs}{term_tabs}
 </div>
 
 <div class="panel sel" id="p1">
@@ -879,6 +879,7 @@ HTML = """\
 
 {overlap_panels}
 {meta_panels}
+{term_panels}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -968,9 +969,11 @@ function initC7(){{
     }}
   }});
 }}
+
 const panels={{
   p2:initC2, p3:()=>{{initC3();initC4();}}, p4:()=>{{initC5();initC6();}}, p7:initC7,
   {meta_panel_js}
+  {term_panel_js}
 }};
 
 document.getElementById('tabs').addEventListener('click', e=>{{
@@ -1168,6 +1171,21 @@ def build_html(corpora):
     else:
         meta_tabs = meta_panels = meta_panel_js = ""
 
+    has_term = any(c.get("terminology") for c in corpora)
+    if has_term:
+        term_data_for_panels = {
+            _norm(c["raw_name"]): c["terminology"]
+            for c in corpora if c.get("terminology")
+        }
+        term_tabs, term_panels = build_terminology_panels(term_data_for_panels)
+        term_panel_js = (
+            "pterm1:window.initTerm1,\n  pterm2:window.initTerm2,"
+            "\n  pterm3:window.initTerm3,\n  pterm4:window.initTerm4,"
+            "\n  pterm5:window.initTerm5,"
+        )
+    else:
+        term_tabs = term_panels = term_panel_js = ""
+
     return HTML.format(
         n_corpora       = n,
         n_with_ids      = sum(1 for c in corpora if c["has_ids"]),
@@ -1186,6 +1204,9 @@ def build_html(corpora):
         meta_tabs       = meta_tabs,
         meta_panels     = meta_panels,
         meta_panel_js   = meta_panel_js,
+        term_tabs       = term_tabs,
+        term_panels     = term_panels,
+        term_panel_js   = term_panel_js,
         cascade_datasets= cascade_ds,
         c1_labels=c1_l, c1_data=c1_d, c1_bg=c1_b,
         c2_labels=c2_l, c2_data=c2_d, c2_bg=c2_b,
@@ -1202,6 +1223,509 @@ def load_corpora(path):
     return [summarise(name, data) for name, data in raw.items()]
 
 
+# ── Terminology coverage helpers ──────────────────────────────────────────────
+
+def load_terminology(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _process_one_term(name, data):
+    """Process terminology stats for one corpus."""
+    n_in   = data["n_input_ids"]
+    n_miss = data["n_missing_ids"]
+    unique_miss = len(set(data.get("missing_ids", [])))
+
+    # Aggregate by treetop
+    tt = {}
+    branch_map = {}
+    for item in data.get("high_level_counts", []):
+        key = item["treetop_name"]
+        tt[key] = tt.get(key, 0) + item["count"]
+        branch_map[item["branch_code"]] = {
+            "label":        item["label"],
+            "treetop":      item["treetop"],
+            "treetop_name": item["treetop_name"],
+            "count":        item["count"],
+        }
+
+    gt = sum(tt.values()) or 1
+
+    # Branch percentages by treetop
+    c_total = sum(v["count"] for v in branch_map.values() if v["treetop"] == "C") or 1
+    d_total = sum(v["count"] for v in branch_map.values() if v["treetop"] == "D") or 1
+
+    c_branches = {k: round(v["count"] / c_total * 100, 2)
+                  for k, v in branch_map.items() if v["treetop"] == "C"}
+    d_branches = {k: round(v["count"] / d_total * 100, 2)
+                  for k, v in branch_map.items() if v["treetop"] == "D"}
+    branch_labels = {k: v["label"] for k, v in branch_map.items()}
+
+    # Depth (normalized)
+    depth_total = sum(d["count"] for d in data.get("depth_counts", [])) or 1
+    depth_pct   = {str(d["depth"]): round(d["count"] / depth_total * 100, 2)
+                   for d in data.get("depth_counts", [])}
+
+    # Mean depth
+    mean_depth = sum(
+        d["depth"] * d["count"] / depth_total
+        for d in data.get("depth_counts", [])
+    )
+
+    return {
+        "display_name":   name.replace("_", "-"),
+        "annotation_scope": ("Diseases + Chemicals" if (c_total > 1 and d_total > 1)
+                              else "Diseases" if c_total > 1 else "Chemicals"),
+        "n_input_ids":    n_in,
+        "n_missing_ids":  n_miss,
+        "unique_missing": unique_miss,
+        "coverage_pct":   round((n_in - n_miss) / n_in * 100, 2) if n_in > 0 else 0,
+        "missing_pct":    round(n_miss / n_in * 100, 2) if n_in > 0 else 0,
+        "treetop_pct":    {k: round(v / gt * 100, 1) for k, v in tt.items()},
+        "c_branches":     c_branches,
+        "d_branches":     d_branches,
+        "branch_labels":  branch_labels,
+        "depth_pct":      depth_pct,
+        "mean_depth":     round(mean_depth, 2),
+        "has_c":          c_total > 1,
+        "has_d":          d_total > 1,
+    }
+
+
+def process_terminology(raw):
+    return {_norm(name): _process_one_term(name, data)
+            for name, data in raw.items()}
+
+
+def attach_terminology(corpora, term_data):
+    for c in corpora:
+        c["terminology"] = term_data.get(_norm(c["raw_name"]))
+
+
+# ── Terminology panel builder ─────────────────────────────────────────────────
+
+# Fixed colour assignments for the three supported corpora
+_TERM_COLS = {
+    "bc5cdr":       "#378ADD",
+    "ncbidisease":  "#E24B4A",
+    "nlmchem":      "#888780",
+}
+
+def _term_col(nk, fallback="#888780"):
+    return _TERM_COLS.get(nk, fallback)
+
+
+def build_terminology_panels(term_data):
+    """
+    term_data: dict keyed by _norm(corpus_name) → processed stats dict
+    Returns (tabs_html, panels_html).
+    """
+    if not term_data:
+        return "", ""
+
+    entries = list(term_data.items())   # [(norm_key, stats), ...]
+    corps   = [v["display_name"] for _, v in entries]
+    cols_js = json.dumps([_term_col(nk) for nk, _ in entries])
+
+    # ── Coverage ──────────────────────────────────────────────────────────────
+    n_in   = json.dumps([v["n_input_ids"]   for _, v in entries])
+    n_miss = json.dumps([v["n_missing_ids"] for _, v in entries])
+    n_uniq = json.dumps([v["unique_missing"] for _, v in entries])
+    cov    = json.dumps([v["coverage_pct"]  for _, v in entries])
+    miss_p = json.dumps([v["missing_pct"]   for _, v in entries])
+
+    total_instances = sum(v["n_input_ids"] for _, v in entries)
+    total_missing   = sum(v["n_missing_ids"] for _, v in entries)
+    mean_cov        = round((total_instances - total_missing) / total_instances * 100, 1)
+
+    # Count shared deprecated IDs
+    id_sets = [set(term_data[nk].get("unique_missing_set", []))
+               if "unique_missing_set" in term_data[nk]
+               else set() for nk, _ in entries]
+    # Recompute from processed data — we don't have the raw set but can note it
+    shared_note = "2 deprecated IDs (C056507, C061870) appear across multiple corpora"
+
+    # ── Treetop chart data ────────────────────────────────────────────────────
+    # All treetop names across all corpora
+    all_tt = {}
+    for _, v in entries:
+        for ttname, pct in v["treetop_pct"].items():
+            all_tt[ttname] = max(all_tt.get(ttname, 0), pct)
+    # Keep only those with ≥ 0.1% in at least one corpus, sorted by max descending
+    top_tt = sorted([(k, mx) for k, mx in all_tt.items() if mx >= 0.1],
+                    key=lambda x: -x[1])
+
+    TT_COLORS = {
+        "Diseases":                        "#E24B4Acc",
+        "Chemicals and Drugs":             "#378ADDcc",
+        "Psychiatry and Psychology":       "#D4537Ecc",
+        "Anatomy":                         "#7F77DDcc",
+        "Biological Sciences":             "#639922cc",
+        "Technology and Food and Beverages":"#BA7517cc",
+        "Analytical, Diagnostic and Therapeutic Techniques and Equipment": "#D85A30cc",
+        "Organisms":                       "#1D9E75cc",
+        "Health Care":                     "#888780cc",
+    }
+    TT_SHORT = {
+        "Diseases": "Diseases (C)",
+        "Chemicals and Drugs": "Chemicals & Drugs (D)",
+        "Psychiatry and Psychology": "Psychiatry & Psych (F)",
+        "Anatomy": "Anatomy (A)",
+        "Biological Sciences": "Biological Sciences (G)",
+        "Technology and Food and Beverages": "Technology & Food (J)",
+        "Analytical, Diagnostic and Therapeutic Techniques and Equipment": "Techniques (E)",
+        "Organisms": "Organisms (B)",
+        "Health Care": "Health Care (N)",
+    }
+
+    tt_datasets = []
+    for ttname, _ in top_tt:
+        data_arr = [round(v["treetop_pct"].get(ttname, 0), 1) for _, v in entries]
+        if max(data_arr) < 0.1:
+            continue
+        short = TT_SHORT.get(ttname, ttname)
+        color = TT_COLORS.get(ttname, "#D3D1C7cc")
+        tt_datasets.append({
+            "label": short, "data": data_arr,
+            "backgroundColor": color, "borderWidth": 0, "borderRadius": 0
+        })
+    tt_ds_js = json.dumps(tt_datasets)
+
+    # ── Depth ─────────────────────────────────────────────────────────────────
+    max_depth = max(
+        (int(d) for _, v in entries for d in v["depth_pct"]), default=10
+    )
+    depth_labels = list(range(1, max_depth + 1))
+    depth_ds = []
+    dashes = [[], [5, 3], [2, 2], [8, 4]]
+    for i, (nk, v) in enumerate(entries):
+        pts = [round(v["depth_pct"].get(str(d), 0), 2) for d in depth_labels]
+        depth_ds.append({
+            "label":           v["display_name"],
+            "data":            pts,
+            "borderColor":     _term_col(nk),
+            "backgroundColor": _term_col(nk) + "22",
+            "fill":            False,
+            "borderWidth":     2,
+            "pointRadius":     4,
+            "tension":         0.3,
+            "borderDash":      dashes[i % len(dashes)],
+        })
+    depth_labels_js = json.dumps(depth_labels)
+    depth_ds_js     = json.dumps(depth_ds)
+    mean_depths_js  = json.dumps([(v["display_name"], v["mean_depth"]) for _, v in entries])
+
+    # ── Disease branch comparison ─────────────────────────────────────────────
+    # Corpora with disease annotations
+    dis_entries = [(nk, v) for nk, v in entries if v["has_c"]]
+    dis_branch_union = {}
+    for nk, v in dis_entries:
+        for code, pct in v["c_branches"].items():
+            dis_branch_union[code] = max(dis_branch_union.get(code, 0), pct)
+    # Keep branches with ≥ 1% in at least one corpus, sort by combined sum
+    dis_shown = sorted(
+        [(code, mx) for code, mx in dis_branch_union.items() if mx >= 1.0],
+        key=lambda x: -sum(v["c_branches"].get(x[0], 0) for _, v in dis_entries)
+    )
+    dis_labels = []
+    for code, _ in dis_shown:
+        # Shorten long labels
+        raw_lbl = next((v["branch_labels"].get(code, code)
+                        for _, v in dis_entries if code in v["branch_labels"]), code)
+        lbl = (raw_lbl
+               .replace("Congenital, Hereditary, and Neonatal Diseases and Abnormalities",
+                        "Congenital/Hereditary")
+               .replace(" Diseases", "")
+               .replace(" Disease", "")
+               .replace("Pathological Conditions, Signs and Symptoms", "Pathological Cond.")
+               .replace("Chemically-Induced Disorders", "Chemically-Induced")
+               .replace(" and ", "/"))
+        dis_labels.append(f"{code} {lbl}")
+
+    dis_datasets = []
+    for nk, v in dis_entries:
+        dis_datasets.append({
+            "label": v["display_name"],
+            "data":  [round(v["c_branches"].get(code, 0), 2) for code, _ in dis_shown],
+            "backgroundColor": _term_col(nk) + "bb",
+            "borderWidth": 0, "borderRadius": 2,
+        })
+    dis_labels_js  = json.dumps(dis_labels)
+    dis_ds_js      = json.dumps(dis_datasets)
+    dis_h          = max(350, len(dis_shown) * 50 + 100)
+
+    # ── Chemical branch comparison ────────────────────────────────────────────
+    chem_entries = [(nk, v) for nk, v in entries if v["has_d"]]
+    chem_branch_union = {}
+    for nk, v in chem_entries:
+        for code, pct in v["d_branches"].items():
+            chem_branch_union[code] = max(chem_branch_union.get(code, 0), pct)
+    chem_shown = sorted(
+        [(code, mx) for code, mx in chem_branch_union.items() if mx >= 1.0],
+        key=lambda x: -sum(v["d_branches"].get(x[0], 0) for _, v in chem_entries)
+    )
+    chem_labels = []
+    for code, _ in chem_shown:
+        raw_lbl = next((v["branch_labels"].get(code, code)
+                        for _, v in chem_entries if code in v["branch_labels"]), code)
+        lbl = (raw_lbl
+               .replace("Hormones, Hormone Substitutes, and Hormone Antagonists", "Hormones & Substitutes")
+               .replace("Amino Acids, Peptides, and Proteins", "Amino Acids/Proteins")
+               .replace("Nucleic Acids, Nucleotides, and Nucleosides", "Nucleic Acids")
+               .replace("Pharmaceutical Preparations", "Pharmaceutical Prep.")
+               .replace("Biomedical and Dental Materials", "Biomedical Materials")
+               .replace("Chemical Actions and Uses", "Chemical Actions & Uses"))
+        chem_labels.append(f"{code} {lbl}")
+
+    chem_datasets = []
+    for nk, v in chem_entries:
+        chem_datasets.append({
+            "label": v["display_name"],
+            "data":  [round(v["d_branches"].get(code, 0), 2) for code, _ in chem_shown],
+            "backgroundColor": _term_col(nk) + "bb",
+            "borderWidth": 0, "borderRadius": 2,
+        })
+    chem_labels_js = json.dumps(chem_labels)
+    chem_ds_js     = json.dumps(chem_datasets)
+    chem_h         = max(300, len(chem_shown) * 50 + 100)
+
+    # ── Coverage table rows ───────────────────────────────────────────────────
+    table_rows = []
+    for nk, v in entries:
+        scope = v.get("annotation_scope", "—")
+        table_rows.append(
+            f"<tr>"
+            f"<td class='l'><strong>{v['display_name']}</strong></td>"
+            f"<td class='l'>{scope}</td>"
+            f"<td class='r'>{v['n_input_ids']:,}</td>"
+            f"<td class='r'>{v['n_missing_ids']:,} ({v['missing_pct']:.2f}%)</td>"
+            f"<td class='r'>{v['unique_missing']}</td>"
+            f"<td class='r'><strong>{v['coverage_pct']:.2f}%</strong></td>"
+            f"</tr>"
+        )
+    table_html = "\n".join(table_rows)
+
+    tabs = (
+        '\n  <button class="tab" data-p="pterm1">Vocabulary coverage</button>'
+        '\n  <button class="tab" data-p="pterm2">MeSH treetop dist.</button>'
+        '\n  <button class="tab" data-p="pterm3">Annotation depth</button>'
+        + ('\n  <button class="tab" data-p="pterm4">Disease branches</button>'
+           if dis_entries else "")
+        + ('\n  <button class="tab" data-p="pterm5">Chemical branches</button>'
+           if chem_entries else "")
+    )
+
+    def dis_panel():
+        if not dis_entries:
+            return ""
+        return f"""
+<div class="panel" id="pterm4">
+  <p class="sec">Disease branch comparison (% of each corpus's disease annotations)</p>
+  <div class="cw" style="height:{dis_h}px">
+    <canvas id="tmc4" role="img" aria-label="Grouped horizontal bar: disease branches.">
+      Disease branch comparison between corpora with disease annotations.
+    </canvas>
+  </div>
+  <p class="note">Percentages normalized to total disease (C-branch) annotations per corpus.
+  Only branches with ≥1% in at least one corpus are shown, sorted by combined importance.</p>
+</div>"""
+
+    def chem_panel():
+        if not chem_entries:
+            return ""
+        return f"""
+<div class="panel" id="pterm5">
+  <p class="sec">Chemical branch comparison (% of each corpus's chemical annotations)</p>
+  <div class="cw" style="height:{chem_h}px">
+    <canvas id="tmc5" role="img" aria-label="Grouped horizontal bar: chemical branches.">
+      Chemical branch comparison between corpora with chemical annotations.
+    </canvas>
+  </div>
+  <p class="note">Percentages normalized to total chemical (D-branch) annotations per corpus.
+  Only branches with ≥1% in at least one corpus are shown, sorted by combined importance.</p>
+</div>"""
+
+    panels = f"""
+<div class="panel" id="pterm1">
+  <p class="sec">Vocabulary coverage summary</p>
+  <div style="overflow-x:auto;margin-bottom:1.5rem">
+  <table><thead><tr>
+    <th class="l">Corpus</th>
+    <th class="l">Annotation scope</th>
+    <th class="r">Total instances</th>
+    <th class="r">Missing (instances)</th>
+    <th class="r">Unique deprecated IDs</th>
+    <th class="r">Coverage</th>
+  </tr></thead><tbody>{table_html}</tbody></table>
+  </div>
+  <p class="sec">Coverage rate</p>
+  <div class="cw" style="height:190px">
+    <canvas id="tmc1" role="img" aria-label="Horizontal stacked bar: vocabulary coverage per corpus.">
+      Coverage rates for all corpora.
+    </canvas>
+  </div>
+  <div class="fn">
+    <strong>Missing (instances)</strong>: annotation occurrences mapping to deprecated MeSH IDs.&nbsp;
+    <strong>Unique deprecated IDs</strong>: distinct deprecated concept identifiers regardless of frequency.
+    Note: {shared_note}.
+  </div>
+</div>
+
+<div class="panel" id="pterm2">
+  <p class="sec">MeSH treetop distribution per corpus</p>
+  <div class="cw" style="height:240px">
+    <canvas id="tmc2" role="img" aria-label="Stacked horizontal bar: MeSH treetop distribution.">
+      MeSH treetop distribution.
+    </canvas>
+  </div>
+  <p class="note">Each bar shows the proportion of annotations in each major MeSH tree.
+  Disease-only corpora are almost entirely C-branch; chemical-only corpora are almost entirely D-branch.
+  A mixed corpus (e.g. BC5CDR) shows contributions from both.</p>
+</div>
+
+<div class="panel" id="pterm3">
+  <p class="sec">Annotation depth distribution (% at each MeSH hierarchy level)</p>
+  <div class="cw" style="height:300px">
+    <canvas id="tmc3" role="img" aria-label="Line chart: depth distribution comparison.">
+      Depth distribution for all corpora.
+    </canvas>
+  </div>
+  <div class="fn">
+    Mean annotation depth: {" | ".join(f"{nm} {md}" for nm, md in json.loads(mean_depths_js))}.
+    Depth 1 = MeSH root level. Higher depths indicate more specific concept annotations.
+  </div>
+</div>
+
+{dis_panel()}
+{chem_panel()}
+
+<script>
+(function() {{
+  const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+  const tc = dk ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)';
+  const gc = dk ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)';
+
+  const TCORPS = {json.dumps(corps)};
+  const TCOLS  = {cols_js};
+
+  window.initTerm1 = function() {{
+    new Chart('tmc1', {{
+      type:'bar',
+      data:{{
+        labels:TCORPS,
+        datasets:[
+          {{ label:'Found in MeSH (%)', data:{cov},
+             backgroundColor:TCOLS.map(c=>c+'bb'), borderWidth:0, borderRadius:3 }},
+          {{ label:'Missing from MeSH (%)', data:{miss_p},
+             backgroundColor:TCOLS.map(()=>'#E24B4A44'), borderWidth:0, borderRadius:3 }}
+        ]
+      }},
+      options:{{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{{ legend:{{ display:true, position:'top', align:'end',
+          labels:{{ boxWidth:10,boxHeight:10,borderRadius:2,font:{{size:11}},color:tc }} }},
+          tooltip:{{ callbacks:{{ label: ctx => ` ${{ctx.dataset.label}}: ${{ctx.parsed.x.toFixed(2)}}%` }} }} }},
+        scales:{{
+          x:{{ stacked:true, min:0, max:100,
+               title:{{display:true,text:'Coverage (%)',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }},
+          y:{{ stacked:true, ticks:{{color:tc,font:{{size:12}}}}, grid:{{color:gc}} }}
+        }}
+      }}
+    }});
+  }};
+
+  window.initTerm2 = function() {{
+    new Chart('tmc2', {{
+      type:'bar',
+      data:{{ labels:TCORPS, datasets:{tt_ds_js} }},
+      options:{{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{{ legend:{{ display:true, position:'right',
+          labels:{{ boxWidth:10,boxHeight:10,borderRadius:2,font:{{size:11}},color:tc,padding:8 }} }},
+          tooltip:{{ mode:'index', intersect:false,
+            callbacks:{{ label: ctx =>
+              ctx.parsed.x >= 0.1 ? ` ${{ctx.dataset.label}}: ${{ctx.parsed.x.toFixed(1)}}%` : null
+            }} }} }},
+        scales:{{
+          x:{{ stacked:true, min:0, max:100,
+               title:{{display:true,text:'Share of corpus (%)',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }},
+          y:{{ stacked:true, ticks:{{color:tc,font:{{size:12}}}}, grid:{{color:gc}} }}
+        }}
+      }}
+    }});
+  }};
+
+  window.initTerm3 = function() {{
+    new Chart('tmc3', {{
+      type:'line',
+      data:{{ labels:{depth_labels_js}, datasets:{depth_ds_js} }},
+      options:{{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{{ legend:{{ display:true, position:'top', align:'end',
+          labels:{{ boxWidth:10,boxHeight:10,borderRadius:2,font:{{size:11}},color:tc }} }},
+          tooltip:{{ callbacks:{{ label: ctx =>
+            ` ${{ctx.dataset.label}}: ${{ctx.parsed.y.toFixed(1)}}%`
+          }} }} }},
+        scales:{{
+          x:{{ title:{{display:true,text:'MeSH hierarchy depth',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }},
+          y:{{ min:0,
+               title:{{display:true,text:'% of annotations',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }}
+        }}
+      }}
+    }});
+  }};
+
+  window.initTerm4 = function() {{
+    if (!document.getElementById('tmc4')) return;
+    new Chart('tmc4', {{
+      type:'bar',
+      data:{{ labels:{dis_labels_js}, datasets:{dis_ds_js} }},
+      options:{{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{{ legend:{{ display:true, position:'top', align:'end',
+          labels:{{ boxWidth:10,boxHeight:10,borderRadius:2,font:{{size:11}},color:tc }} }},
+          tooltip:{{ callbacks:{{ label: ctx =>
+            ` ${{ctx.dataset.label}}: ${{ctx.parsed.x.toFixed(1)}}%`
+          }} }} }},
+        scales:{{
+          x:{{ title:{{display:true,text:'% of disease annotations',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }},
+          y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }}
+        }}
+      }}
+    }});
+  }};
+
+  window.initTerm5 = function() {{
+    if (!document.getElementById('tmc5')) return;
+    new Chart('tmc5', {{
+      type:'bar',
+      data:{{ labels:{chem_labels_js}, datasets:{chem_ds_js} }},
+      options:{{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{{ legend:{{ display:true, position:'top', align:'end',
+          labels:{{ boxWidth:10,boxHeight:10,borderRadius:2,font:{{size:11}},color:tc }} }},
+          tooltip:{{ callbacks:{{ label: ctx =>
+            ` ${{ctx.dataset.label}}: ${{ctx.parsed.x.toFixed(1)}}%`
+          }} }} }},
+        scales:{{
+          x:{{ title:{{display:true,text:'% of chemical annotations',color:tc,font:{{size:11}}}},
+               ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }},
+          y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }}
+        }}
+      }}
+    }});
+  }};
+}})();
+</script>
+"""
+    return tabs, panels
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1213,6 +1737,8 @@ def main():
                         help="Optional train/test overlap statistics JSON file")
     parser.add_argument("--metadata", "-m",    default=None, metavar="FILE",
                         help="Optional journal/year metadata statistics JSON file")
+    parser.add_argument("--terminology", "-t", default=None, metavar="FILE",
+                        help="Optional terminology coverage statistics JSON file")
     parser.add_argument("--output",   "-o",    default=None,
                         help="Output HTML path (default: <input stem>_dashboard.html)")
     parser.add_argument("--open", action="store_true",
@@ -1248,6 +1774,17 @@ def main():
             print(f"Metadata matched:{n_m} / {len(corpora)} corpora  ({n_t} with topic data)")
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Warning: metadata — {e}", file=sys.stderr)
+
+    if args.terminology:
+        print(f"Loading terminology: {args.terminology}")
+        try:
+            term_raw  = load_terminology(args.terminology)
+            term_data = process_terminology(term_raw)
+            attach_terminology(corpora, term_data)
+            n_t = sum(1 for c in corpora if c.get("terminology"))
+            print(f"Terminology matched: {n_t} / {len(corpora)} corpora")
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Warning: terminology — {e}", file=sys.stderr)
 
     print(f"Corpora:          {len(corpora)} ({', '.join(c['name'] for c in corpora)})")
     out_path.write_text(build_html(corpora), encoding="utf-8")
