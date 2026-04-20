@@ -779,7 +779,7 @@ HTML = """\
 
 <div class="tabs" id="tabs">
   <button class="tab sel" data-p="p1">Annotation density</button>
-  <button class="tab" data-p="p2">Identifier density</button>
+  <button class="tab" data-p="p2">Identifier coverage</button>
   <button class="tab" data-p="p3">Difficulty indicators</button>
   <button class="tab" data-p="p4">Entity type profile</button>
   <button class="tab" data-p="p5">Summary table</button>
@@ -802,7 +802,7 @@ HTML = """\
       Three corpora have no concept identifiers.
     </canvas>
   </div>
-  <p class="note">Faded bars — zero or negligible identifier density. These corpora can only
+  <p class="note">Faded bars — zero or negligible identifier coverage. These corpora can only
   benchmark span detection, not entity normalization.</p>
 </div>
 
@@ -877,7 +877,7 @@ HTML = """\
   </div>
 </div>
 
-{overlap_panels}
+  {overlap_panels}
 {meta_panels}
 {term_panels}
 
@@ -926,8 +926,7 @@ new Chart('c1', {{
 const inited={{}};
 function initC2(){{ hbar('c2',{c2_labels},{c2_data},{c2_bg},'Mean unique identifiers per document'); }}
 function initC3(){{
-  new Chart('c3', {{
-    type:'bar',
+  new Chart('c3',{{ type:'bar',
     data:{{ labels:{c3_labels}, datasets:[{{ data:{c3_data}, backgroundColor:{c3_bg},
       borderWidth:0, borderRadius:3 }}] }},
     options:{{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
@@ -936,10 +935,7 @@ function initC3(){{
       scales:{{ x:{{ min:{amb_min_scale}, max:{amb_max_scale},
         title:{{display:true,text:'Mean identifiers per mention',color:tc,font:{{size:11}}}},
         ticks:{{color:tc,font:{{size:11}},callback:v=>v.toFixed(2)}}, grid:{{color:gc}} }},
-        y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }}
-      }}
-    }}
-  }});
+        y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }} }} }});
 }}
 function initC4(){{ hbar('c4',{c4_labels},{c4_data},{c4_bg},'Mean surface forms per concept'); }}
 function initC5(){{ hbar('c5',{c5_labels},{c5_data},{c5_bg},'Distinct entity type labels',
@@ -953,8 +949,7 @@ function initC7(){{
   if(leg) leg.innerHTML=cascadeDatasets.map(d=>
     `<span class="li"><span class="lc" style="background:${{d.borderColor}}"></span>${{d.label}}</span>`
   ).join('');
-  new Chart('c7', {{
-    type:'line',
+  new Chart('c7',{{ type:'line',
     data:{{ labels:['Token vocab','Mention tokens','Mention strings','Identifiers'],
              datasets:cascadeDatasets }},
     options:{{ responsive:true, maintainAspectRatio:false,
@@ -964,10 +959,7 @@ function initC7(){{
       scales:{{ x:{{ ticks:{{color:tc,font:{{size:12}}}}, grid:{{color:gc}} }},
         y:{{ min:0, max:65,
           title:{{display:true,text:'Jaccard overlap (%)',color:tc,font:{{size:11}}}},
-          ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }}
-      }}
-    }}
-  }});
+          ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }} }} }});
 }}
 
 const panels={{
@@ -1231,64 +1223,113 @@ def load_terminology(path):
 
 
 def _process_one_term(name, data):
-    """Process terminology stats for one corpus."""
-    n_in   = data["n_input_ids"]
-    n_miss = data["n_missing_ids"]
+    """
+    Process terminology stats for one corpus.
+    Supports both old format (count only) and new format (with proportion +
+    mesh_total_count per branch and depth).  When proportion is present it is
+    used directly as the recall metric; otherwise it is estimated from counts.
+    """
+    n_in        = data["n_input_ids"]
+    n_miss      = data["n_missing_ids"]
     unique_miss = len(set(data.get("missing_ids", [])))
 
-    # Aggregate by treetop
-    tt = {}
+    # Detect new format: first high_level_counts entry has 'proportion' key
+    hlc = data.get("high_level_counts", [])
+    new_format = bool(hlc) and "proportion" in hlc[0]
+
+    # ── Branch map ─────────────────────────────────────────────────────────────
     branch_map = {}
-    for item in data.get("high_level_counts", []):
-        key = item["treetop_name"]
-        tt[key] = tt.get(key, 0) + item["count"]
-        branch_map[item["branch_code"]] = {
-            "label":        item["label"],
-            "treetop":      item["treetop"],
-            "treetop_name": item["treetop_name"],
-            "count":        item["count"],
+    for item in hlc:
+        code = item["branch_code"]
+        branch_map[code] = {
+            "label":         item["label"],
+            "treetop":       item["treetop"],
+            "treetop_name":  item["treetop_name"],
+            "count":         item["count"],
+            # New format fields (default to None for old format)
+            "mesh_total":    item.get("mesh_total_count"),
+            "proportion":    item.get("proportion"),   # fraction 0–1
         }
 
+    # ── Treetop aggregation ────────────────────────────────────────────────────
+    tt = {}
+    for v in branch_map.values():
+        tt[v["treetop_name"]] = tt.get(v["treetop_name"], 0) + v["count"]
     gt = sum(tt.values()) or 1
 
-    # Branch percentages by treetop
-    c_total = sum(v["count"] for v in branch_map.values() if v["treetop"] == "C") or 1
-    d_total = sum(v["count"] for v in branch_map.values() if v["treetop"] == "D") or 1
+    # ── C-branch (disease) recall ──────────────────────────────────────────────
+    c_items   = {k: v for k, v in branch_map.items() if v["treetop"] == "C"}
+    c_total   = sum(v["count"] for v in c_items.values()) or 1
 
-    c_branches = {k: round(v["count"] / c_total * 100, 2)
-                  for k, v in branch_map.items() if v["treetop"] == "C"}
-    d_branches = {k: round(v["count"] / d_total * 100, 2)
-                  for k, v in branch_map.items() if v["treetop"] == "D"}
+    if new_format:
+        # proportion is recall against MeSH (0–1); convert to %
+        c_recall = {k: round(v["proportion"] * 100, 2)
+                    for k, v in c_items.items() if v["proportion"] is not None}
+        c_mesh   = {k: round(v["mesh_total"], 1)
+                    for k, v in c_items.items() if v["mesh_total"] is not None}
+    else:
+        # Fallback: proportion within this corpus's C annotations
+        c_recall = {k: round(v["count"] / c_total * 100, 2) for k, v in c_items.items()}
+        c_mesh   = {}
+
+    # ── D-branch (chemical) recall ─────────────────────────────────────────────
+    d_items   = {k: v for k, v in branch_map.items() if v["treetop"] == "D"}
+    d_total   = sum(v["count"] for v in d_items.values()) or 1
+
+    if new_format:
+        d_recall = {k: round(v["proportion"] * 100, 2)
+                    for k, v in d_items.items() if v["proportion"] is not None}
+        d_mesh   = {k: round(v["mesh_total"], 1)
+                    for k, v in d_items.items() if v["mesh_total"] is not None}
+    else:
+        d_recall = {k: round(v["count"] / d_total * 100, 2) for k, v in d_items.items()}
+        d_mesh   = {}
+
     branch_labels = {k: v["label"] for k, v in branch_map.items()}
 
-    # Depth (normalized)
-    depth_total = sum(d["count"] for d in data.get("depth_counts", [])) or 1
-    depth_pct   = {str(d["depth"]): round(d["count"] / depth_total * 100, 2)
-                   for d in data.get("depth_counts", [])}
+    # ── Depth ──────────────────────────────────────────────────────────────────
+    dc = data.get("depth_counts", [])
+    if new_format:
+        # Use proportion directly (recall against MeSH at that depth)
+        depth_recall = {str(d["depth"]): round(d["proportion"] * 100, 3)
+                        for d in dc}
+        depth_mesh   = {str(d["depth"]): round(d.get("mesh_total_count", 0), 1)
+                        for d in dc}
+    else:
+        depth_total  = sum(d["count"] for d in dc) or 1
+        depth_recall = {str(d["depth"]): round(d["count"] / depth_total * 100, 2)
+                        for d in dc}
+        depth_mesh   = {}
 
-    # Mean depth
-    mean_depth = sum(
-        d["depth"] * d["count"] / depth_total
-        for d in data.get("depth_counts", [])
-    )
+    # Mean depth (weighted by count)
+    depth_total_ct = sum(d["count"] for d in dc) or 1
+    mean_depth = sum(d["depth"] * d["count"] / depth_total_ct for d in dc)
 
     return {
-        "display_name":   name.replace("_", "-"),
+        "display_name":     name.replace("_", "-"),
+        "new_format":       new_format,
         "annotation_scope": ("Diseases + Chemicals" if (c_total > 1 and d_total > 1)
                               else "Diseases" if c_total > 1 else "Chemicals"),
-        "n_input_ids":    n_in,
-        "n_missing_ids":  n_miss,
-        "unique_missing": unique_miss,
-        "coverage_pct":   round((n_in - n_miss) / n_in * 100, 2) if n_in > 0 else 0,
-        "missing_pct":    round(n_miss / n_in * 100, 2) if n_in > 0 else 0,
-        "treetop_pct":    {k: round(v / gt * 100, 1) for k, v in tt.items()},
-        "c_branches":     c_branches,
-        "d_branches":     d_branches,
-        "branch_labels":  branch_labels,
-        "depth_pct":      depth_pct,
-        "mean_depth":     round(mean_depth, 2),
-        "has_c":          c_total > 1,
-        "has_d":          d_total > 1,
+        "n_input_ids":      n_in,
+        "n_missing_ids":    n_miss,
+        "unique_missing":   unique_miss,
+        "coverage_pct":     round((n_in - n_miss) / n_in * 100, 2) if n_in > 0 else 0,
+        "missing_pct":      round(n_miss / n_in * 100, 2) if n_in > 0 else 0,
+        "treetop_pct":      {k: round(v / gt * 100, 1) for k, v in tt.items()},
+        # Recall metrics (new format) or corpus-composition metrics (old format)
+        "c_recall":         c_recall,   # % of MeSH branch covered
+        "d_recall":         d_recall,
+        "c_mesh":           c_mesh,     # total MeSH concepts in branch
+        "d_mesh":           d_mesh,
+        # Keep old names as aliases for backward compat with panel builder
+        "c_branches":       c_recall,
+        "d_branches":       d_recall,
+        "branch_labels":    branch_labels,
+        "depth_pct":        depth_recall,
+        "depth_mesh":       depth_mesh,
+        "mean_depth":       round(mean_depth, 2),
+        "has_c":            c_total > 1,
+        "has_d":            d_total > 1,
     }
 
 
@@ -1509,25 +1550,40 @@ def build_terminology_panels(term_data):
         '\n  <button class="tab" data-p="pterm1">Vocabulary coverage</button>'
         '\n  <button class="tab" data-p="pterm2">MeSH treetop dist.</button>'
         '\n  <button class="tab" data-p="pterm3">Annotation depth</button>'
-        + ('\n  <button class="tab" data-p="pterm4">Disease branches</button>'
+        + ('\n  <button class="tab" data-p="pterm4">Disease recall</button>'
            if dis_entries else "")
-        + ('\n  <button class="tab" data-p="pterm5">Chemical branches</button>'
+        + ('\n  <button class="tab" data-p="pterm5">Chemical recall</button>'
            if chem_entries else "")
     )
+
+    # Detect whether we have new-format recall data
+    new_fmt = any(v.get("new_format") for _, v in entries)
+    dis_metric_label = ("% of MeSH branch concepts covered"
+                        if new_fmt else "% of disease annotations")
+    chem_metric_label = ("% of MeSH branch concepts covered"
+                         if new_fmt else "% of chemical annotations")
+    dis_panel_title  = ("Disease recall (% of MeSH covered per branch)"
+                        if new_fmt else "Disease branch composition (% of corpus disease annotations)")
+    chem_panel_title = ("Chemical recall (% of MeSH covered per branch)"
+                        if new_fmt else "Chemical branch composition (% of corpus chemical annotations)")
+    depth_title      = ("Recall at each MeSH depth (% of MeSH concepts covered)"
+                        if new_fmt else "Annotation depth distribution (% at each level)")
+    depth_y_label    = ("% of MeSH concepts covered"
+                        if new_fmt else "% of annotations at depth")
 
     def dis_panel():
         if not dis_entries:
             return ""
         return f"""
 <div class="panel" id="pterm4">
-  <p class="sec">Disease branch comparison (% of each corpus's disease annotations)</p>
+  <p class="sec">{dis_panel_title}</p>
   <div class="cw" style="height:{dis_h}px">
     <canvas id="tmc4" role="img" aria-label="Grouped horizontal bar: disease branches.">
       Disease branch comparison between corpora with disease annotations.
     </canvas>
   </div>
-  <p class="note">Percentages normalized to total disease (C-branch) annotations per corpus.
-  Only branches with ≥1% in at least one corpus are shown, sorted by combined importance.</p>
+  <p class="note">{("Proportion = unique corpus concept count in branch ÷ total MeSH concepts in that branch. Sorted by max across corpora." if new_fmt else "Percentages normalized to total disease annotations per corpus.")}
+  Only branches with ≥1% in at least one corpus are shown.</p>
 </div>"""
 
     def chem_panel():
@@ -1535,14 +1591,14 @@ def build_terminology_panels(term_data):
             return ""
         return f"""
 <div class="panel" id="pterm5">
-  <p class="sec">Chemical branch comparison (% of each corpus's chemical annotations)</p>
+  <p class="sec">{chem_panel_title}</p>
   <div class="cw" style="height:{chem_h}px">
     <canvas id="tmc5" role="img" aria-label="Grouped horizontal bar: chemical branches.">
       Chemical branch comparison between corpora with chemical annotations.
     </canvas>
   </div>
-  <p class="note">Percentages normalized to total chemical (D-branch) annotations per corpus.
-  Only branches with ≥1% in at least one corpus are shown, sorted by combined importance.</p>
+  <p class="note">{("Proportion = unique corpus concept count in branch ÷ total MeSH concepts in that branch. Sorted by max across corpora." if new_fmt else "Percentages normalized to total chemical annotations per corpus.")}
+  Only branches with ≥1% in at least one corpus are shown.</p>
 </div>"""
 
     panels = f"""

@@ -12,12 +12,10 @@ Main capabilities:
    - parent IDs
    - broader categories / branches
 4. Convert a list of MeSH IDs into:
-   - counts by high-level MeSH concept (treetop or first tree branch)
+   - counts by first MeSH tree branch
    - counts by MeSH tree depth
 
 Notes:
-- Current MeSH XML does not include semantic types. If you need semantic types,
-  you now need a separate source such as UMLS.
 - Descriptor IDs typically start with D, Supplementary Concept Record IDs with C,
   and Qualifier IDs with Q.
 
@@ -70,7 +68,6 @@ class MeshRecord:
     parent_ids: List[str] = field(default_factory=list)
     scope_note: Optional[str] = None
     mapped_descriptor_ids: List[str] = field(default_factory=list)  # mainly for SCRs
-    semantic_types: List[str] = field(default_factory=list)  # left empty for current XML
 
     def to_dict(self) -> Dict[str, object]:
         return {
@@ -82,7 +79,6 @@ class MeshRecord:
             "parent_ids": list(self.parent_ids),
             "scope_note": self.scope_note,
             "mapped_descriptor_ids": list(self.mapped_descriptor_ids),
-            "semantic_types": list(self.semantic_types),
         }
 
 
@@ -102,16 +98,30 @@ class MeshRepository:
         supplemental_xml: str | pathlib.Path | None = None,
     ) -> "MeshRepository":
         repo = cls()
-        repo._parse_descriptor_or_qualifier_xml(descriptor_xml, record_tag="DescriptorRecord", ui_tag="DescriptorUI", name_path="DescriptorName/String", record_type="descriptor")
+        repo._parse_descriptor_or_qualifier_xml(
+            descriptor_xml,
+            record_tag="DescriptorRecord",
+            ui_tag="DescriptorUI",
+            name_path="DescriptorName/String",
+            record_type="descriptor",
+        )
         if qualifier_xml is not None:
-            repo._parse_descriptor_or_qualifier_xml(qualifier_xml, record_tag="QualifierRecord", ui_tag="QualifierUI", name_path="QualifierName/String", record_type="qualifier")
+            repo._parse_descriptor_or_qualifier_xml(
+                qualifier_xml,
+                record_tag="QualifierRecord",
+                ui_tag="QualifierUI",
+                name_path="QualifierName/String",
+                record_type="qualifier",
+            )
         if supplemental_xml is not None:
             repo._parse_supplemental_xml(supplemental_xml)
         repo._finalize_parents()
         return repo
 
     @staticmethod
-    def download_mesh_xml(year: int, out_dir: str | pathlib.Path, include_qualifiers: bool = False, include_supplementals: bool = True) -> Dict[str, pathlib.Path]:
+    def download_mesh_xml(
+        year: int, out_dir: str | pathlib.Path, include_qualifiers: bool = False, include_supplementals: bool = True
+    ) -> Dict[str, pathlib.Path]:
         """Download MeSH XML files for the given production year from NLM."""
         out_path = pathlib.Path(out_dir)
         out_path.mkdir(parents=True, exist_ok=True)
@@ -199,7 +209,9 @@ class MeshRepository:
             if not mapped_descriptor_ids:
                 mapped_descriptor_ids = _unique_preserve_order(
                     _text(el)
-                    for el in record_el.findall("IndexingInformationList/IndexingInformation/DescriptorReferredTo/DescriptorUI")
+                    for el in record_el.findall(
+                        "IndexingInformationList/IndexingInformation/DescriptorReferredTo/DescriptorUI"
+                    )
                     if _text(el)
                 )
 
@@ -276,36 +288,25 @@ class MeshRepository:
     # -----------------------------
     # Counting
     # -----------------------------
-    def count_by_treetop(self, mesh_ids: Iterable[str], count_mode: str = "unique") -> Dict[str, float]:
-        counts: collections.defaultdict[str, float] = collections.defaultdict(float)
-        for mesh_id in mesh_ids:
-            records = self.resolve_descriptor_records(mesh_id)
-            if not records:
-                continue
-            keys: List[str] = []
-            for record in records:
-                for tree in record.tree_numbers:
-                    keys.append(tree[0])
-            
-            if not keys:
-                continue
-                
-            if count_mode == "proportional":
-                weight = 1.0 / len(keys)
-                for key in keys:
-                    counts[key] += weight
-            elif count_mode == "all":
-                for key in keys:
-                    counts[key] += 1.0
-            else:  # unique
-                for key in set(keys):
-                    counts[key] += 1.0
-        return dict(sorted(counts.items()))
+    def count_global_by_branch(self) -> Dict[str, float]:
+        """
+        Calculate the total weighted count of all unique concepts in MeSH by branch.
+        """
+        # We only count records that have tree numbers (Descriptors/Qualifiers)
+        # to avoid double-counting SCRs that map to the same Descriptors.
+        target_ids = [r.ui for r in self.records.values() if r.tree_numbers]
+        return self.count_by_branch(target_ids)
 
-    def count_by_branch(self, mesh_ids: Iterable[str], count_mode: str = "unique") -> Dict[str, float]:
+    def count_global_by_depth(self) -> Dict[int, float]:
+        """
+        Calculate the total weighted count of all unique concepts in MeSH by depth.
+        """
+        target_ids = [r.ui for r in self.records.values() if r.tree_numbers]
+        return self.count_by_depth(target_ids)
+        
+    def count_by_branch(self, mesh_ids: Iterable[str]) -> Dict[str, float]:
         """
         Count by the first tree segment, e.g. C04, D12, A11.
-        This is usually the most useful 'high-level concept' summary.
         """
         counts: collections.defaultdict[str, float] = collections.defaultdict(float)
         for mesh_id in mesh_ids:
@@ -316,23 +317,16 @@ class MeshRepository:
             for record in records:
                 for tree in record.tree_numbers:
                     keys.append(tree.split(".")[0])
-            
+
             if not keys:
                 continue
 
-            if count_mode == "proportional":
-                weight = 1.0 / len(keys)
-                for key in keys:
-                    counts[key] += weight
-            elif count_mode == "all":
-                for key in keys:
-                    counts[key] += 1.0
-            else:  # unique
-                for key in set(keys):
-                    counts[key] += 1.0
+            weight = 1.0 / len(keys)
+            for key in keys:
+                counts[key] += weight
         return dict(sorted(counts.items()))
 
-    def count_by_depth(self, mesh_ids: Iterable[str], depth_mode: str = "unique") -> Dict[int, float]:
+    def count_by_depth(self, mesh_ids: Iterable[str]) -> Dict[int, float]:
         """
         Count by MeSH tree depth.
         """
@@ -345,39 +339,41 @@ class MeshRepository:
             if not depths:
                 continue
 
-            if depth_mode == "proportional":
-                weight = 1.0 / len(depths)
-                for depth in depths:
-                    counts[depth] += weight
-            elif depth_mode == "all":
-                for depth in depths:
-                    counts[depth] += 1.0
-            elif depth_mode == "min":
-                counts[min(depths)] += 1.0
-            elif depth_mode == "max":
-                counts[max(depths)] += 1.0
-            else:  # unique
-                for depth in set(depths):
-                    counts[depth] += 1.0
+            weight = 1.0 / len(depths)
+            for depth in depths:
+                counts[depth] += weight
         return dict(sorted(counts.items()))
-    
-    def describe_branch_codes(self, branch_counts: Dict[str, float]) -> List[Dict[str, object]]:
+
+    def describe_branch_codes(
+        self, corpus_counts: Dict[str, float], global_counts: Dict[str, float]
+    ) -> List[Dict[str, object]]:
         """
-        Turn branch codes like C04 into a richer structure with a best-effort label.
+        Turn branch codes into a rich structure including corpus counts,
+        global MeSH totals, and the proportion of MeSH covered.
         """
         rows: List[Dict[str, object]] = []
-        for branch_code, count in sorted(branch_counts.items()):
+        # Iterate over all branches present in either the corpus or the global MeSH set
+        all_branches = sorted(set(corpus_counts.keys()) | set(global_counts.keys()))
+        
+        for branch_code in all_branches:
             label = None
             candidate_ids = sorted(self.tree_to_ids.get(branch_code, []))
             if candidate_ids:
                 label = self.records[candidate_ids[0]].name
+            
+            count = corpus_counts.get(branch_code, 0.0)
+            mesh_total = global_counts.get(branch_code, 0.0)
+            proportion = count / mesh_total if mesh_total > 0 else 0.0
+
             rows.append(
                 {
                     "branch_code": branch_code,
                     "label": label,
                     "treetop": branch_code[0],
                     "treetop_name": TREETOP_NAMES.get(branch_code[0]),
-                    "count": count,  # Now correctly handling float
+                    "count": count,
+                    "mesh_total_count": mesh_total,
+                    "proportion": proportion,
                 }
             )
         return rows
@@ -391,6 +387,7 @@ class MeshRepository:
             }
             for code, count in sorted(treetop_counts.items())
         ]
+
 
 def _iterparse_for_tag(file_obj, tag: str) -> Iterator[ET.Element]:
     context = ET.iterparse(file_obj, events=("start", "end"))
@@ -452,52 +449,58 @@ def tree_depth(tree_number: str) -> int:
 
 
 def load_mesh_ids(path: str | pathlib.Path) -> List[str]:
-    ids: List[str] = []
+    ids: Set[str] = set()
     with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            ids.append(line)
-    return ids
+            ids.add(line)
+    return list(ids)
 
 
 def summarize_ids(
     repo: MeshRepository,
     mesh_ids: Sequence[str],
-    *,
-    high_level_mode: str = "branch",
-    count_mode: str = "unique",
-    depth_mode: str = "unique",
 ) -> Dict[str, object]:
     missing_ids = [mesh_id for mesh_id in mesh_ids if repo.get(mesh_id) is None]
 
-    if high_level_mode == "treetop":
-        high_level_counts = repo.count_by_treetop(mesh_ids, count_mode=count_mode)
-        high_level_rows = repo.describe_treetops(high_level_counts)
-    elif high_level_mode == "branch":
-        high_level_counts = repo.count_by_branch(mesh_ids, count_mode=count_mode)
-        high_level_rows = repo.describe_branch_codes(high_level_counts)
-    else:
-        raise ValueError(f"Unsupported high_level_mode: {high_level_mode}")
+    # Calculate corpus distributions
+    corpus_branch_counts = repo.count_by_branch(mesh_ids)
+    corpus_depth_counts = repo.count_by_depth(mesh_ids)
+    
+    # Calculate global MeSH distributions (Feature 1)
+    global_branch_counts = repo.count_global_by_branch()
+    global_depth_counts = repo.count_global_by_depth()
 
-    depth_counts = repo.count_by_depth(mesh_ids, depth_mode=depth_mode)
+    # Build branch rows with proportions (Feature 2)
+    high_level_rows = repo.describe_branch_codes(corpus_branch_counts, global_branch_counts)
+
+    # Build depth rows with proportions (Feature 2)
+    all_depths = sorted(set(corpus_depth_counts.keys()) | set(global_depth_counts.keys()))
+    depth_rows = []
+    for d in all_depths:
+        c_count = corpus_depth_counts.get(d, 0.0)
+        m_count = global_depth_counts.get(d, 0.0)
+        depth_rows.append({
+            "depth": d,
+            "count": c_count,
+            "mesh_total_count": m_count,
+            "proportion": c_count / m_count if m_count > 0 else 0.0
+        })
 
     return {
         "n_input_ids": len(mesh_ids),
         "n_missing_ids": len(missing_ids),
         "missing_ids": missing_ids,
-        "high_level_mode": high_level_mode,
-        "count_mode": count_mode,
-        "depth_mode": depth_mode,
         "high_level_counts": high_level_rows,
-        "depth_counts": [{"depth": depth, "count": count} for depth, count in sorted(depth_counts.items())],
+        "depth_counts": depth_rows,
     }
-
 
 # -----------------------------
 # CLI
 # -----------------------------
+
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Work with MeSH XML and summarize MeSH IDs.")
@@ -509,20 +512,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p_download.add_argument("--include-qualifiers", action="store_true")
     p_download.add_argument("--no-supplementals", action="store_true")
 
-    p_export = subparsers.add_parser("export-json", help="Parse XML and export a JSON dictionary of records.")
-    p_export.add_argument("--descriptor-xml", required=True)
-    p_export.add_argument("--qualifier-xml")
-    p_export.add_argument("--supplemental-xml")
-    p_export.add_argument("--out", required=True)
-
-    p_summarize = subparsers.add_parser("summarize", help="Summarize a list of MeSH IDs by high-level branch and depth.")
-    p_summarize.add_argument("--descriptor-xml", required=True) # 
+    p_summarize = subparsers.add_parser(
+        "summarize", help="Summarize a list of MeSH IDs by high-level branch and depth."
+    )
+    p_summarize.add_argument("--descriptor-xml", required=True)  #
     p_summarize.add_argument("--qualifier-xml")
     p_summarize.add_argument("--supplemental-xml")
     p_summarize.add_argument("--ids", required=True, help="Text file with one MeSH ID per line.")
-    p_summarize.add_argument("--high-level-mode", choices=["branch", "treetop"], default="branch")
-    p_summarize.add_argument("--count-mode", choices=["unique", "all", "proportional"], default="unique")
-    p_summarize.add_argument("--depth-mode", choices=["unique", "all", "min", "max", "proportional"], default="unique")
     p_summarize.add_argument("--out", required=True)
 
     return parser
@@ -542,15 +538,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(json.dumps({k: str(v) for k, v in files.items()}, indent=2))
         return 0
 
-    if args.command == "export-json":
-        repo = MeshRepository.from_xml(
-            descriptor_xml=args.descriptor_xml,
-            qualifier_xml=args.qualifier_xml,
-            supplemental_xml=args.supplemental_xml,
-        )
-        repo.write_json(args.out)
-        return 0
-
     if args.command == "summarize":
         repo = MeshRepository.from_xml(
             descriptor_xml=args.descriptor_xml,
@@ -561,9 +548,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         summary = summarize_ids(
             repo,
             mesh_ids,
-            high_level_mode=args.high_level_mode,
-            count_mode=args.count_mode,
-            depth_mode=args.depth_mode,
         )
         with open(args.out, "w", encoding="utf-8") as fh:
             json.dump(summary, fh, ensure_ascii=False, indent=2)

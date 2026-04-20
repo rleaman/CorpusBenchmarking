@@ -8,8 +8,3 @@ wget https://ftp.ncbi.nlm.nih.gov/pub/lu/BC7-NLM-Chem-track/BC7T2-CHEMDNER-corpu
 mv BC7T2-CHEMDNER-corpus_v2.BioC.xml.gz BC7T2-CHEMDNER-corpus_v2.BioC.xml.tar
 tar -xvf BC7T2-CHEMDNER-corpus_v2.BioC.xml.tar 
 rm BC7T2-CHEMDNER-corpus_v2.BioC.xml.tar
-cd ../..
-
-# Run 
-export PYTHONPATH=src
-python -m corpus_benchmark.cli configs/CHEMDNER.yaml 

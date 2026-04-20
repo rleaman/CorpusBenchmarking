@@ -11,8 +11,3 @@ mv CDR_Data/CDR.Corpus.v010516/CDR_TrainingSet.BioC.xml .
 mv CDR_Data/CDR.Corpus.v010516/CDR_DevelopmentSet.BioC.xml .
 mv CDR_Data/CDR.Corpus.v010516/CDR_TestSet.BioC.xml .
 rm -rf CDR_Data __MACOSX 
-cd ../..
-
-# Run 
-export PYTHONPATH=src
-python -m corpus_benchmark.cli configs/BC5CDR.yaml 

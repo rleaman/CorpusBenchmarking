@@ -20,9 +20,6 @@ python -u src/mesh_tree_counts.py summarize \
   --descriptor-xml data/MeSH/desc2026.xml \
   --supplemental-xml data/MeSH/supp2026.xml \
   --ids corpora/BC5CDR/mesh_ids.txt \
-  --high-level-mode branch \
-  --count-mode proportional \
-  --depth-mode proportional \
   --out output/BC5CDR_mesh_summary.json
 
 # Summarize a list of MeSH IDs (one ID per line) for NCBI_Disease
@@ -30,9 +27,6 @@ python -u src/mesh_tree_counts.py summarize \
   --descriptor-xml data/MeSH/desc2026.xml \
   --supplemental-xml data/MeSH/supp2026.xml \
   --ids corpora/NCBI_Disease/mesh_ids.txt \
-  --high-level-mode branch \
-  --count-mode proportional \
-  --depth-mode proportional \
   --out output/NCBI_Disease_mesh_summary.json
 
 # Summarize a list of MeSH IDs (one ID per line) for NLM_Chem
@@ -40,9 +34,6 @@ python -u src/mesh_tree_counts.py summarize \
   --descriptor-xml data/MeSH/desc2026.xml \
   --supplemental-xml data/MeSH/supp2026.xml \
   --ids corpora/NLM_Chem/mesh_ids.txt \
-  --high-level-mode branch \
-  --count-mode proportional \
-  --depth-mode proportional \
   --out output/NLM_Chem_mesh_summary.json
 
 # Merge terminology statistics

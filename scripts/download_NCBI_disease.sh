@@ -11,8 +11,3 @@ unzip NCBItrainset_corpus.zip
 unzip NCBIdevelopset_corpus.zip
 unzip NCBItestset_corpus.zip
 rm *.zip
-cd ../..
-
-# Run 
-export PYTHONPATH=src
-python -m corpus_benchmark.cli configs/BC5CDR.yaml 
