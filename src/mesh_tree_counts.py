@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from typing import DefaultDict, Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple
 
-
+PRECISION = 8 # Number of decimal places
 RECORD_LOG_FREQ = 10000
 
 TREETOP_NAMES: Dict[str, str] = {
@@ -371,9 +371,9 @@ class MeshRepository:
                     "label": label,
                     "treetop": branch_code[0],
                     "treetop_name": TREETOP_NAMES.get(branch_code[0]),
-                    "count": count,
-                    "mesh_total_count": mesh_total,
-                    "proportion": proportion,
+                    "count": round(count, PRECISION),
+                    "mesh_total_count": round(mesh_total, PRECISION),
+                    "proportion": round(proportion, PRECISION),
                 }
             )
         return rows
@@ -383,7 +383,7 @@ class MeshRepository:
             {
                 "treetop": code,
                 "treetop_name": TREETOP_NAMES.get(code),
-                "count": count,  # Now correctly handling float
+                "count": round(count, PRECISION),  # Now correctly handling float
             }
             for code, count in sorted(treetop_counts.items())
         ]
@@ -464,6 +464,7 @@ def summarize_ids(
     mesh_ids: Sequence[str],
 ) -> Dict[str, object]:
     missing_ids = [mesh_id for mesh_id in mesh_ids if repo.get(mesh_id) is None]
+    missing_ids.sort()
 
     # Calculate corpus distributions
     corpus_branch_counts = repo.count_by_branch(mesh_ids)
@@ -484,9 +485,9 @@ def summarize_ids(
         m_count = global_depth_counts.get(d, 0.0)
         depth_rows.append({
             "depth": d,
-            "count": c_count,
-            "mesh_total_count": m_count,
-            "proportion": c_count / m_count if m_count > 0 else 0.0
+            "count": round(c_count, PRECISION),
+            "mesh_total_count": round(m_count, PRECISION),
+            "proportion": round(c_count / m_count, PRECISION) if m_count > 0 else 0.0
         })
 
     return {

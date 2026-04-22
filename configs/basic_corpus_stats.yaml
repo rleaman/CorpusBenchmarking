@@ -96,4 +96,4 @@ metrics:
   - metric_name: ambiguity_degree_stats
     target_bundles: ["AnatEM_corpus", "BC5CDR_corpus", "BioID_corpus", "CHEMDNER_corpus", "CRAFT_corpus", "CellLink_corpus", "JNLPBA_corpus", "NCBI_Disease_corpus", "NLM_Chem_corpus"]
 
-output_path: "statistics/basic_corpus_stats.json"
+output_path: "output/basic_corpus_stats.json"

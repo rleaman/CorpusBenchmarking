@@ -20,6 +20,8 @@ from corpus_benchmark.context import (
 from corpus_benchmark.registry import register_subset_metric
 from corpus_benchmark.results import SubsetMetricResult
 
+PRECISION = 8  # Number of decimal places
+
 LENGTH_ZERO = (
     {
         "mean": math.nan,
@@ -37,12 +39,12 @@ def calculate_stats(values: list[int]) -> dict[str, float]:
     if len(values) == 0:
         return LENGTH_ZERO
     stats = {
-        "mean": statistics.mean(values),
-        "stdev": statistics.stdev(values) if len(values) > 1 else math.nan,
-        "min": min(values),
-        "median": statistics.median(values),
-        "max": max(values),
-        "count": len(values),
+        "mean": round(statistics.mean(values), PRECISION),
+        "stdev": round(statistics.stdev(values), PRECISION) if len(values) > 1 else math.nan,
+        "min": round(min(values), PRECISION),
+        "median": round(statistics.median(values), PRECISION),
+        "max": round(max(values), PRECISION),
+        "count": round(len(values), PRECISION),
     }
     return stats, Counter(values)
 
@@ -85,10 +87,10 @@ def annotations_per_document_stats(
         metric_name="annotations_per_document_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -106,10 +108,10 @@ def unique_mentions_per_document_stats(
         metric_name="unique_mentions_per_document_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -130,10 +132,10 @@ def unique_identifiers_per_document_stats(
         metric_name="unique_identifiers_per_document_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -147,10 +149,10 @@ def spans_per_annotation_stats(
         metric_name="spans_per_annotation_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -165,10 +167,10 @@ def identifiers_per_annotation_stats(
         metric_name="identifiers_per_annotation_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -181,10 +183,10 @@ def document_length_stats(target: MetricTarget, result_name: str) -> SubsetMetri
         metric_name="document_length_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -247,10 +249,10 @@ def mention_length_stats(
         metric_name="mention_length_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -367,10 +369,10 @@ def identifier_redundancy_stats(
         metric_name="identifier_redundancy_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -386,10 +388,10 @@ def variation_degree_stats(target: MetricTarget, result_name: str) -> SubsetMetr
         metric_name="variation_degree_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )
 
 
@@ -405,8 +407,8 @@ def ambiguity_degree_stats(target: MetricTarget, result_name: str) -> SubsetMetr
         metric_name="ambiguity_degree_stats",
         value=stats,
         subset_name=target.name,
-        #details={
+        # details={
         #    "distribution": dict(distribution),
         #    "total": distribution.total(),
-        #},
+        # },
     )

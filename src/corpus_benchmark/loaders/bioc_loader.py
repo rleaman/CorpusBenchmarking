@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import re
+from collections import Counter
+
 from bioc import biocxml, pubtator
 
 from corpus_benchmark.models.corpus import (
@@ -146,6 +149,57 @@ class Loader:
             accession = identifier_text
         return IdentifierLink(resource=resource, identifier=accession)
 
+class DocIDFetcher:
+
+    def __init__(self, loader: Loader, doc_id_map: dict[str, str] = {}):
+        self.loader = loader
+        if not isinstance(loader,BioCXMLLoader) and not isinstance(loader, BioCPubtatorLoader):
+            raise ValueError(f"Unknown loader type: {type(loader)}")
+        self.doc_id_map = doc_id_map
+
+    def get_IDs(self, doc):
+        if isinstance(self.loader,BioCXMLLoader):
+            return self.get_BioCXML_IDs(doc)
+        if isinstance(self.loader, BioCPubtatorLoader):
+            return self.get_Pubtator_IDs(doc)
+        raise ValueError(f"Unknown loader type: {type(self.loader)}")
+
+    def get_BioCXML_IDs(self, doc):
+        ids = dict()
+        for id_type, location in self.doc_id_map.items():
+            match location:
+                # Case 1: Simple string match for Document ID
+                case "__DOCUMENT_ID__":
+                    doc_id = str(doc.id)
+                
+                # Case 2: List/Tuple with ["__HEADER_INFON__", "key"]
+                case ["__HEADER_INFON__", key] if len(doc.passages) > 0:
+                    val = doc.passages[0].infons.get(key)
+                    doc_id = str(val) if val is not None else None
+
+                # Case 3: List/Tuple with ["__DOCUMENT_INFON__", "key"]
+                case ["__DOCUMENT_INFON__", key]:
+                    val = doc.infons.get(key)
+                    doc_id = str(val) if val is not None else None
+
+                # Case 4: Catch-all for legacy strings or invalid formats
+                case _:
+                    raise ValueError(f"Invalid location format or value: {location}")
+
+            if doc_id:
+                ids[id_type] = doc_id
+                
+        return ids
+
+    def get_Pubtator_IDs(self, doc):
+        ids = dict()
+        for id_type, location in self.doc_id_map.items():
+            if location != "__DOCUMENT_ID__":
+                raise ValueError(f"Pubtator format only supports location=\"__DOCUMENT_ID__\": {location}")
+            ids[id_type] = str(doc.pmid)
+        return ids
+
+
 
 class BioCXMLLoader(Loader):
 
@@ -163,7 +217,7 @@ class BioCXMLLoader(Loader):
         **kwargs,
     ):
         super().__init__(label_map, id_format_list, qualifier_map, nil_labels, None, resource_delimiter)
-        self.doc_id_map = doc_id_map
+        self.doc_id_fetcher = DocIDFetcher(self, doc_id_map)
         self.passage_id_infon_key = passage_id_infon_key
         self.label_infon_key = label_infon_key
         self.id_infon_key = id_infon_key
@@ -172,24 +226,20 @@ class BioCXMLLoader(Loader):
         """
         Load a BioC XML file and convert it into the internal corpus model.
         """
+        print(f"Loading subset {subset_name} from {path}")
         with open(path, "r", encoding="utf-8") as fp:
             collection = biocxml.load(fp)
 
         # NOTE: This version silently de-duplicates documents based on the document ID
         documents: dict[str, Document] = {}
-
+        id_type_counts = Counter()
         for doc in collection.documents:
             # Copy identifiers into the doc infons
             doc_infons = {k: str(v) for k, v in doc.infons.items()}
-            for id_type, location in self.doc_id_map.items():
-                if location == "__DOCUMENT_ID__":
-                    # Strategy 2: Document ID
-                    doc_infons[id_type] = str(doc.id)
-                elif len(doc.passages) > 0:
-                    # Strategy 1: Specific infon key in the header (first passage)
-                    val = doc.passages[0].infons.get(location)
-                    if val:
-                        doc_infons[id_type] = str(val)
+            ids = self.doc_id_fetcher.get_IDs(doc)
+            doc_infons.update(ids)
+            id_type_counts.update(ids.keys())
+
             passages: list[Passage] = []
 
             for passage_index, passage in enumerate(doc.passages):
@@ -212,6 +262,11 @@ class BioCXMLLoader(Loader):
                 passages=passages,
                 infons=doc_infons,
             )
+        
+        print(f"\tLoaded {len(collection.documents)} documents")
+        for id_type, count in id_type_counts.items():
+            percentage = 100.0 * count / len(collection.documents)
+            print(f"\tID type {id_type} present in {count} / {len(collection.documents)} of documents ({percentage:.2f}%)")
         return CorpusSubset(name=subset_name, documents=list(documents.values()))
 
     def get_mention(self, ann):
@@ -242,6 +297,7 @@ class BioCXMLLoader(Loader):
 @register_loader("pubtator")
 def load_pubtator(
     paths: dict[str, str],
+    doc_id_map: dict[str, str] = {"pmid", "__DOCUMENT_ID__"},
     label_map: dict[str, str | None] = {},
     id_format_list: list[list[str]] = [],
     qualifier_map: dict[str, str] = {},
@@ -257,6 +313,7 @@ def load_pubtator(
     - If your corpus uses discontinuous spans, extend this representation before production use.
     """
     loader = BioCPubtatorLoader(
+        doc_id_map,
         label_map,
         parse_identifier_format_list(id_format_list),
         parse_qualifier_map(qualifier_map),
@@ -279,6 +336,7 @@ class BioCPubtatorLoader(Loader):
 
     def __init__(
         self,
+        doc_id_map: dict[str, str] = {"pmid", "__DOCUMENT_ID__"},
         label_map: dict[str, str | None] = {},
         id_format_list: list[IdentifierFormat] = [],
         qualifier_map: dict[str, MatchType] = {},
@@ -287,6 +345,7 @@ class BioCPubtatorLoader(Loader):
         resource_delimiter: str = ":",
     ):
         super().__init__(label_map, id_format_list, qualifier_map, nil_labels, default_resource, resource_delimiter)
+        self.doc_id_fetcher = DocIDFetcher(self, doc_id_map)
 
     def load_subset(self, subset_name: str, path: str):
         """
@@ -295,6 +354,7 @@ class BioCPubtatorLoader(Loader):
         with open(path, "r", encoding="utf-8") as fp:
             collection = pubtator.load(fp)
 
+        id_type_counts = Counter()
         documents: list[Document] = []
 
         for doc in collection:
@@ -332,11 +392,19 @@ class BioCPubtatorLoader(Loader):
                     title_passage.annotations.append(mention)
                 else:
                     abstract_passage.annotations.append(mention)
+            doc_infons = dict()
+            ids = self.doc_id_fetcher.get_IDs(doc)
+            doc_infons.update(ids)
+            id_type_counts.update(ids.keys())
             documents.append(
                 Document(
                     document_id=pmid,
                     passages=[title_passage, abstract_passage],
-                    infons={"pmid": pmid}
+                    infons=doc_infons
                 )
             )
+        print(f"\tLoaded {len(collection)} documents")
+        for id_type, count in id_type_counts.items():
+            percentage = 100.0 * count / len(collection)
+            print(f"\tID type {id_type} present in {count} / {len(collection)} of documents ({percentage:.2f}%)")
         return CorpusSubset(name=subset_name, documents=documents)

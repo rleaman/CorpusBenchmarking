@@ -43,6 +43,8 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
 
     results: list[Any] = []
     
+    print("metrics = {}".format([metric_spec.metric_name for metric_spec in battery_config.metrics]))
+
     for metric_spec in battery_config.metrics:
         if not metric_spec.enabled:
             continue

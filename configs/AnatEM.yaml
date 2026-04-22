@@ -9,4 +9,5 @@ loader:
       test: corpora/AnatEM/testData_allEntities.xml 
     label_infon_key: type
     doc_id_map:
-        pmcid: "article-id_pmc"
+        pmid: ["__HEADER_INFON__", "article-id_pmid"]
+        pmcid: ["__HEADER_INFON__", "article-id_pmc"]

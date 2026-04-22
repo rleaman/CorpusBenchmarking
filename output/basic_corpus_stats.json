@@ -15,18 +15,18 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "Cellular_component": 0.06050653236990001,
-        "Cell": 0.3299759141668491,
-        "Cancer": 0.22370629881030582,
-        "Organ": 0.06298810305817093,
-        "Organism_subdivision": 0.024523757389971534,
-        "Tissue": 0.06152835559448216,
-        "Multi-tissue_structure": 0.12371359754762426,
-        "Organism_substance": 0.04999635063134078,
-        "Pathological_formation": 0.028538062915115684,
-        "Immaterial_anatomical_entity": 0.019049704401138602,
-        "Developing_anatomical_structure": 0.007298737318443909,
-        "Anatomical_system": 0.008174585796657178
+        "Cellular_component": 0.06050653,
+        "Cell": 0.32997591,
+        "Cancer": 0.2237063,
+        "Organ": 0.0629881,
+        "Organism_subdivision": 0.02452376,
+        "Tissue": 0.06152836,
+        "Multi-tissue_structure": 0.1237136,
+        "Organism_substance": 0.04999635,
+        "Pathological_formation": 0.02853806,
+        "Immaterial_anatomical_entity": 0.0190497,
+        "Developing_anatomical_structure": 0.00729874,
+        "Anatomical_system": 0.00817459
       },
       "details": {
         "counts": {
@@ -49,8 +49,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 10.93277862929713,
-        "stdev": 7.192773589262552,
+        "mean": 10.93277863,
+        "stdev": 7.19277359,
         "min": 1,
         "median": 9,
         "max": 63,
@@ -79,8 +79,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 11.304455445544555,
-        "stdev": 11.26641039790403,
+        "mean": 11.30445545,
+        "stdev": 11.2664104,
         "min": 0,
         "median": 10.0,
         "max": 197,
@@ -90,8 +90,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 7.2161716171617165,
-        "stdev": 6.132675883326028,
+        "mean": 7.21617162,
+        "stdev": 6.13267588,
         "min": 0,
         "median": 7.0,
         "max": 39,
@@ -112,8 +112,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 346.9166666666667,
-        "stdev": 400.0176037793004,
+        "mean": 346.91666667,
+        "stdev": 400.01760378,
         "min": 31,
         "median": 169.5,
         "max": 1362,
@@ -123,8 +123,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.0281551000246976,
-        "stdev": 0.2041989546794739,
+        "mean": 1.0281551,
+        "stdev": 0.20419895,
         "min": 1,
         "median": 1,
         "max": 5,
@@ -148,8 +148,8 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "Chemical": 0.5450104198694954,
-        "Disease": 0.4549895801305046
+        "Chemical": 0.54501042,
+        "Disease": 0.45498958
       },
       "details": {
         "counts": {
@@ -162,8 +162,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 11.50326261487479,
-        "stdev": 7.044961365613633,
+        "mean": 11.50326261,
+        "stdev": 7.04496137,
         "min": 1,
         "median": 10,
         "max": 120,
@@ -173,8 +173,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 12.574223734581029,
-        "stdev": 27.46504779160284,
+        "mean": 12.57422373,
+        "stdev": 27.46504779,
         "min": 1,
         "median": 5,
         "max": 470,
@@ -197,7 +197,7 @@
       "metric_name": "annotations_per_document_stats",
       "value": {
         "mean": 19.514,
-        "stdev": 9.177542637288017,
+        "stdev": 9.17754264,
         "min": 3,
         "median": 18.0,
         "max": 69,
@@ -207,8 +207,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 9.387333333333334,
-        "stdev": 4.043786306670795,
+        "mean": 9.38733333,
+        "stdev": 4.04378631,
         "min": 2,
         "median": 9.0,
         "max": 28,
@@ -219,7 +219,7 @@
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
         "mean": 6.884,
-        "stdev": 3.1182836831745284,
+        "stdev": 3.11828368,
         "min": 2,
         "median": 6.0,
         "max": 23,
@@ -229,8 +229,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 2.4718875502008033,
-        "stdev": 3.5056364033385203,
+        "mean": 2.47188755,
+        "stdev": 3.5056364,
         "min": 1,
         "median": 2.0,
         "max": 75,
@@ -240,8 +240,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.0176917989417988,
-        "stdev": 0.13796878534888912,
+        "mean": 1.0176918,
+        "stdev": 0.13796879,
         "min": 1,
         "median": 1.0,
         "max": 4,
@@ -265,12 +265,12 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "cell_line": 0.06069606834736246,
-        "chemical": 0.11845336803879175,
-        "gene": 0.6172673649740759,
-        "anatomy": 0.06877768215117866,
-        "species": 0.08369193308003946,
-        "cell_type": 0.051113583408551815
+        "cell_line": 0.06069607,
+        "chemical": 0.11845337,
+        "gene": 0.61726736,
+        "anatomy": 0.06877768,
+        "species": 0.08369193,
+        "cell_type": 0.05111358
       },
       "details": {
         "counts": {
@@ -287,8 +287,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 5.245964440899264,
-        "stdev": 3.1035916062214826,
+        "mean": 5.24596444,
+        "stdev": 3.10359161,
         "min": 1,
         "median": 4.0,
         "max": 49,
@@ -298,8 +298,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 12.103350637092968,
-        "stdev": 70.70621212050412,
+        "mean": 12.10335064,
+        "stdev": 70.70621212,
         "min": 1,
         "median": 3.0,
         "max": 4002,
@@ -309,20 +309,20 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "null": 0.05641010644519827,
-        "CHEBI": 0.09620033532187,
-        "Uniprot": 0.29448863414824344,
-        "molecule": 0.0074180216009669744,
-        "PubChem": 0.006823410145436113,
-        "subcellular": 0.002222482161656334,
-        "NCBI gene": 0.21216906460794635,
-        "NCBI taxon": 0.07751393925215425,
-        "protein": 0.1195461457480407,
-        "gene": 0.01919327796623387,
-        "CL": 0.04520996607790385,
-        "Uberon": 0.057219167933871405,
-        "tissue": 0.0053417553709985575,
-        "organism": 0.0002436932194798612
+        "null": 0.05641011,
+        "CHEBI": 0.09620034,
+        "Uniprot": 0.29448863,
+        "molecule": 0.00741802,
+        "PubChem": 0.00682341,
+        "subcellular": 0.00222248,
+        "NCBI gene": 0.21216906,
+        "NCBI taxon": 0.07751394,
+        "protein": 0.11954615,
+        "gene": 0.01919328,
+        "CL": 0.04520997,
+        "Uberon": 0.05721917,
+        "tissue": 0.00534176,
+        "organism": 0.00024369
       },
       "details": {
         "counts": {
@@ -347,8 +347,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 6.9561217784916405,
-        "stdev": 5.281092765651939,
+        "mean": 6.95612178,
+        "stdev": 5.28109277,
         "min": 0,
         "median": 6,
         "max": 73,
@@ -358,8 +358,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 4.519529824049062,
-        "stdev": 2.4619627623919125,
+        "mean": 4.51952982,
+        "stdev": 2.46196276,
         "min": 0,
         "median": 4,
         "max": 22,
@@ -369,8 +369,8 @@
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 4.768635467620647,
-        "stdev": 2.6569018001406586,
+        "mean": 4.76863547,
+        "stdev": 2.6569018,
         "min": 0,
         "median": 4,
         "max": 21,
@@ -380,8 +380,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 1.4403573915061498,
-        "stdev": 1.6676318944710604,
+        "mean": 1.44035739,
+        "stdev": 1.66763189,
         "min": 1,
         "median": 1.0,
         "max": 77,
@@ -391,8 +391,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.3624190538909011,
-        "stdev": 1.1167467002599156,
+        "mean": 1.36241905,
+        "stdev": 1.1167467,
         "min": 1,
         "median": 1,
         "max": 39,
@@ -428,8 +428,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 9.977493448435332,
-        "stdev": 9.3195299174216,
+        "mean": 9.97749345,
+        "stdev": 9.31952992,
         "min": 0,
         "median": 8,
         "max": 325,
@@ -459,7 +459,7 @@
       "metric_name": "annotations_per_document_stats",
       "value": {
         "mean": 8.4331,
-        "stdev": 8.111824983347216,
+        "stdev": 8.11182498,
         "min": 0,
         "median": 7.0,
         "max": 67,
@@ -470,7 +470,7 @@
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
         "mean": 4.566,
-        "stdev": 4.2540867087275664,
+        "stdev": 4.25408671,
         "min": 0,
         "median": 4.0,
         "max": 40,
@@ -539,8 +539,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 11.221167127071823,
-        "stdev": 5.6328661096820625,
+        "mean": 11.22116713,
+        "stdev": 5.63286611,
         "min": 1,
         "median": 10.0,
         "max": 53,
@@ -550,8 +550,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 20.32280701754386,
-        "stdev": 57.52177486519522,
+        "mean": 20.32280702,
+        "stdev": 57.52177487,
         "min": 1,
         "median": 4,
         "max": 610,
@@ -573,8 +573,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 59.71134020618557,
-        "stdev": 66.32730690216113,
+        "mean": 59.71134021,
+        "stdev": 66.3273069,
         "min": 0,
         "median": 32,
         "max": 325,
@@ -584,8 +584,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 17.38144329896907,
-        "stdev": 14.395053620203099,
+        "mean": 17.3814433,
+        "stdev": 14.39505362,
         "min": 0,
         "median": 14,
         "max": 81,
@@ -595,8 +595,8 @@
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 8.597938144329897,
-        "stdev": 6.094156685257391,
+        "mean": 8.59793814,
+        "stdev": 6.09415669,
         "min": 0,
         "median": 8,
         "max": 27,
@@ -606,8 +606,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 3.4175438596491228,
-        "stdev": 3.111378640526493,
+        "mean": 3.41754386,
+        "stdev": 3.11137864,
         "min": 1,
         "median": 2,
         "max": 20,
@@ -617,8 +617,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.011422637590862,
-        "stdev": 0.10631979662492985,
+        "mean": 1.01142264,
+        "stdev": 0.1063198,
         "min": 1,
         "median": 1,
         "max": 2,
@@ -642,9 +642,9 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "cell_phenotype": 0.8279670870226277,
-        "cell_hetero": 0.07226545031750291,
-        "cell_desc": 0.09976746265986942
+        "cell_phenotype": 0.82796709,
+        "cell_hetero": 0.07226545,
+        "cell_desc": 0.09976746
       },
       "details": {
         "counts": {
@@ -658,8 +658,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 14.627627224756283,
-        "stdev": 10.79365692959126,
+        "mean": 14.62762722,
+        "stdev": 10.79365693,
         "min": 1,
         "median": 12.0,
         "max": 230,
@@ -669,8 +669,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 19.55147645650439,
-        "stdev": 92.86743759934811,
+        "mean": 19.55147646,
+        "stdev": 92.8674376,
         "min": 1,
         "median": 5,
         "max": 2842,
@@ -680,9 +680,9 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "CL": 0.8797452853294147,
-        "null": 0.11600947016082945,
-        "<NIL>": 0.0042452445097558985
+        "CL": 0.87974529,
+        "null": 0.11600947,
+        "<NIL>": 0.00424524
       },
       "details": {
         "counts": {
@@ -696,8 +696,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 7.441597337770383,
-        "stdev": 8.97082488841957,
+        "mean": 7.44159734,
+        "stdev": 8.97082489,
         "min": 0,
         "median": 4,
         "max": 70,
@@ -707,8 +707,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 5.999001663893511,
-        "stdev": 7.3004066839682835,
+        "mean": 5.99900166,
+        "stdev": 7.30040668,
         "min": 0,
         "median": 3,
         "max": 59,
@@ -718,8 +718,8 @@
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 4.105823627287854,
-        "stdev": 4.555923701564245,
+        "mean": 4.10582363,
+        "stdev": 4.5559237,
         "min": 0,
         "median": 3,
         "max": 41,
@@ -729,8 +729,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 4.084627329192546,
-        "stdev": 35.870108448317694,
+        "mean": 4.08462733,
+        "stdev": 35.87010845,
         "min": 1,
         "median": 2.0,
         "max": 1801,
@@ -740,8 +740,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.073235414116687,
-        "stdev": 0.46847108868838255,
+        "mean": 1.07323541,
+        "stdev": 0.46847109,
         "min": 1,
         "median": 1.0,
         "max": 18,
@@ -765,11 +765,11 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "protein": 0.5892967329853409,
-        "DNA": 0.17659223187632372,
-        "cell_line": 0.07221119690475794,
-        "cell_type": 0.1440721778430032,
-        "RNA": 0.017827660390574186
+        "protein": 0.58929673,
+        "DNA": 0.17659223,
+        "cell_line": 0.0722112,
+        "cell_type": 0.14407218,
+        "RNA": 0.01782766
       },
       "details": {
         "counts": {
@@ -785,8 +785,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 14.327451928689358,
-        "stdev": 11.164445041467859,
+        "mean": 14.32745193,
+        "stdev": 11.16444504,
         "min": 1,
         "median": 11,
         "max": 118,
@@ -815,8 +815,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 24.943011647254576,
-        "stdev": 11.974678385179919,
+        "mean": 24.94301165,
+        "stdev": 11.97467839,
         "min": 0,
         "median": 24.5,
         "max": 71,
@@ -826,8 +826,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 16.457154742096506,
-        "stdev": 7.6211422348060385,
+        "mean": 16.45715474,
+        "stdev": 7.62114223,
         "min": 0,
         "median": 16.0,
         "max": 55,
@@ -849,7 +849,7 @@
       "metric_name": "variation_degree_stats",
       "value": {
         "mean": 4450.2,
-        "stdev": 3871.8234334742074,
+        "stdev": 3871.82343347,
         "min": 543,
         "median": 2767,
         "max": 10437,
@@ -859,8 +859,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.0204540243063518,
-        "stdev": 0.14633000521280984,
+        "mean": 1.02045402,
+        "stdev": 0.14633001,
         "min": 1,
         "median": 1,
         "max": 3,
@@ -896,8 +896,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 15.152205455600697,
-        "stdev": 11.71802244363004,
+        "mean": 15.15220546,
+        "stdev": 11.71802244,
         "min": 1,
         "median": 14.0,
         "max": 80,
@@ -907,8 +907,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 9.414114513981358,
-        "stdev": 26.31998506550113,
+        "mean": 9.41411451,
+        "stdev": 26.31998507,
         "min": 1,
         "median": 2,
         "max": 291,
@@ -918,9 +918,9 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "null": 0.9188118811881189,
-        "OMIM": 0.0809052333804809,
-        "MESH": 0.0002828854314002829
+        "null": 0.91881188,
+        "OMIM": 0.08090523,
+        "MESH": 0.00028289
       },
       "details": {
         "counts": {
@@ -934,8 +934,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 8.691046658259774,
-        "stdev": 5.247089913917947,
+        "mean": 8.69104666,
+        "stdev": 5.24708991,
         "min": 1,
         "median": 8,
         "max": 30,
@@ -945,8 +945,8 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 5.075662042875158,
-        "stdev": 3.205397176226051,
+        "mean": 5.07566204,
+        "stdev": 3.20539718,
         "min": 1,
         "median": 4,
         "max": 19,
@@ -956,8 +956,8 @@
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 3.170239596469105,
-        "stdev": 2.2940463276996303,
+        "mean": 3.1702396,
+        "stdev": 2.29404633,
         "min": 1,
         "median": 3,
         "max": 16,
@@ -967,8 +967,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 2.7509529860228716,
-        "stdev": 3.9334778273682387,
+        "mean": 2.75095299,
+        "stdev": 3.93347783,
         "min": 1,
         "median": 1,
         "max": 57,
@@ -978,8 +978,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.0135767790262171,
-        "stdev": 0.13791059352761134,
+        "mean": 1.01357678,
+        "stdev": 0.13791059,
         "min": 1,
         "median": 1.0,
         "max": 4,
@@ -1015,8 +1015,8 @@
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 7.566264117478286,
-        "stdev": 7.098879091462053,
+        "mean": 7.56626412,
+        "stdev": 7.09887909,
         "min": 1,
         "median": 5,
         "max": 162,
@@ -1026,8 +1026,8 @@
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 22.999447818884594,
-        "stdev": 52.67033404197013,
+        "mean": 22.99944782,
+        "stdev": 52.67033404,
         "min": 1,
         "median": 5,
         "max": 681,
@@ -1037,8 +1037,8 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "MESH": 0.9915490252568904,
-        "<NIL>": 0.008450974743109574
+        "MESH": 0.99154903,
+        "<NIL>": 0.00845097
       },
       "details": {
         "counts": {
@@ -1051,8 +1051,8 @@
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 255.59333333333333,
-        "stdev": 157.781817611156,
+        "mean": 255.59333333,
+        "stdev": 157.78181761,
         "min": 2,
         "median": 236.5,
         "max": 682,
@@ -1063,7 +1063,7 @@
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
         "mean": 54.32,
-        "stdev": 32.794728664648524,
+        "stdev": 32.79472866,
         "min": 1,
         "median": 49.5,
         "max": 161,
@@ -1073,8 +1073,8 @@
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 34.06666666666667,
-        "stdev": 19.265599159174073,
+        "mean": 34.06666667,
+        "stdev": 19.26559916,
         "min": 1,
         "median": 31.0,
         "max": 91,
@@ -1084,8 +1084,8 @@
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 2.415332362930616,
-        "stdev": 4.205086811921002,
+        "mean": 2.41533236,
+        "stdev": 4.20508681,
         "min": 1,
         "median": 2,
         "max": 157,
@@ -1095,8 +1095,8 @@
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.0238584944467297,
-        "stdev": 0.17165554861324442,
+        "mean": 1.02385849,
+        "stdev": 0.17165555,
         "min": 1,
         "median": 1.0,
         "max": 4,

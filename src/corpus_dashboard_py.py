@@ -877,7 +877,7 @@ HTML = """\
   </div>
 </div>
 
-  {overlap_panels}
+{overlap_panels}
 {meta_panels}
 {term_panels}
 
@@ -926,7 +926,8 @@ new Chart('c1', {{
 const inited={{}};
 function initC2(){{ hbar('c2',{c2_labels},{c2_data},{c2_bg},'Mean unique identifiers per document'); }}
 function initC3(){{
-  new Chart('c3',{{ type:'bar',
+  new Chart('c3', {{
+    type:'bar',
     data:{{ labels:{c3_labels}, datasets:[{{ data:{c3_data}, backgroundColor:{c3_bg},
       borderWidth:0, borderRadius:3 }}] }},
     options:{{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
@@ -935,7 +936,10 @@ function initC3(){{
       scales:{{ x:{{ min:{amb_min_scale}, max:{amb_max_scale},
         title:{{display:true,text:'Mean identifiers per mention',color:tc,font:{{size:11}}}},
         ticks:{{color:tc,font:{{size:11}},callback:v=>v.toFixed(2)}}, grid:{{color:gc}} }},
-        y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }} }} }});
+        y:{{ ticks:{{color:tc,font:{{size:11}}}}, grid:{{color:gc}} }}
+      }}
+    }}
+  }});
 }}
 function initC4(){{ hbar('c4',{c4_labels},{c4_data},{c4_bg},'Mean surface forms per concept'); }}
 function initC5(){{ hbar('c5',{c5_labels},{c5_data},{c5_bg},'Distinct entity type labels',
@@ -949,7 +953,8 @@ function initC7(){{
   if(leg) leg.innerHTML=cascadeDatasets.map(d=>
     `<span class="li"><span class="lc" style="background:${{d.borderColor}}"></span>${{d.label}}</span>`
   ).join('');
-  new Chart('c7',{{ type:'line',
+  new Chart('c7', {{
+    type:'line',
     data:{{ labels:['Token vocab','Mention tokens','Mention strings','Identifiers'],
              datasets:cascadeDatasets }},
     options:{{ responsive:true, maintainAspectRatio:false,
@@ -959,7 +964,10 @@ function initC7(){{
       scales:{{ x:{{ ticks:{{color:tc,font:{{size:12}}}}, grid:{{color:gc}} }},
         y:{{ min:0, max:65,
           title:{{display:true,text:'Jaccard overlap (%)',color:tc,font:{{size:11}}}},
-          ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }} }} }});
+          ticks:{{color:tc,font:{{size:11}},callback:v=>v+'%'}}, grid:{{color:gc}} }}
+      }}
+    }}
+  }});
 }}
 
 const panels={{

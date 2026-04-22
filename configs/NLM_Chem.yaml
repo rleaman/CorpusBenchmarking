@@ -12,7 +12,9 @@ loader:
     nil_labels: { "-" }
     label_map: {"Chemical": "Chemical", "MeSH_Indexing_Chemical": null}
     doc_id_map:
-        pmid: "article-id_pmid"
+        pmid: ["__HEADER_INFON__", "article-id_pmid"]
+        pmcid: ["__HEADER_INFON__", "article-id_pmc"]
+        doi: ["__HEADER_INFON__", "article-id_doi"]
 
 
 

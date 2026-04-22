@@ -6,12 +6,13 @@ from corpus_benchmark.context import MetricTarget, get_labels, get_identifier_re
 from corpus_benchmark.registry import register_subset_metric
 from corpus_benchmark.results import SubsetMetricResult
 
+PRECISION = 8  # Number of decimal places
+
+
 def calculate_proportions(counts: Counter[str, int]) -> dict[str, float]:
     total = counts.total()
-    return {
-        label: (count / total if total else 0.0)
-        for label, count in counts.items()
-    }
+    return {label: (round(count / total, PRECISION) if total else 0.0) for label, count in counts.items()}
+
 
 @register_subset_metric("label_distribution")
 def label_distribution(target: MetricTarget, result_name: str) -> SubsetMetricResult:
@@ -27,6 +28,7 @@ def label_distribution(target: MetricTarget, result_name: str) -> SubsetMetricRe
         },
     )
 
+
 @register_subset_metric("identifier_resource_distribution")
 def identifier_resource_distribution(target: MetricTarget, result_name: str) -> SubsetMetricResult:
     counts = Counter(get_identifier_resources(target))
@@ -40,6 +42,7 @@ def identifier_resource_distribution(target: MetricTarget, result_name: str) -> 
             "total": counts.total(),
         },
     )
+
 
 @register_subset_metric("match_type_distribution")
 def match_type_distribution(target: MetricTarget, result_name: str) -> SubsetMetricResult:

@@ -12,7 +12,8 @@ loader:
     qualifier_map: {"(skos:exact)": "exact", "(skos:related)": "related"}
     nil_labels: { "-" }
     doc_id_map:
-        pmid: "article-id_pmid"
+        pmid: ["__HEADER_INFON__", "article-id_pmid"]
+        pmcid: ["__HEADER_INFON__", "article-id_pmc"]
 
 filters:
     cell_phenotype_exact_single:

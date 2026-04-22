@@ -3,89 +3,89 @@
         "n_input_ids": 2350,
         "n_missing_ids": 83,
         "missing_ids": [
-            "C055162",
-            "C413408",
-            "C009250",
-            "C034930",
-            "C063008",
-            "C076946",
-            "C531616",
-            "C065757",
-            "C107135",
-            "C039726",
-            "C562386",
+            "C000873",
+            "C005435",
             "C008281",
-            "C043211",
-            "C076029",
-            "C471405",
-            "C108606",
-            "C086816",
-            "C081489",
-            "C052342",
-            "C102006",
-            "C562750",
-            "C094645",
-            "C049430",
-            "C105934",
-            "C047047",
-            "C061870",
-            "C090450",
-            "C045645",
-            "C118667",
-            "C084178",
-            "C056507",
-            "C473478",
+            "C009250",
+            "C010845",
+            "C012052",
+            "C014347",
+            "C019248",
+            "C022189",
+            "C026098",
+            "C030852",
+            "C032171",
+            "C032302",
+            "C034930",
+            "C035133",
             "C036006",
+            "C037663",
+            "C039726",
+            "C040029",
+            "C041359",
+            "C043211",
+            "C043265",
+            "C044650",
+            "C045645",
+            "C047047",
+            "C047426",
             "C047781",
-            "C476756",
+            "C048833",
+            "C049430",
+            "C051890",
+            "C052342",
+            "C055162",
+            "C056507",
+            "C059262",
+            "C061870",
+            "C063008",
+            "C064276",
+            "C065179",
+            "C065180",
+            "C065757",
+            "C067311",
+            "C067431",
+            "C069541",
+            "C071741",
+            "C076029",
+            "C076946",
+            "C081309",
+            "C081489",
+            "C084178",
             "C085143",
+            "C086816",
+            "C090450",
+            "C094645",
+            "C096012",
+            "C096918",
             "C098010",
             "C099041",
-            "C047426",
-            "C096918",
-            "C422923",
-            "C010845",
-            "C005435",
-            "C019248",
-            "C035133",
-            "C048833",
-            "C012052",
-            "C037663",
-            "C065180",
-            "C067431",
-            "C562729",
-            "C051890",
-            "C400082",
-            "C467567",
-            "C030852",
-            "C000873",
-            "C422649",
-            "C014347",
-            "C067311",
-            "C043265",
-            "C032171",
-            "C069541",
-            "C531767",
-            "C059262",
-            "C096012",
-            "C041359",
-            "C071741",
-            "C026098",
-            "C081309",
-            "C542870",
-            "C032302",
-            "C065179",
-            "C064276",
+            "C102006",
+            "C105934",
+            "C107135",
+            "C108606",
             "C110904",
-            "C022189",
-            "C044650",
-            "C040029",
+            "C118667",
+            "C400082",
+            "C413408",
             "C418563",
-            "C562388",
-            "C476513",
-            "C537630",
+            "C422649",
+            "C422923",
+            "C467567",
+            "C471405",
+            "C473478",
             "C476217",
-            "C492458"
+            "C476513",
+            "C476756",
+            "C492458",
+            "C531616",
+            "C531767",
+            "C537630",
+            "C542870",
+            "C562386",
+            "C562388",
+            "C562729",
+            "C562750"
         ],
         "high_level_counts": [
             {
@@ -94,7 +94,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 85.16666666666667,
+                "mesh_total_count": 85.16666667,
                 "proportion": 0.0
             },
             {
@@ -103,7 +103,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 183.79761904761904,
+                "mesh_total_count": 183.79761905,
                 "proportion": 0.0
             },
             {
@@ -112,7 +112,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 54.411904761904815,
+                "mesh_total_count": 54.41190476,
                 "proportion": 0.0
             },
             {
@@ -121,7 +121,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.169047619047618,
+                "mesh_total_count": 29.16904762,
                 "proportion": 0.0
             },
             {
@@ -130,7 +130,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 59.4166666666667,
+                "mesh_total_count": 59.41666667,
                 "proportion": 0.0
             },
             {
@@ -139,7 +139,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.38095238095236,
+                "mesh_total_count": 29.38095238,
                 "proportion": 0.0
             },
             {
@@ -148,7 +148,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 120.58333333333331,
+                "mesh_total_count": 120.58333333,
                 "proportion": 0.0
             },
             {
@@ -157,7 +157,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 337.5634920634919,
+                "mesh_total_count": 337.56349206,
                 "proportion": 0.0
             },
             {
@@ -166,7 +166,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 83.0047619047619,
+                "mesh_total_count": 83.0047619,
                 "proportion": 0.0
             },
             {
@@ -175,7 +175,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 93.63492063492065,
+                "mesh_total_count": 93.63492063,
                 "proportion": 0.0
             },
             {
@@ -183,9 +183,9 @@
                 "label": "Cells",
                 "treetop": "A",
                 "treetop_name": "Anatomy",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 414.44126984126945,
-                "proportion": 0.0008042957050609358
+                "count": 0.33333333,
+                "mesh_total_count": 414.44126984,
+                "proportion": 0.0008043
             },
             {
                 "branch_code": "A12",
@@ -193,8 +193,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.2,
-                "mesh_total_count": 50.46783216783219,
-                "proportion": 0.003962920367470796
+                "mesh_total_count": 50.46783217,
+                "proportion": 0.00396292
             },
             {
                 "branch_code": "A13",
@@ -202,7 +202,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 59.80952380952381,
+                "mesh_total_count": 59.80952381,
                 "proportion": 0.0
             },
             {
@@ -211,7 +211,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 55.91666666666669,
+                "mesh_total_count": 55.91666667,
                 "proportion": 0.0
             },
             {
@@ -220,7 +220,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 56.431746031746115,
+                "mesh_total_count": 56.43174603,
                 "proportion": 0.0
             },
             {
@@ -229,7 +229,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 52.33333333333334,
+                "mesh_total_count": 52.33333333,
                 "proportion": 0.0
             },
             {
@@ -247,7 +247,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 33.72619047619048,
+                "mesh_total_count": 33.72619048,
                 "proportion": 0.0
             },
             {
@@ -256,7 +256,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 6.583333333333333,
+                "mesh_total_count": 6.58333333,
                 "proportion": 0.0
             },
             {
@@ -283,8 +283,8 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 2.0,
-                "mesh_total_count": 2445.785714285725,
-                "proportion": 0.0008177331269530643
+                "mesh_total_count": 2445.78571429,
+                "proportion": 0.00081773
             },
             {
                 "branch_code": "B02",
@@ -301,7 +301,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 856.8333333333385,
+                "mesh_total_count": 856.83333333,
                 "proportion": 0.0
             },
             {
@@ -319,7 +319,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 29.166666666666668,
+                "mesh_total_count": 29.16666667,
                 "proportion": 0.0
             },
             {
@@ -327,153 +327,153 @@
                 "label": "Infections",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 52.84523809523811,
-                "mesh_total_count": 558.3756493506481,
-                "proportion": 0.09464101480194101
+                "count": 52.8452381,
+                "mesh_total_count": 558.37564935,
+                "proportion": 0.09464101
             },
             {
                 "branch_code": "C04",
                 "label": "Neoplasms",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 50.58780663780668,
-                "mesh_total_count": 446.08064574314494,
-                "proportion": 0.11340506951053722
+                "count": 50.58780664,
+                "mesh_total_count": 446.08064574,
+                "proportion": 0.11340507
             },
             {
                 "branch_code": "C05",
                 "label": "Musculoskeletal Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 28.198845598845587,
-                "mesh_total_count": 220.05721500721504,
-                "proportion": 0.1281432449189227
+                "count": 28.1988456,
+                "mesh_total_count": 220.05721501,
+                "proportion": 0.12814324
             },
             {
                 "branch_code": "C06",
                 "label": "Digestive System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 51.08138528138528,
-                "mesh_total_count": 220.5949134199133,
-                "proportion": 0.23156193626345928
+                "count": 51.08138528,
+                "mesh_total_count": 220.59491342,
+                "proportion": 0.23156194
             },
             {
                 "branch_code": "C07",
                 "label": "Stomatognathic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 15.01111111111111,
-                "mesh_total_count": 145.7503968253968,
-                "proportion": 0.10299190560073622
+                "count": 15.01111111,
+                "mesh_total_count": 145.75039683,
+                "proportion": 0.10299191
             },
             {
                 "branch_code": "C08",
                 "label": "Respiratory Tract Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 29.950000000000003,
-                "mesh_total_count": 142.7468253968254,
-                "proportion": 0.20981202150549594
+                "count": 29.95,
+                "mesh_total_count": 142.7468254,
+                "proportion": 0.20981202
             },
             {
                 "branch_code": "C09",
                 "label": "Otorhinolaryngologic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 7.199999999999999,
-                "mesh_total_count": 55.33422035480867,
-                "proportion": 0.13011839606364495
+                "count": 7.2,
+                "mesh_total_count": 55.33422035,
+                "proportion": 0.1301184
             },
             {
                 "branch_code": "C10",
                 "label": "Nervous System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 137.65292207792206,
-                "mesh_total_count": 465.0934429132948,
-                "proportion": 0.295968313841793
+                "count": 137.65292208,
+                "mesh_total_count": 465.09344291,
+                "proportion": 0.29596831
             },
             {
                 "branch_code": "C11",
                 "label": "Eye Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 33.97142857142857,
-                "mesh_total_count": 169.27408963585412,
-                "proportion": 0.20068888655380512
+                "count": 33.97142857,
+                "mesh_total_count": 169.27408964,
+                "proportion": 0.20068889
             },
             {
                 "branch_code": "C12",
                 "label": "Urogenital Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 82.76771284271294,
-                "mesh_total_count": 303.65659046835384,
-                "proportion": 0.2725701184850086
+                "count": 82.76771284,
+                "mesh_total_count": 303.65659047,
+                "proportion": 0.27257012
             },
             {
                 "branch_code": "C14",
                 "label": "Cardiovascular Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 108.06634199134191,
-                "mesh_total_count": 294.16897824397785,
-                "proportion": 0.3673614486355317
+                "count": 108.06634199,
+                "mesh_total_count": 294.16897824,
+                "proportion": 0.36736145
             },
             {
                 "branch_code": "C15",
                 "label": "Hemic and Lymphatic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 40.85440115440116,
-                "mesh_total_count": 173.87189754689757,
-                "proportion": 0.23496839760077798
+                "count": 40.85440115,
+                "mesh_total_count": 173.87189755,
+                "proportion": 0.2349684
             },
             {
                 "branch_code": "C16",
                 "label": "Congenital, Hereditary, and Neonatal Diseases and Abnormalities",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 26.82932900432899,
-                "mesh_total_count": 299.7472844965473,
-                "proportion": 0.0895064956114324
+                "count": 26.829329,
+                "mesh_total_count": 299.7472845,
+                "proportion": 0.0895065
             },
             {
                 "branch_code": "C17",
                 "label": "Skin and Connective Tissue Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 37.259523809523806,
-                "mesh_total_count": 221.63062770562723,
-                "proportion": 0.16811540983862755
+                "count": 37.25952381,
+                "mesh_total_count": 221.63062771,
+                "proportion": 0.16811541
             },
             {
                 "branch_code": "C18",
                 "label": "Nutritional and Metabolic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 36.981060606060616,
-                "mesh_total_count": 194.4532110862991,
-                "proportion": 0.19017973732327967
+                "count": 36.98106061,
+                "mesh_total_count": 194.45321109,
+                "proportion": 0.19017974
             },
             {
                 "branch_code": "C19",
                 "label": "Endocrine System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 23.526623376623377,
-                "mesh_total_count": 78.9249342161108,
-                "proportion": 0.2980886029274755
+                "count": 23.52662338,
+                "mesh_total_count": 78.92493422,
+                "proportion": 0.2980886
             },
             {
                 "branch_code": "C20",
                 "label": "Immune System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 22.592460317460308,
-                "mesh_total_count": 102.47142857142858,
-                "proportion": 0.22047570364174285
+                "count": 22.59246032,
+                "mesh_total_count": 102.47142857,
+                "proportion": 0.2204757
             },
             {
                 "branch_code": "C21",
@@ -490,17 +490,17 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 1.0,
-                "mesh_total_count": 67.25952380952386,
-                "proportion": 0.014867782930369207
+                "mesh_total_count": 67.25952381,
+                "proportion": 0.01486778
             },
             {
                 "branch_code": "C23",
                 "label": "Pathological Conditions, Signs and Symptoms",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 163.9047619047619,
-                "mesh_total_count": 505.75024975024763,
-                "proportion": 0.3240824141672738
+                "count": 163.9047619,
+                "mesh_total_count": 505.75024975,
+                "proportion": 0.32408241
             },
             {
                 "branch_code": "C24",
@@ -508,152 +508,152 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.25,
-                "mesh_total_count": 9.376190476190475,
-                "proportion": 0.02666328085322499
+                "mesh_total_count": 9.37619048,
+                "proportion": 0.02666328
             },
             {
                 "branch_code": "C25",
                 "label": "Chemically-Induced Disorders",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 16.71666666666666,
-                "mesh_total_count": 67.27500000000002,
-                "proportion": 0.2484825963086831
+                "count": 16.71666667,
+                "mesh_total_count": 67.275,
+                "proportion": 0.2484826
             },
             {
                 "branch_code": "C26",
                 "label": "Wounds and Injuries",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 12.283333333333333,
-                "mesh_total_count": 175.3574786324785,
-                "proportion": 0.07004738793648634
+                "count": 12.28333333,
+                "mesh_total_count": 175.35747863,
+                "proportion": 0.07004739
             },
             {
                 "branch_code": "D01",
                 "label": "Inorganic Chemicals",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 71.48333333333336,
-                "mesh_total_count": 430.69523809523633,
-                "proportion": 0.16597196117020174
+                "count": 71.48333333,
+                "mesh_total_count": 430.6952381,
+                "proportion": 0.16597196
             },
             {
                 "branch_code": "D02",
                 "label": "Organic Chemicals",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 336.2901875901864,
-                "mesh_total_count": 1689.3531746031751,
-                "proportion": 0.199064466001421
+                "count": 336.29018759,
+                "mesh_total_count": 1689.3531746,
+                "proportion": 0.19906447
             },
             {
                 "branch_code": "D03",
                 "label": "Heterocyclic Compounds",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 279.7425324675325,
-                "mesh_total_count": 1065.8968253968335,
-                "proportion": 0.2624480398122814
+                "count": 279.74253247,
+                "mesh_total_count": 1065.8968254,
+                "proportion": 0.26244804
             },
             {
                 "branch_code": "D04",
                 "label": "Polycyclic Compounds",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 70.13737373737376,
-                "mesh_total_count": 327.0428571428564,
-                "proportion": 0.2144592740844876
+                "count": 70.13737374,
+                "mesh_total_count": 327.04285714,
+                "proportion": 0.21445927
             },
             {
                 "branch_code": "D05",
                 "label": "Macromolecular Substances",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 1.7261904761904763,
-                "mesh_total_count": 110.70311355311344,
-                "proportion": 0.015592971333749163
+                "count": 1.72619048,
+                "mesh_total_count": 110.70311355,
+                "proportion": 0.01559297
             },
             {
                 "branch_code": "D06",
                 "label": "Hormones, Hormone Substitutes, and Hormone Antagonists",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 16.949999999999996,
-                "mesh_total_count": 125.33636363636369,
-                "proportion": 0.13523609197069694
+                "count": 16.95,
+                "mesh_total_count": 125.33636364,
+                "proportion": 0.13523609
             },
             {
                 "branch_code": "D08",
                 "label": "Enzymes and Coenzymes",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 5.916666666666667,
-                "mesh_total_count": 1419.994993894989,
-                "proportion": 0.00416668135599372
+                "count": 5.91666667,
+                "mesh_total_count": 1419.99499389,
+                "proportion": 0.00416668
             },
             {
                 "branch_code": "D09",
                 "label": "Carbohydrates",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 38.519119769119776,
-                "mesh_total_count": 305.93935786435776,
-                "proportion": 0.1259044277205999
+                "count": 38.51911977,
+                "mesh_total_count": 305.93935786,
+                "proportion": 0.12590443
             },
             {
                 "branch_code": "D10",
                 "label": "Lipids",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 18.549999999999997,
-                "mesh_total_count": 187.35476190476237,
-                "proportion": 0.09901002681442107
+                "count": 18.55,
+                "mesh_total_count": 187.3547619,
+                "proportion": 0.09901003
             },
             {
                 "branch_code": "D12",
                 "label": "Amino Acids, Peptides, and Proteins",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 73.5389610389611,
-                "mesh_total_count": 3322.8336385836587,
-                "proportion": 0.022131400195619398
+                "count": 73.53896104,
+                "mesh_total_count": 3322.83363858,
+                "proportion": 0.0221314
             },
             {
                 "branch_code": "D13",
                 "label": "Nucleic Acids, Nucleotides, and Nucleosides",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 23.845238095238088,
-                "mesh_total_count": 238.78888888888915,
-                "proportion": 0.09985907722169399
+                "count": 23.8452381,
+                "mesh_total_count": 238.78888889,
+                "proportion": 0.09985908
             },
             {
                 "branch_code": "D20",
                 "label": "Complex Mixtures",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 6.477777777777778,
-                "mesh_total_count": 185.56746031746025,
-                "proportion": 0.03490794003806429
+                "count": 6.47777778,
+                "mesh_total_count": 185.56746032,
+                "proportion": 0.03490794
             },
             {
                 "branch_code": "D23",
                 "label": "Biological Factors",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 15.55952380952381,
-                "mesh_total_count": 388.3972943722949,
-                "proportion": 0.040060845003233626
+                "count": 15.55952381,
+                "mesh_total_count": 388.39729437,
+                "proportion": 0.04006085
             },
             {
                 "branch_code": "D25",
                 "label": "Biomedical and Dental Materials",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 0.7023809523809523,
-                "mesh_total_count": 43.760317460317516,
-                "proportion": 0.016050636584569605
+                "count": 0.70238095,
+                "mesh_total_count": 43.76031746,
+                "proportion": 0.01605064
             },
             {
                 "branch_code": "D26",
@@ -661,17 +661,17 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 9.325,
-                "mesh_total_count": 72.38730158730164,
-                "proportion": 0.12882093675993325
+                "mesh_total_count": 72.38730159,
+                "proportion": 0.12882094
             },
             {
                 "branch_code": "D27",
                 "label": "Chemical Actions and Uses",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 31.66666666666666,
-                "mesh_total_count": 629.5730158730149,
-                "proportion": 0.0502986402979092
+                "count": 31.66666667,
+                "mesh_total_count": 629.57301587,
+                "proportion": 0.05029864
             },
             {
                 "branch_code": "E01",
@@ -679,8 +679,8 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 1.4,
-                "mesh_total_count": 484.6124999999983,
-                "proportion": 0.002888906084758451
+                "mesh_total_count": 484.6125,
+                "proportion": 0.00288891
             },
             {
                 "branch_code": "E02",
@@ -688,7 +688,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 510.20476190476006,
+                "mesh_total_count": 510.2047619,
                 "proportion": 0.0
             },
             {
@@ -697,7 +697,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 40.285714285714285,
+                "mesh_total_count": 40.28571429,
                 "proportion": 0.0
             },
             {
@@ -706,7 +706,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 463.43988095237927,
+                "mesh_total_count": 463.43988095,
                 "proportion": 0.0
             },
             {
@@ -714,9 +714,9 @@
                 "label": "Investigative Techniques",
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 735.7540598290635,
-                "proportion": 0.0004530499409147346
+                "count": 0.33333333,
+                "mesh_total_count": 735.75405983,
+                "proportion": 0.00045305
             },
             {
                 "branch_code": "E06",
@@ -724,7 +724,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 143.2833333333333,
+                "mesh_total_count": 143.28333333,
                 "proportion": 0.0
             },
             {
@@ -741,9 +741,9 @@
                 "label": "Behavior and Behavior Mechanisms",
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
-                "count": 6.449999999999998,
-                "mesh_total_count": 424.81785714285564,
-                "proportion": 0.015182977578626184
+                "count": 6.45,
+                "mesh_total_count": 424.81785714,
+                "proportion": 0.01518298
             },
             {
                 "branch_code": "F02",
@@ -751,17 +751,17 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 4.9,
-                "mesh_total_count": 236.98690476190504,
-                "proportion": 0.02067624793413337
+                "mesh_total_count": 236.98690476,
+                "proportion": 0.02067625
             },
             {
                 "branch_code": "F03",
                 "label": "Mental Disorders",
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
-                "count": 44.91904761904762,
-                "mesh_total_count": 163.72936507936512,
-                "proportion": 0.27434936669591214
+                "count": 44.91904762,
+                "mesh_total_count": 163.72936508,
+                "proportion": 0.27434937
             },
             {
                 "branch_code": "F04",
@@ -769,7 +769,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 158.03452380952382,
+                "mesh_total_count": 158.03452381,
                 "proportion": 0.0
             },
             {
@@ -778,26 +778,26 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.45,
-                "mesh_total_count": 166.6880952380952,
-                "proportion": 0.0026996529017697733
+                "mesh_total_count": 166.68809524,
+                "proportion": 0.00269965
             },
             {
                 "branch_code": "G02",
                 "label": "Chemical Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 234.93730158730162,
-                "proportion": 0.001418818259515372
+                "count": 0.33333333,
+                "mesh_total_count": 234.93730159,
+                "proportion": 0.00141882
             },
             {
                 "branch_code": "G03",
                 "label": "Metabolism",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 0.6666666666666666,
-                "mesh_total_count": 89.15714285714283,
-                "proportion": 0.0074774341718741675
+                "count": 0.66666667,
+                "mesh_total_count": 89.15714286,
+                "proportion": 0.00747743
             },
             {
                 "branch_code": "G04",
@@ -805,7 +805,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 125.11349206349205,
+                "mesh_total_count": 125.11349206,
                 "proportion": 0.0
             },
             {
@@ -814,8 +814,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.5,
-                "mesh_total_count": 425.3380952380945,
-                "proportion": 0.0011755354283986988
+                "mesh_total_count": 425.33809524,
+                "proportion": 0.00117554
             },
             {
                 "branch_code": "G06",
@@ -823,7 +823,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 47.61666666666668,
+                "mesh_total_count": 47.61666667,
                 "proportion": 0.0
             },
             {
@@ -831,27 +831,27 @@
                 "label": "Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 1.8333333333333333,
-                "mesh_total_count": 282.8506077256076,
-                "proportion": 0.006481631233091936
+                "count": 1.83333333,
+                "mesh_total_count": 282.85060773,
+                "proportion": 0.00648163
             },
             {
                 "branch_code": "G08",
                 "label": "Reproductive and Urinary Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 0.8333333333333333,
-                "mesh_total_count": 126.92777777777773,
-                "proportion": 0.006565413402197227
+                "count": 0.83333333,
+                "mesh_total_count": 126.92777778,
+                "proportion": 0.00656541
             },
             {
                 "branch_code": "G09",
                 "label": "Circulatory and Respiratory Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 1.3333333333333333,
-                "mesh_total_count": 111.89325396825394,
-                "proportion": 0.011916119033517632
+                "count": 1.33333333,
+                "mesh_total_count": 111.89325397,
+                "proportion": 0.01191612
             },
             {
                 "branch_code": "G10",
@@ -859,7 +859,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 29.88333333333333,
+                "mesh_total_count": 29.88333333,
                 "proportion": 0.0
             },
             {
@@ -867,9 +867,9 @@
                 "label": "Musculoskeletal and Neural Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 4.8500000000000005,
-                "mesh_total_count": 119.68095238095233,
-                "proportion": 0.040524410138065514
+                "count": 4.85,
+                "mesh_total_count": 119.68095238,
+                "proportion": 0.04052441
             },
             {
                 "branch_code": "G12",
@@ -877,8 +877,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.5,
-                "mesh_total_count": 92.02738095238098,
-                "proportion": 0.005433165595125673
+                "mesh_total_count": 92.02738095,
+                "proportion": 0.00543317
             },
             {
                 "branch_code": "G13",
@@ -886,7 +886,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 6.8999999999999995,
+                "mesh_total_count": 6.9,
                 "proportion": 0.0
             },
             {
@@ -895,7 +895,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 20.483333333333327,
+                "mesh_total_count": 20.48333333,
                 "proportion": 0.0
             },
             {
@@ -904,7 +904,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 22.469047619047622,
+                "mesh_total_count": 22.46904762,
                 "proportion": 0.0
             },
             {
@@ -913,7 +913,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 101.09761904761893,
+                "mesh_total_count": 101.09761905,
                 "proportion": 0.0
             },
             {
@@ -922,7 +922,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 31.79047619047618,
+                "mesh_total_count": 31.79047619,
                 "proportion": 0.0
             },
             {
@@ -931,7 +931,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 182.40714285714284,
+                "mesh_total_count": 182.40714286,
                 "proportion": 0.0
             },
             {
@@ -940,7 +940,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 190.4869047619048,
+                "mesh_total_count": 190.48690476,
                 "proportion": 0.0
             },
             {
@@ -949,7 +949,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 353.1107142857143,
+                "mesh_total_count": 353.11071429,
                 "proportion": 0.0
             },
             {
@@ -958,7 +958,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.91666666666669,
+                "mesh_total_count": 84.91666667,
                 "proportion": 0.0
             },
             {
@@ -967,7 +967,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.10000000000002,
+                "mesh_total_count": 84.1,
                 "proportion": 0.0
             },
             {
@@ -975,18 +975,18 @@
                 "label": "Technology, Industry, and Agriculture",
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
-                "count": 0.7023809523809523,
-                "mesh_total_count": 271.3793650793651,
-                "proportion": 0.002588188502009136
+                "count": 0.70238095,
+                "mesh_total_count": 271.37936508,
+                "proportion": 0.00258819
             },
             {
                 "branch_code": "J02",
                 "label": "Food and Beverages",
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 60.36449661449674,
-                "proportion": 0.0055220096584601055
+                "count": 0.33333333,
+                "mesh_total_count": 60.36449661,
+                "proportion": 0.00552201
             },
             {
                 "branch_code": "J03",
@@ -994,7 +994,7 @@
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
                 "count": 0.0,
-                "mesh_total_count": 38.86666666666666,
+                "mesh_total_count": 38.86666667,
                 "proportion": 0.0
             },
             {
@@ -1003,7 +1003,7 @@
                 "treetop": "K",
                 "treetop_name": "Humanities",
                 "count": 0.0,
-                "mesh_total_count": 151.61666666666667,
+                "mesh_total_count": 151.61666667,
                 "proportion": 0.0
             },
             {
@@ -1012,7 +1012,7 @@
                 "treetop": "L",
                 "treetop_name": "Information Science",
                 "count": 0.0,
-                "mesh_total_count": 386.6392857142848,
+                "mesh_total_count": 386.63928571,
                 "proportion": 0.0
             },
             {
@@ -1021,7 +1021,7 @@
                 "treetop": "M",
                 "treetop_name": "Persons",
                 "count": 0.0,
-                "mesh_total_count": 291.7750000000001,
+                "mesh_total_count": 291.775,
                 "proportion": 0.0
             },
             {
@@ -1030,7 +1030,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 76.11904761904766,
+                "mesh_total_count": 76.11904762,
                 "proportion": 0.0
             },
             {
@@ -1039,7 +1039,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 352.69285714285695,
+                "mesh_total_count": 352.69285714,
                 "proportion": 0.0
             },
             {
@@ -1048,7 +1048,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 310.31904761904786,
+                "mesh_total_count": 310.31904762,
                 "proportion": 0.0
             },
             {
@@ -1057,7 +1057,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 239.26190476190493,
+                "mesh_total_count": 239.26190476,
                 "proportion": 0.0
             },
             {
@@ -1066,7 +1066,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 166.75412087912076,
+                "mesh_total_count": 166.75412088,
                 "proportion": 0.0
             },
             {
@@ -1074,9 +1074,9 @@
                 "label": "Environment and Public Health",
                 "treetop": "N",
                 "treetop_name": "Health Care",
-                "count": 1.1666666666666665,
-                "mesh_total_count": 329.5862637362631,
-                "proportion": 0.0035397915357305064
+                "count": 1.16666667,
+                "mesh_total_count": 329.58626374,
+                "proportion": 0.00353979
             },
             {
                 "branch_code": "V01",
@@ -1093,7 +1093,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 135.91666666666663,
+                "mesh_total_count": 135.91666667,
                 "proportion": 0.0
             },
             {
@@ -1102,7 +1102,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 30.083333333333336,
+                "mesh_total_count": 30.08333333,
                 "proportion": 0.0
             },
             {
@@ -1128,79 +1128,79 @@
             {
                 "depth": 1,
                 "count": 11.0,
-                "mesh_total_count": 112.33333333333334,
-                "proportion": 0.09792284866468842
+                "mesh_total_count": 112.33333333,
+                "proportion": 0.09792285
             },
             {
                 "depth": 2,
-                "count": 85.38333333333335,
-                "mesh_total_count": 1580.5309523809503,
-                "proportion": 0.05402193054473867
+                "count": 85.38333333,
+                "mesh_total_count": 1580.53095238,
+                "proportion": 0.05402193
             },
             {
                 "depth": 3,
-                "count": 345.6568181818178,
-                "mesh_total_count": 4893.806382506359,
-                "proportion": 0.07063148624298249
+                "count": 345.65681818,
+                "mesh_total_count": 4893.80638251,
+                "proportion": 0.07063149
             },
             {
                 "depth": 4,
-                "count": 547.7444444444434,
-                "mesh_total_count": 7285.63198868085,
-                "proportion": 0.07518145924683454
+                "count": 547.74444444,
+                "mesh_total_count": 7285.63198868,
+                "proportion": 0.07518146
             },
             {
                 "depth": 5,
-                "count": 534.4590187590171,
-                "mesh_total_count": 6837.7291528728665,
-                "proportion": 0.07816323326209325
+                "count": 534.45901876,
+                "mesh_total_count": 6837.72915287,
+                "proportion": 0.07816323
             },
             {
                 "depth": 6,
-                "count": 287.8837301587297,
-                "mesh_total_count": 4604.310868135073,
-                "proportion": 0.06252482475739826
+                "count": 287.88373016,
+                "mesh_total_count": 4604.31086814,
+                "proportion": 0.06252482
             },
             {
                 "depth": 7,
-                "count": 154.75537518037513,
-                "mesh_total_count": 2562.1414236906867,
-                "proportion": 0.06040079355083168
+                "count": 154.75537518,
+                "mesh_total_count": 2562.14142369,
+                "proportion": 0.06040079
             },
             {
                 "depth": 8,
-                "count": 54.439754689754736,
-                "mesh_total_count": 1729.6726624682353,
-                "proportion": 0.031474021571266234
+                "count": 54.43975469,
+                "mesh_total_count": 1729.67266247,
+                "proportion": 0.03147402
             },
             {
                 "depth": 9,
-                "count": 25.077525252525238,
-                "mesh_total_count": 927.6063311688379,
-                "proportion": 0.027034663746770788
+                "count": 25.07752525,
+                "mesh_total_count": 927.60633117,
+                "proportion": 0.02703466
             },
             {
                 "depth": 10,
-                "count": 6.566666666666666,
-                "mesh_total_count": 422.96071428571355,
-                "proportion": 0.015525476586534293
+                "count": 6.56666667,
+                "mesh_total_count": 422.96071429,
+                "proportion": 0.01552548
             },
             {
                 "depth": 11,
-                "count": 1.0333333333333332,
-                "mesh_total_count": 72.90952380952382,
-                "proportion": 0.014172816929005287
+                "count": 1.03333333,
+                "mesh_total_count": 72.90952381,
+                "proportion": 0.01417282
             },
             {
                 "depth": 12,
                 "count": 0.0,
-                "mesh_total_count": 56.03333333333335,
+                "mesh_total_count": 56.03333333,
                 "proportion": 0.0
             },
             {
                 "depth": 13,
                 "count": 0.0,
-                "mesh_total_count": 22.333333333333332,
+                "mesh_total_count": 22.33333333,
                 "proportion": 0.0
             }
         ]
@@ -1209,15 +1209,15 @@
         "n_input_ids": 664,
         "n_missing_ids": 9,
         "missing_ids": [
-            "C538392",
-            "C538219",
-            "C531652",
-            "C538138",
-            "C535804",
-            "C531610",
             "C531603",
-            "C538554",
-            "C537666"
+            "C531610",
+            "C531652",
+            "C535804",
+            "C537666",
+            "C538138",
+            "C538219",
+            "C538392",
+            "C538554"
         ],
         "high_level_counts": [
             {
@@ -1226,8 +1226,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 6.5,
-                "mesh_total_count": 85.16666666666667,
-                "proportion": 0.07632093933463796
+                "mesh_total_count": 85.16666667,
+                "proportion": 0.07632094
             },
             {
                 "branch_code": "A02",
@@ -1235,8 +1235,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 1.0,
-                "mesh_total_count": 183.79761904761904,
-                "proportion": 0.005440766889047218
+                "mesh_total_count": 183.79761905,
+                "proportion": 0.00544077
             },
             {
                 "branch_code": "A03",
@@ -1244,7 +1244,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 54.411904761904815,
+                "mesh_total_count": 54.41190476,
                 "proportion": 0.0
             },
             {
@@ -1253,7 +1253,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.169047619047618,
+                "mesh_total_count": 29.16904762,
                 "proportion": 0.0
             },
             {
@@ -1262,8 +1262,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.5,
-                "mesh_total_count": 59.4166666666667,
-                "proportion": 0.008415147265077133
+                "mesh_total_count": 59.41666667,
+                "proportion": 0.00841515
             },
             {
                 "branch_code": "A06",
@@ -1271,7 +1271,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.38095238095236,
+                "mesh_total_count": 29.38095238,
                 "proportion": 0.0
             },
             {
@@ -1280,7 +1280,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 120.58333333333331,
+                "mesh_total_count": 120.58333333,
                 "proportion": 0.0
             },
             {
@@ -1289,7 +1289,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 337.5634920634919,
+                "mesh_total_count": 337.56349206,
                 "proportion": 0.0
             },
             {
@@ -1298,8 +1298,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 2.0,
-                "mesh_total_count": 83.0047619047619,
-                "proportion": 0.02409500315529803
+                "mesh_total_count": 83.0047619,
+                "proportion": 0.024095
             },
             {
                 "branch_code": "A10",
@@ -1307,17 +1307,17 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 1.0,
-                "mesh_total_count": 93.63492063492065,
-                "proportion": 0.010679776233259873
+                "mesh_total_count": 93.63492063,
+                "proportion": 0.01067978
             },
             {
                 "branch_code": "A11",
                 "label": "Cells",
                 "treetop": "A",
                 "treetop_name": "Anatomy",
-                "count": 1.3333333333333333,
-                "mesh_total_count": 414.44126984126945,
-                "proportion": 0.003217182820243743
+                "count": 1.33333333,
+                "mesh_total_count": 414.44126984,
+                "proportion": 0.00321718
             },
             {
                 "branch_code": "A12",
@@ -1325,7 +1325,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 50.46783216783219,
+                "mesh_total_count": 50.46783217,
                 "proportion": 0.0
             },
             {
@@ -1334,7 +1334,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 59.80952380952381,
+                "mesh_total_count": 59.80952381,
                 "proportion": 0.0
             },
             {
@@ -1343,8 +1343,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.5,
-                "mesh_total_count": 55.91666666666669,
-                "proportion": 0.008941877794336807
+                "mesh_total_count": 55.91666667,
+                "proportion": 0.00894188
             },
             {
                 "branch_code": "A15",
@@ -1352,8 +1352,8 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 1.0,
-                "mesh_total_count": 56.431746031746115,
-                "proportion": 0.017720522052205194
+                "mesh_total_count": 56.43174603,
+                "proportion": 0.01772052
             },
             {
                 "branch_code": "A16",
@@ -1361,7 +1361,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 52.33333333333334,
+                "mesh_total_count": 52.33333333,
                 "proportion": 0.0
             },
             {
@@ -1369,9 +1369,9 @@
                 "label": "Integumentary System",
                 "treetop": "A",
                 "treetop_name": "Anatomy",
-                "count": 0.3333333333333333,
+                "count": 0.33333333,
                 "mesh_total_count": 11.5,
-                "proportion": 0.02898550724637681
+                "proportion": 0.02898551
             },
             {
                 "branch_code": "A18",
@@ -1379,7 +1379,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 33.72619047619048,
+                "mesh_total_count": 33.72619048,
                 "proportion": 0.0
             },
             {
@@ -1388,7 +1388,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 6.583333333333333,
+                "mesh_total_count": 6.58333333,
                 "proportion": 0.0
             },
             {
@@ -1415,7 +1415,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 2445.785714285725,
+                "mesh_total_count": 2445.78571429,
                 "proportion": 0.0
             },
             {
@@ -1433,7 +1433,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 856.8333333333385,
+                "mesh_total_count": 856.83333333,
                 "proportion": 0.0
             },
             {
@@ -1451,7 +1451,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 29.166666666666668,
+                "mesh_total_count": 29.16666667,
                 "proportion": 0.0
             },
             {
@@ -1459,153 +1459,153 @@
                 "label": "Infections",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 14.280952380952373,
-                "mesh_total_count": 558.3756493506481,
-                "proportion": 0.025575886766480815
+                "count": 14.28095238,
+                "mesh_total_count": 558.37564935,
+                "proportion": 0.02557589
             },
             {
                 "branch_code": "C04",
                 "label": "Neoplasms",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 74.99089105339112,
-                "mesh_total_count": 446.08064574314494,
-                "proportion": 0.16811061356060533
+                "count": 74.99089105,
+                "mesh_total_count": 446.08064574,
+                "proportion": 0.16811061
             },
             {
                 "branch_code": "C05",
                 "label": "Musculoskeletal Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 33.132178932178945,
-                "mesh_total_count": 220.05721500721504,
-                "proportion": 0.15056165702675386
+                "count": 33.13217893,
+                "mesh_total_count": 220.05721501,
+                "proportion": 0.15056166
             },
             {
                 "branch_code": "C06",
                 "label": "Digestive System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 18.754040404040403,
-                "mesh_total_count": 220.5949134199133,
-                "proportion": 0.08501574271724553
+                "count": 18.7540404,
+                "mesh_total_count": 220.59491342,
+                "proportion": 0.08501574
             },
             {
                 "branch_code": "C07",
                 "label": "Stomatognathic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 12.694444444444441,
-                "mesh_total_count": 145.7503968253968,
-                "proportion": 0.08709715184962331
+                "count": 12.69444444,
+                "mesh_total_count": 145.75039683,
+                "proportion": 0.08709715
             },
             {
                 "branch_code": "C08",
                 "label": "Respiratory Tract Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 2.5833333333333335,
-                "mesh_total_count": 142.7468253968254,
-                "proportion": 0.018097308477101764
+                "count": 2.58333333,
+                "mesh_total_count": 142.7468254,
+                "proportion": 0.01809731
             },
             {
                 "branch_code": "C09",
                 "label": "Otorhinolaryngologic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 5.499999999999999,
-                "mesh_total_count": 55.33422035480867,
-                "proportion": 0.09939599699306212
+                "count": 5.5,
+                "mesh_total_count": 55.33422035,
+                "proportion": 0.099396
             },
             {
                 "branch_code": "C10",
                 "label": "Nervous System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 64.17253996004007,
-                "mesh_total_count": 465.0934429132948,
-                "proportion": 0.13797773530856564
+                "count": 64.17253996,
+                "mesh_total_count": 465.09344291,
+                "proportion": 0.13797774
             },
             {
                 "branch_code": "C11",
                 "label": "Eye Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 27.298015873015864,
-                "mesh_total_count": 169.27408963585412,
-                "proportion": 0.16126517609245403
+                "count": 27.29801587,
+                "mesh_total_count": 169.27408964,
+                "proportion": 0.16126518
             },
             {
                 "branch_code": "C12",
                 "label": "Urogenital Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 31.03603618603616,
-                "mesh_total_count": 303.65659046835384,
-                "proportion": 0.10220768183613864
+                "count": 31.03603619,
+                "mesh_total_count": 303.65659047,
+                "proportion": 0.10220768
             },
             {
                 "branch_code": "C14",
                 "label": "Cardiovascular Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 23.866341991341987,
-                "mesh_total_count": 294.16897824397785,
-                "proportion": 0.08113140322888746
+                "count": 23.86634199,
+                "mesh_total_count": 294.16897824,
+                "proportion": 0.0811314
             },
             {
                 "branch_code": "C15",
                 "label": "Hemic and Lymphatic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 29.944877344877334,
-                "mesh_total_count": 173.87189754689757,
-                "proportion": 0.17222379100567678
+                "count": 29.94487734,
+                "mesh_total_count": 173.87189755,
+                "proportion": 0.17222379
             },
             {
                 "branch_code": "C16",
                 "label": "Congenital, Hereditary, and Neonatal Diseases and Abnormalities",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 67.14517843267858,
-                "mesh_total_count": 299.7472844965473,
-                "proportion": 0.22400596070604936
+                "count": 67.14517843,
+                "mesh_total_count": 299.7472845,
+                "proportion": 0.22400596
             },
             {
                 "branch_code": "C17",
                 "label": "Skin and Connective Tissue Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 25.152813852813846,
-                "mesh_total_count": 221.63062770562723,
-                "proportion": 0.11348979206169171
+                "count": 25.15281385,
+                "mesh_total_count": 221.63062771,
+                "proportion": 0.11348979
             },
             {
                 "branch_code": "C18",
                 "label": "Nutritional and Metabolic Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 41.325231712731714,
-                "mesh_total_count": 194.4532110862991,
-                "proportion": 0.21252018149698446
+                "count": 41.32523171,
+                "mesh_total_count": 194.45321109,
+                "proportion": 0.21252018
             },
             {
                 "branch_code": "C19",
                 "label": "Endocrine System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 18.99733044733044,
-                "mesh_total_count": 78.9249342161108,
-                "proportion": 0.24070125158815212
+                "count": 18.99733045,
+                "mesh_total_count": 78.92493422,
+                "proportion": 0.24070125
             },
             {
                 "branch_code": "C20",
                 "label": "Immune System Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 13.190079365079361,
-                "mesh_total_count": 102.47142857142858,
-                "proportion": 0.12871958114534438
+                "count": 13.19007937,
+                "mesh_total_count": 102.47142857,
+                "proportion": 0.12871958
             },
             {
                 "branch_code": "C21",
@@ -1622,7 +1622,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 67.25952380952386,
+                "mesh_total_count": 67.25952381,
                 "proportion": 0.0
             },
             {
@@ -1630,27 +1630,27 @@
                 "label": "Pathological Conditions, Signs and Symptoms",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 56.850000000000016,
-                "mesh_total_count": 505.75024975024763,
-                "proportion": 0.11240726035839625
+                "count": 56.85,
+                "mesh_total_count": 505.75024975,
+                "proportion": 0.11240726
             },
             {
                 "branch_code": "C24",
                 "label": "Occupational Diseases",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 9.376190476190475,
-                "proportion": 0.03555104113763332
+                "count": 0.33333333,
+                "mesh_total_count": 9.37619048,
+                "proportion": 0.03555104
             },
             {
                 "branch_code": "C25",
                 "label": "Chemically-Induced Disorders",
                 "treetop": "C",
                 "treetop_name": "Diseases",
-                "count": 1.2333333333333332,
-                "mesh_total_count": 67.27500000000002,
-                "proportion": 0.01833271398488789
+                "count": 1.23333333,
+                "mesh_total_count": 67.275,
+                "proportion": 0.01833271
             },
             {
                 "branch_code": "C26",
@@ -1658,8 +1658,8 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 3.0,
-                "mesh_total_count": 175.3574786324785,
-                "proportion": 0.017107910215152698
+                "mesh_total_count": 175.35747863,
+                "proportion": 0.01710791
             },
             {
                 "branch_code": "D01",
@@ -1667,8 +1667,8 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 1.0,
-                "mesh_total_count": 430.69523809523633,
-                "proportion": 0.0023218273887181395
+                "mesh_total_count": 430.6952381,
+                "proportion": 0.00232183
             },
             {
                 "branch_code": "D02",
@@ -1676,7 +1676,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 1689.3531746031751,
+                "mesh_total_count": 1689.3531746,
                 "proportion": 0.0
             },
             {
@@ -1685,7 +1685,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 1065.8968253968335,
+                "mesh_total_count": 1065.8968254,
                 "proportion": 0.0
             },
             {
@@ -1694,7 +1694,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 327.0428571428564,
+                "mesh_total_count": 327.04285714,
                 "proportion": 0.0
             },
             {
@@ -1703,7 +1703,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 110.70311355311344,
+                "mesh_total_count": 110.70311355,
                 "proportion": 0.0
             },
             {
@@ -1712,7 +1712,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 125.33636363636369,
+                "mesh_total_count": 125.33636364,
                 "proportion": 0.0
             },
             {
@@ -1721,26 +1721,26 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 2.0,
-                "mesh_total_count": 1419.994993894989,
-                "proportion": 0.00140845566963168
+                "mesh_total_count": 1419.99499389,
+                "proportion": 0.00140846
             },
             {
                 "branch_code": "D09",
                 "label": "Carbohydrates",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 305.93935786435776,
-                "proportion": 0.0010895405405182326
+                "count": 0.33333333,
+                "mesh_total_count": 305.93935786,
+                "proportion": 0.00108954
             },
             {
                 "branch_code": "D10",
                 "label": "Lipids",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 0.6666666666666666,
-                "mesh_total_count": 187.35476190476237,
-                "proportion": 0.00355831183519932
+                "count": 0.66666667,
+                "mesh_total_count": 187.3547619,
+                "proportion": 0.00355831
             },
             {
                 "branch_code": "D12",
@@ -1748,7 +1748,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 3322.8336385836587,
+                "mesh_total_count": 3322.83363858,
                 "proportion": 0.0
             },
             {
@@ -1757,7 +1757,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 238.78888888888915,
+                "mesh_total_count": 238.78888889,
                 "proportion": 0.0
             },
             {
@@ -1766,7 +1766,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 185.56746031746025,
+                "mesh_total_count": 185.56746032,
                 "proportion": 0.0
             },
             {
@@ -1775,7 +1775,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 388.3972943722949,
+                "mesh_total_count": 388.39729437,
                 "proportion": 0.0
             },
             {
@@ -1784,7 +1784,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 43.760317460317516,
+                "mesh_total_count": 43.76031746,
                 "proportion": 0.0
             },
             {
@@ -1793,7 +1793,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 72.38730158730164,
+                "mesh_total_count": 72.38730159,
                 "proportion": 0.0
             },
             {
@@ -1802,7 +1802,7 @@
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
                 "count": 0.0,
-                "mesh_total_count": 629.5730158730149,
+                "mesh_total_count": 629.57301587,
                 "proportion": 0.0
             },
             {
@@ -1810,9 +1810,9 @@
                 "label": "Diagnosis",
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
-                "count": 1.0666666666666667,
-                "mesh_total_count": 484.6124999999983,
-                "proportion": 0.0022010713026731055
+                "count": 1.06666667,
+                "mesh_total_count": 484.6125,
+                "proportion": 0.00220107
             },
             {
                 "branch_code": "E02",
@@ -1820,7 +1820,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 510.20476190476006,
+                "mesh_total_count": 510.2047619,
                 "proportion": 0.0
             },
             {
@@ -1829,7 +1829,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 40.285714285714285,
+                "mesh_total_count": 40.28571429,
                 "proportion": 0.0
             },
             {
@@ -1838,7 +1838,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 463.43988095237927,
+                "mesh_total_count": 463.43988095,
                 "proportion": 0.0
             },
             {
@@ -1847,7 +1847,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 735.7540598290635,
+                "mesh_total_count": 735.75405983,
                 "proportion": 0.0
             },
             {
@@ -1856,7 +1856,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 143.2833333333333,
+                "mesh_total_count": 143.28333333,
                 "proportion": 0.0
             },
             {
@@ -1873,9 +1873,9 @@
                 "label": "Behavior and Behavior Mechanisms",
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
-                "count": 0.5833333333333333,
-                "mesh_total_count": 424.81785714285564,
-                "proportion": 0.0013731375071108953
+                "count": 0.58333333,
+                "mesh_total_count": 424.81785714,
+                "proportion": 0.00137314
             },
             {
                 "branch_code": "F02",
@@ -1883,17 +1883,17 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.5,
-                "mesh_total_count": 236.98690476190504,
-                "proportion": 0.002109821217768711
+                "mesh_total_count": 236.98690476,
+                "proportion": 0.00210982
             },
             {
                 "branch_code": "F03",
                 "label": "Mental Disorders",
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
-                "count": 13.56904761904762,
-                "mesh_total_count": 163.72936507936512,
-                "proportion": 0.08287485639775276
+                "count": 13.56904762,
+                "mesh_total_count": 163.72936508,
+                "proportion": 0.08287486
             },
             {
                 "branch_code": "F04",
@@ -1901,7 +1901,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 158.03452380952382,
+                "mesh_total_count": 158.03452381,
                 "proportion": 0.0
             },
             {
@@ -1910,8 +1910,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.25,
-                "mesh_total_count": 166.6880952380952,
-                "proportion": 0.001499807167649874
+                "mesh_total_count": 166.68809524,
+                "proportion": 0.00149981
             },
             {
                 "branch_code": "G02",
@@ -1919,7 +1919,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 234.93730158730162,
+                "mesh_total_count": 234.93730159,
                 "proportion": 0.0
             },
             {
@@ -1928,7 +1928,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 89.15714285714283,
+                "mesh_total_count": 89.15714286,
                 "proportion": 0.0
             },
             {
@@ -1937,7 +1937,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 125.11349206349205,
+                "mesh_total_count": 125.11349206,
                 "proportion": 0.0
             },
             {
@@ -1946,8 +1946,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 5.35,
-                "mesh_total_count": 425.3380952380945,
-                "proportion": 0.012578229083866077
+                "mesh_total_count": 425.33809524,
+                "proportion": 0.01257823
             },
             {
                 "branch_code": "G06",
@@ -1955,7 +1955,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 47.61666666666668,
+                "mesh_total_count": 47.61666667,
                 "proportion": 0.0
             },
             {
@@ -1964,7 +1964,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 282.8506077256076,
+                "mesh_total_count": 282.85060773,
                 "proportion": 0.0
             },
             {
@@ -1973,7 +1973,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 126.92777777777773,
+                "mesh_total_count": 126.92777778,
                 "proportion": 0.0
             },
             {
@@ -1982,7 +1982,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 111.89325396825394,
+                "mesh_total_count": 111.89325397,
                 "proportion": 0.0
             },
             {
@@ -1991,7 +1991,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 29.88333333333333,
+                "mesh_total_count": 29.88333333,
                 "proportion": 0.0
             },
             {
@@ -1999,9 +1999,9 @@
                 "label": "Musculoskeletal and Neural Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 1.0333333333333332,
-                "mesh_total_count": 119.68095238095233,
-                "proportion": 0.008634066764811207
+                "count": 1.03333333,
+                "mesh_total_count": 119.68095238,
+                "proportion": 0.00863407
             },
             {
                 "branch_code": "G12",
@@ -2009,8 +2009,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.5,
-                "mesh_total_count": 92.02738095238098,
-                "proportion": 0.005433165595125673
+                "mesh_total_count": 92.02738095,
+                "proportion": 0.00543317
             },
             {
                 "branch_code": "G13",
@@ -2018,7 +2018,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 6.8999999999999995,
+                "mesh_total_count": 6.9,
                 "proportion": 0.0
             },
             {
@@ -2027,7 +2027,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 20.483333333333327,
+                "mesh_total_count": 20.48333333,
                 "proportion": 0.0
             },
             {
@@ -2036,7 +2036,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 22.469047619047622,
+                "mesh_total_count": 22.46904762,
                 "proportion": 0.0
             },
             {
@@ -2045,7 +2045,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 101.09761904761893,
+                "mesh_total_count": 101.09761905,
                 "proportion": 0.0
             },
             {
@@ -2054,7 +2054,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 31.79047619047618,
+                "mesh_total_count": 31.79047619,
                 "proportion": 0.0
             },
             {
@@ -2063,7 +2063,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 182.40714285714284,
+                "mesh_total_count": 182.40714286,
                 "proportion": 0.0
             },
             {
@@ -2072,7 +2072,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 190.4869047619048,
+                "mesh_total_count": 190.48690476,
                 "proportion": 0.0
             },
             {
@@ -2081,7 +2081,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 353.1107142857143,
+                "mesh_total_count": 353.11071429,
                 "proportion": 0.0
             },
             {
@@ -2090,7 +2090,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.91666666666669,
+                "mesh_total_count": 84.91666667,
                 "proportion": 0.0
             },
             {
@@ -2099,7 +2099,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.10000000000002,
+                "mesh_total_count": 84.1,
                 "proportion": 0.0
             },
             {
@@ -2108,7 +2108,7 @@
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
                 "count": 0.0,
-                "mesh_total_count": 271.3793650793651,
+                "mesh_total_count": 271.37936508,
                 "proportion": 0.0
             },
             {
@@ -2117,7 +2117,7 @@
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
                 "count": 0.0,
-                "mesh_total_count": 60.36449661449674,
+                "mesh_total_count": 60.36449661,
                 "proportion": 0.0
             },
             {
@@ -2126,7 +2126,7 @@
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
                 "count": 0.0,
-                "mesh_total_count": 38.86666666666666,
+                "mesh_total_count": 38.86666667,
                 "proportion": 0.0
             },
             {
@@ -2135,7 +2135,7 @@
                 "treetop": "K",
                 "treetop_name": "Humanities",
                 "count": 0.0,
-                "mesh_total_count": 151.61666666666667,
+                "mesh_total_count": 151.61666667,
                 "proportion": 0.0
             },
             {
@@ -2144,7 +2144,7 @@
                 "treetop": "L",
                 "treetop_name": "Information Science",
                 "count": 0.0,
-                "mesh_total_count": 386.6392857142848,
+                "mesh_total_count": 386.63928571,
                 "proportion": 0.0
             },
             {
@@ -2153,7 +2153,7 @@
                 "treetop": "M",
                 "treetop_name": "Persons",
                 "count": 0.0,
-                "mesh_total_count": 291.7750000000001,
+                "mesh_total_count": 291.775,
                 "proportion": 0.0
             },
             {
@@ -2162,7 +2162,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 76.11904761904766,
+                "mesh_total_count": 76.11904762,
                 "proportion": 0.0
             },
             {
@@ -2171,7 +2171,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 352.69285714285695,
+                "mesh_total_count": 352.69285714,
                 "proportion": 0.0
             },
             {
@@ -2180,7 +2180,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 310.31904761904786,
+                "mesh_total_count": 310.31904762,
                 "proportion": 0.0
             },
             {
@@ -2189,7 +2189,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 239.26190476190493,
+                "mesh_total_count": 239.26190476,
                 "proportion": 0.0
             },
             {
@@ -2198,7 +2198,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 166.75412087912076,
+                "mesh_total_count": 166.75412088,
                 "proportion": 0.0
             },
             {
@@ -2207,8 +2207,8 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.5,
-                "mesh_total_count": 329.5862637362631,
-                "proportion": 0.0015170535153130743
+                "mesh_total_count": 329.58626374,
+                "proportion": 0.00151705
             },
             {
                 "branch_code": "V01",
@@ -2225,7 +2225,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 135.91666666666663,
+                "mesh_total_count": 135.91666667,
                 "proportion": 0.0
             },
             {
@@ -2234,7 +2234,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 30.083333333333336,
+                "mesh_total_count": 30.08333333,
                 "proportion": 0.0
             },
             {
@@ -2260,79 +2260,79 @@
             {
                 "depth": 1,
                 "count": 10.0,
-                "mesh_total_count": 112.33333333333334,
-                "proportion": 0.08902077151335311
+                "mesh_total_count": 112.33333333,
+                "proportion": 0.08902077
             },
             {
                 "depth": 2,
                 "count": 38.25,
-                "mesh_total_count": 1580.5309523809503,
-                "proportion": 0.02420072820616342
+                "mesh_total_count": 1580.53095238,
+                "proportion": 0.02420073
             },
             {
                 "depth": 3,
-                "count": 160.930241980242,
-                "mesh_total_count": 4893.806382506359,
-                "proportion": 0.03288447261737022
+                "count": 160.93024198,
+                "mesh_total_count": 4893.80638251,
+                "proportion": 0.03288447
             },
             {
                 "depth": 4,
-                "count": 174.5710109335109,
-                "mesh_total_count": 7285.63198868085,
-                "proportion": 0.023960997646426424
+                "count": 174.57101093,
+                "mesh_total_count": 7285.63198868,
+                "proportion": 0.023961
             },
             {
                 "depth": 5,
-                "count": 126.15758824508836,
-                "mesh_total_count": 6837.7291528728665,
-                "proportion": 0.018450217232146925
+                "count": 126.15758825,
+                "mesh_total_count": 6837.72915287,
+                "proportion": 0.01845022
             },
             {
                 "depth": 6,
-                "count": 61.074968087468235,
-                "mesh_total_count": 4604.310868135073,
-                "proportion": 0.01326473599125291
+                "count": 61.07496809,
+                "mesh_total_count": 4604.31086814,
+                "proportion": 0.01326474
             },
             {
                 "depth": 7,
-                "count": 26.93083721833721,
-                "mesh_total_count": 2562.1414236906867,
-                "proportion": 0.010511065848794623
+                "count": 26.93083722,
+                "mesh_total_count": 2562.14142369,
+                "proportion": 0.01051107
             },
             {
                 "depth": 8,
-                "count": 7.196464646464644,
-                "mesh_total_count": 1729.6726624682353,
-                "proportion": 0.004160593390078398
+                "count": 7.19646465,
+                "mesh_total_count": 1729.67266247,
+                "proportion": 0.00416059
             },
             {
                 "depth": 9,
-                "count": 1.7777777777777781,
-                "mesh_total_count": 927.6063311688379,
-                "proportion": 0.0019165218240130755
+                "count": 1.77777778,
+                "mesh_total_count": 927.60633117,
+                "proportion": 0.00191652
             },
             {
                 "depth": 10,
-                "count": 0.1111111111111111,
-                "mesh_total_count": 422.96071428571355,
-                "proportion": 0.00026269841939990344
+                "count": 0.11111111,
+                "mesh_total_count": 422.96071429,
+                "proportion": 0.0002627
             },
             {
                 "depth": 11,
                 "count": 0.0,
-                "mesh_total_count": 72.90952380952382,
+                "mesh_total_count": 72.90952381,
                 "proportion": 0.0
             },
             {
                 "depth": 12,
                 "count": 0.0,
-                "mesh_total_count": 56.03333333333335,
+                "mesh_total_count": 56.03333333,
                 "proportion": 0.0
             },
             {
                 "depth": 13,
                 "count": 0.0,
-                "mesh_total_count": 22.333333333333332,
+                "mesh_total_count": 22.33333333,
                 "proportion": 0.0
             }
         ]
@@ -2341,21 +2341,21 @@
         "n_input_ids": 1850,
         "n_missing_ids": 15,
         "missing_ids": [
-            "C490728",
-            "C059514",
-            "C419708",
-            "C067134",
-            "C056507",
-            "C015329",
-            "C011991",
-            "C004322",
-            "C551994",
-            "C522924",
-            "C061870",
             "C000603933",
-            "C089032",
+            "C000612088",
+            "C004322",
+            "C011991",
+            "C015329",
             "C016679",
-            "C000612088"
+            "C056507",
+            "C059514",
+            "C061870",
+            "C067134",
+            "C089032",
+            "C419708",
+            "C490728",
+            "C522924",
+            "C551994"
         ],
         "high_level_counts": [
             {
@@ -2364,7 +2364,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 85.16666666666667,
+                "mesh_total_count": 85.16666667,
                 "proportion": 0.0
             },
             {
@@ -2373,7 +2373,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 183.79761904761904,
+                "mesh_total_count": 183.79761905,
                 "proportion": 0.0
             },
             {
@@ -2382,7 +2382,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 54.411904761904815,
+                "mesh_total_count": 54.41190476,
                 "proportion": 0.0
             },
             {
@@ -2391,7 +2391,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.169047619047618,
+                "mesh_total_count": 29.16904762,
                 "proportion": 0.0
             },
             {
@@ -2400,7 +2400,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 59.4166666666667,
+                "mesh_total_count": 59.41666667,
                 "proportion": 0.0
             },
             {
@@ -2409,7 +2409,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 29.38095238095236,
+                "mesh_total_count": 29.38095238,
                 "proportion": 0.0
             },
             {
@@ -2418,7 +2418,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 120.58333333333331,
+                "mesh_total_count": 120.58333333,
                 "proportion": 0.0
             },
             {
@@ -2427,7 +2427,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 337.5634920634919,
+                "mesh_total_count": 337.56349206,
                 "proportion": 0.0
             },
             {
@@ -2436,7 +2436,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 83.0047619047619,
+                "mesh_total_count": 83.0047619,
                 "proportion": 0.0
             },
             {
@@ -2445,7 +2445,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 93.63492063492065,
+                "mesh_total_count": 93.63492063,
                 "proportion": 0.0
             },
             {
@@ -2454,7 +2454,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 414.44126984126945,
+                "mesh_total_count": 414.44126984,
                 "proportion": 0.0
             },
             {
@@ -2463,7 +2463,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 50.46783216783219,
+                "mesh_total_count": 50.46783217,
                 "proportion": 0.0
             },
             {
@@ -2472,7 +2472,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 59.80952380952381,
+                "mesh_total_count": 59.80952381,
                 "proportion": 0.0
             },
             {
@@ -2481,7 +2481,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 55.91666666666669,
+                "mesh_total_count": 55.91666667,
                 "proportion": 0.0
             },
             {
@@ -2490,7 +2490,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 56.431746031746115,
+                "mesh_total_count": 56.43174603,
                 "proportion": 0.0
             },
             {
@@ -2499,7 +2499,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 52.33333333333334,
+                "mesh_total_count": 52.33333333,
                 "proportion": 0.0
             },
             {
@@ -2517,7 +2517,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 33.72619047619048,
+                "mesh_total_count": 33.72619048,
                 "proportion": 0.0
             },
             {
@@ -2526,7 +2526,7 @@
                 "treetop": "A",
                 "treetop_name": "Anatomy",
                 "count": 0.0,
-                "mesh_total_count": 6.583333333333333,
+                "mesh_total_count": 6.58333333,
                 "proportion": 0.0
             },
             {
@@ -2553,7 +2553,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 2445.785714285725,
+                "mesh_total_count": 2445.78571429,
                 "proportion": 0.0
             },
             {
@@ -2571,7 +2571,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 856.8333333333385,
+                "mesh_total_count": 856.83333333,
                 "proportion": 0.0
             },
             {
@@ -2589,7 +2589,7 @@
                 "treetop": "B",
                 "treetop_name": "Organisms",
                 "count": 0.0,
-                "mesh_total_count": 29.166666666666668,
+                "mesh_total_count": 29.16666667,
                 "proportion": 0.0
             },
             {
@@ -2598,7 +2598,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 558.3756493506481,
+                "mesh_total_count": 558.37564935,
                 "proportion": 0.0
             },
             {
@@ -2607,7 +2607,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 446.08064574314494,
+                "mesh_total_count": 446.08064574,
                 "proportion": 0.0
             },
             {
@@ -2616,7 +2616,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 220.05721500721504,
+                "mesh_total_count": 220.05721501,
                 "proportion": 0.0
             },
             {
@@ -2625,7 +2625,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 220.5949134199133,
+                "mesh_total_count": 220.59491342,
                 "proportion": 0.0
             },
             {
@@ -2634,7 +2634,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 145.7503968253968,
+                "mesh_total_count": 145.75039683,
                 "proportion": 0.0
             },
             {
@@ -2643,7 +2643,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 142.7468253968254,
+                "mesh_total_count": 142.7468254,
                 "proportion": 0.0
             },
             {
@@ -2652,7 +2652,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 55.33422035480867,
+                "mesh_total_count": 55.33422035,
                 "proportion": 0.0
             },
             {
@@ -2661,7 +2661,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 465.0934429132948,
+                "mesh_total_count": 465.09344291,
                 "proportion": 0.0
             },
             {
@@ -2670,7 +2670,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 169.27408963585412,
+                "mesh_total_count": 169.27408964,
                 "proportion": 0.0
             },
             {
@@ -2679,7 +2679,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 303.65659046835384,
+                "mesh_total_count": 303.65659047,
                 "proportion": 0.0
             },
             {
@@ -2688,7 +2688,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 294.16897824397785,
+                "mesh_total_count": 294.16897824,
                 "proportion": 0.0
             },
             {
@@ -2697,7 +2697,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 173.87189754689757,
+                "mesh_total_count": 173.87189755,
                 "proportion": 0.0
             },
             {
@@ -2706,7 +2706,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 299.7472844965473,
+                "mesh_total_count": 299.7472845,
                 "proportion": 0.0
             },
             {
@@ -2715,7 +2715,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 221.63062770562723,
+                "mesh_total_count": 221.63062771,
                 "proportion": 0.0
             },
             {
@@ -2724,7 +2724,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 194.4532110862991,
+                "mesh_total_count": 194.45321109,
                 "proportion": 0.0
             },
             {
@@ -2733,7 +2733,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 78.9249342161108,
+                "mesh_total_count": 78.92493422,
                 "proportion": 0.0
             },
             {
@@ -2742,7 +2742,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 102.47142857142858,
+                "mesh_total_count": 102.47142857,
                 "proportion": 0.0
             },
             {
@@ -2760,7 +2760,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 67.25952380952386,
+                "mesh_total_count": 67.25952381,
                 "proportion": 0.0
             },
             {
@@ -2769,7 +2769,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 505.75024975024763,
+                "mesh_total_count": 505.75024975,
                 "proportion": 0.0
             },
             {
@@ -2778,7 +2778,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 9.376190476190475,
+                "mesh_total_count": 9.37619048,
                 "proportion": 0.0
             },
             {
@@ -2787,7 +2787,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 67.27500000000002,
+                "mesh_total_count": 67.275,
                 "proportion": 0.0
             },
             {
@@ -2796,7 +2796,7 @@
                 "treetop": "C",
                 "treetop_name": "Diseases",
                 "count": 0.0,
-                "mesh_total_count": 175.3574786324785,
+                "mesh_total_count": 175.35747863,
                 "proportion": 0.0
             },
             {
@@ -2804,144 +2804,144 @@
                 "label": "Inorganic Chemicals",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 147.03571428571422,
-                "mesh_total_count": 430.69523809523633,
-                "proportion": 0.34139154854830633
+                "count": 147.03571429,
+                "mesh_total_count": 430.6952381,
+                "proportion": 0.34139155
             },
             {
                 "branch_code": "D02",
                 "label": "Organic Chemicals",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 416.82738095237994,
-                "mesh_total_count": 1689.3531746031751,
-                "proportion": 0.24673785636937146
+                "count": 416.82738095,
+                "mesh_total_count": 1689.3531746,
+                "proportion": 0.24673786
             },
             {
                 "branch_code": "D03",
                 "label": "Heterocyclic Compounds",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 206.64523809523808,
-                "mesh_total_count": 1065.8968253968335,
-                "proportion": 0.19386983164932875
+                "count": 206.6452381,
+                "mesh_total_count": 1065.8968254,
+                "proportion": 0.19386983
             },
             {
                 "branch_code": "D04",
                 "label": "Polycyclic Compounds",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 61.1583333333334,
-                "mesh_total_count": 327.0428571428564,
-                "proportion": 0.18700403325616335
+                "count": 61.15833333,
+                "mesh_total_count": 327.04285714,
+                "proportion": 0.18700403
             },
             {
                 "branch_code": "D05",
                 "label": "Macromolecular Substances",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 10.549999999999999,
-                "mesh_total_count": 110.70311355311344,
-                "proportion": 0.09529993928254142
+                "count": 10.55,
+                "mesh_total_count": 110.70311355,
+                "proportion": 0.09529994
             },
             {
                 "branch_code": "D06",
                 "label": "Hormones, Hormone Substitutes, and Hormone Antagonists",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 10.916666666666666,
-                "mesh_total_count": 125.33636363636369,
-                "proportion": 0.08709895795556197
+                "count": 10.91666667,
+                "mesh_total_count": 125.33636364,
+                "proportion": 0.08709896
             },
             {
                 "branch_code": "D08",
                 "label": "Enzymes and Coenzymes",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 9.042857142857141,
-                "mesh_total_count": 1419.994993894989,
-                "proportion": 0.006368231706263237
+                "count": 9.04285714,
+                "mesh_total_count": 1419.99499389,
+                "proportion": 0.00636823
             },
             {
                 "branch_code": "D09",
                 "label": "Carbohydrates",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 88.3583333333333,
-                "mesh_total_count": 305.93935786435776,
-                "proportion": 0.2888099587778704
+                "count": 88.35833333,
+                "mesh_total_count": 305.93935786,
+                "proportion": 0.28880996
             },
             {
                 "branch_code": "D10",
                 "label": "Lipids",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 61.06666666666671,
-                "mesh_total_count": 187.35476190476237,
-                "proportion": 0.32594136410425795
+                "count": 61.06666667,
+                "mesh_total_count": 187.3547619,
+                "proportion": 0.32594136
             },
             {
                 "branch_code": "D12",
                 "label": "Amino Acids, Peptides, and Proteins",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 115.2071428571428,
-                "mesh_total_count": 3322.8336385836587,
-                "proportion": 0.034671354448623334
+                "count": 115.20714286,
+                "mesh_total_count": 3322.83363858,
+                "proportion": 0.03467135
             },
             {
                 "branch_code": "D13",
                 "label": "Nucleic Acids, Nucleotides, and Nucleosides",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 45.202380952381006,
-                "mesh_total_count": 238.78888888888915,
-                "proportion": 0.18929851033987652
+                "count": 45.20238095,
+                "mesh_total_count": 238.78888889,
+                "proportion": 0.18929851
             },
             {
                 "branch_code": "D20",
                 "label": "Complex Mixtures",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 3.366666666666667,
-                "mesh_total_count": 185.56746031746025,
-                "proportion": 0.01814254859611232
+                "count": 3.36666667,
+                "mesh_total_count": 185.56746032,
+                "proportion": 0.01814255
             },
             {
                 "branch_code": "D23",
                 "label": "Biological Factors",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 15.99761904761905,
-                "mesh_total_count": 388.3972943722949,
-                "proportion": 0.04118880146545169
+                "count": 15.99761905,
+                "mesh_total_count": 388.39729437,
+                "proportion": 0.0411888
             },
             {
                 "branch_code": "D25",
                 "label": "Biomedical and Dental Materials",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 8.366666666666667,
-                "mesh_total_count": 43.760317460317516,
-                "proportion": 0.19119300663789016
+                "count": 8.36666667,
+                "mesh_total_count": 43.76031746,
+                "proportion": 0.19119301
             },
             {
                 "branch_code": "D26",
                 "label": "Pharmaceutical Preparations",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 7.791666666666667,
-                "mesh_total_count": 72.38730158730164,
-                "proportion": 0.10763858433470741
+                "count": 7.79166667,
+                "mesh_total_count": 72.38730159,
+                "proportion": 0.10763858
             },
             {
                 "branch_code": "D27",
                 "label": "Chemical Actions and Uses",
                 "treetop": "D",
                 "treetop_name": "Chemicals and Drugs",
-                "count": 6.333333333333334,
-                "mesh_total_count": 629.5730158730149,
-                "proportion": 0.010059728059581843
+                "count": 6.33333333,
+                "mesh_total_count": 629.57301587,
+                "proportion": 0.01005973
             },
             {
                 "branch_code": "E01",
@@ -2949,7 +2949,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 484.6124999999983,
+                "mesh_total_count": 484.6125,
                 "proportion": 0.0
             },
             {
@@ -2958,7 +2958,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 510.20476190476006,
+                "mesh_total_count": 510.2047619,
                 "proportion": 0.0
             },
             {
@@ -2967,7 +2967,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 40.285714285714285,
+                "mesh_total_count": 40.28571429,
                 "proportion": 0.0
             },
             {
@@ -2976,7 +2976,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 463.43988095237927,
+                "mesh_total_count": 463.43988095,
                 "proportion": 0.0
             },
             {
@@ -2985,7 +2985,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 735.7540598290635,
+                "mesh_total_count": 735.75405983,
                 "proportion": 0.0
             },
             {
@@ -2994,7 +2994,7 @@
                 "treetop": "E",
                 "treetop_name": "Analytical, Diagnostic and Therapeutic Techniques and Equipment",
                 "count": 0.0,
-                "mesh_total_count": 143.2833333333333,
+                "mesh_total_count": 143.28333333,
                 "proportion": 0.0
             },
             {
@@ -3012,7 +3012,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 424.81785714285564,
+                "mesh_total_count": 424.81785714,
                 "proportion": 0.0
             },
             {
@@ -3021,7 +3021,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 236.98690476190504,
+                "mesh_total_count": 236.98690476,
                 "proportion": 0.0
             },
             {
@@ -3030,7 +3030,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 163.72936507936512,
+                "mesh_total_count": 163.72936508,
                 "proportion": 0.0
             },
             {
@@ -3039,7 +3039,7 @@
                 "treetop": "F",
                 "treetop_name": "Psychiatry and Psychology",
                 "count": 0.0,
-                "mesh_total_count": 158.03452380952382,
+                "mesh_total_count": 158.03452381,
                 "proportion": 0.0
             },
             {
@@ -3048,8 +3048,8 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.25,
-                "mesh_total_count": 166.6880952380952,
-                "proportion": 0.001499807167649874
+                "mesh_total_count": 166.68809524,
+                "proportion": 0.00149981
             },
             {
                 "branch_code": "G02",
@@ -3057,7 +3057,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 234.93730158730162,
+                "mesh_total_count": 234.93730159,
                 "proportion": 0.0
             },
             {
@@ -3066,7 +3066,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 89.15714285714283,
+                "mesh_total_count": 89.15714286,
                 "proportion": 0.0
             },
             {
@@ -3075,7 +3075,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 125.11349206349205,
+                "mesh_total_count": 125.11349206,
                 "proportion": 0.0
             },
             {
@@ -3084,7 +3084,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 425.3380952380945,
+                "mesh_total_count": 425.33809524,
                 "proportion": 0.0
             },
             {
@@ -3093,7 +3093,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 47.61666666666668,
+                "mesh_total_count": 47.61666667,
                 "proportion": 0.0
             },
             {
@@ -3101,9 +3101,9 @@
                 "label": "Physiological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 0.7333333333333334,
-                "mesh_total_count": 282.8506077256076,
-                "proportion": 0.0025926524932367748
+                "count": 0.73333333,
+                "mesh_total_count": 282.85060773,
+                "proportion": 0.00259265
             },
             {
                 "branch_code": "G08",
@@ -3111,7 +3111,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 126.92777777777773,
+                "mesh_total_count": 126.92777778,
                 "proportion": 0.0
             },
             {
@@ -3120,7 +3120,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 111.89325396825394,
+                "mesh_total_count": 111.89325397,
                 "proportion": 0.0
             },
             {
@@ -3129,7 +3129,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 29.88333333333333,
+                "mesh_total_count": 29.88333333,
                 "proportion": 0.0
             },
             {
@@ -3138,7 +3138,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 119.68095238095233,
+                "mesh_total_count": 119.68095238,
                 "proportion": 0.0
             },
             {
@@ -3147,7 +3147,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 92.02738095238098,
+                "mesh_total_count": 92.02738095,
                 "proportion": 0.0
             },
             {
@@ -3156,7 +3156,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 6.8999999999999995,
+                "mesh_total_count": 6.9,
                 "proportion": 0.0
             },
             {
@@ -3165,7 +3165,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 20.483333333333327,
+                "mesh_total_count": 20.48333333,
                 "proportion": 0.0
             },
             {
@@ -3174,7 +3174,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 22.469047619047622,
+                "mesh_total_count": 22.46904762,
                 "proportion": 0.0
             },
             {
@@ -3182,9 +3182,9 @@
                 "label": "Biological Phenomena",
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
-                "count": 0.3333333333333333,
-                "mesh_total_count": 101.09761904761893,
-                "proportion": 0.0032971432608746884
+                "count": 0.33333333,
+                "mesh_total_count": 101.09761905,
+                "proportion": 0.00329714
             },
             {
                 "branch_code": "G17",
@@ -3192,7 +3192,7 @@
                 "treetop": "G",
                 "treetop_name": "Biological Sciences",
                 "count": 0.0,
-                "mesh_total_count": 31.79047619047618,
+                "mesh_total_count": 31.79047619,
                 "proportion": 0.0
             },
             {
@@ -3201,7 +3201,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 182.40714285714284,
+                "mesh_total_count": 182.40714286,
                 "proportion": 0.0
             },
             {
@@ -3210,7 +3210,7 @@
                 "treetop": "H",
                 "treetop_name": "Physical Sciences",
                 "count": 0.0,
-                "mesh_total_count": 190.4869047619048,
+                "mesh_total_count": 190.48690476,
                 "proportion": 0.0
             },
             {
@@ -3219,7 +3219,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 353.1107142857143,
+                "mesh_total_count": 353.11071429,
                 "proportion": 0.0
             },
             {
@@ -3228,7 +3228,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.91666666666669,
+                "mesh_total_count": 84.91666667,
                 "proportion": 0.0
             },
             {
@@ -3237,7 +3237,7 @@
                 "treetop": "I",
                 "treetop_name": "Anthropology, Education, Sociology and Social Phenomena",
                 "count": 0.0,
-                "mesh_total_count": 84.10000000000002,
+                "mesh_total_count": 84.1,
                 "proportion": 0.0
             },
             {
@@ -3245,18 +3245,18 @@
                 "label": "Technology, Industry, and Agriculture",
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
-                "count": 10.916666666666663,
-                "mesh_total_count": 271.3793650793651,
-                "proportion": 0.04022659078546402
+                "count": 10.91666667,
+                "mesh_total_count": 271.37936508,
+                "proportion": 0.04022659
             },
             {
                 "branch_code": "J02",
                 "label": "Food and Beverages",
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
-                "count": 0.7333333333333334,
-                "mesh_total_count": 60.36449661449674,
-                "proportion": 0.012148421248612233
+                "count": 0.73333333,
+                "mesh_total_count": 60.36449661,
+                "proportion": 0.01214842
             },
             {
                 "branch_code": "J03",
@@ -3264,7 +3264,7 @@
                 "treetop": "J",
                 "treetop_name": "Technology and Food and Beverages",
                 "count": 0.0,
-                "mesh_total_count": 38.86666666666666,
+                "mesh_total_count": 38.86666667,
                 "proportion": 0.0
             },
             {
@@ -3273,7 +3273,7 @@
                 "treetop": "K",
                 "treetop_name": "Humanities",
                 "count": 0.0,
-                "mesh_total_count": 151.61666666666667,
+                "mesh_total_count": 151.61666667,
                 "proportion": 0.0
             },
             {
@@ -3282,7 +3282,7 @@
                 "treetop": "L",
                 "treetop_name": "Information Science",
                 "count": 0.0,
-                "mesh_total_count": 386.6392857142848,
+                "mesh_total_count": 386.63928571,
                 "proportion": 0.0
             },
             {
@@ -3291,7 +3291,7 @@
                 "treetop": "M",
                 "treetop_name": "Persons",
                 "count": 0.0,
-                "mesh_total_count": 291.7750000000001,
+                "mesh_total_count": 291.775,
                 "proportion": 0.0
             },
             {
@@ -3300,7 +3300,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 76.11904761904766,
+                "mesh_total_count": 76.11904762,
                 "proportion": 0.0
             },
             {
@@ -3309,7 +3309,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 352.69285714285695,
+                "mesh_total_count": 352.69285714,
                 "proportion": 0.0
             },
             {
@@ -3318,7 +3318,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 310.31904761904786,
+                "mesh_total_count": 310.31904762,
                 "proportion": 0.0
             },
             {
@@ -3327,7 +3327,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 239.26190476190493,
+                "mesh_total_count": 239.26190476,
                 "proportion": 0.0
             },
             {
@@ -3336,7 +3336,7 @@
                 "treetop": "N",
                 "treetop_name": "Health Care",
                 "count": 0.0,
-                "mesh_total_count": 166.75412087912076,
+                "mesh_total_count": 166.75412088,
                 "proportion": 0.0
             },
             {
@@ -3344,9 +3344,9 @@
                 "label": "Environment and Public Health",
                 "treetop": "N",
                 "treetop_name": "Health Care",
-                "count": 0.16666666666666666,
-                "mesh_total_count": 329.5862637362631,
-                "proportion": 0.0005056845051043581
+                "count": 0.16666667,
+                "mesh_total_count": 329.58626374,
+                "proportion": 0.00050568
             },
             {
                 "branch_code": "V01",
@@ -3363,7 +3363,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 135.91666666666663,
+                "mesh_total_count": 135.91666667,
                 "proportion": 0.0
             },
             {
@@ -3372,7 +3372,7 @@
                 "treetop": "V",
                 "treetop_name": "Publication Characteristics",
                 "count": 0.0,
-                "mesh_total_count": 30.083333333333336,
+                "mesh_total_count": 30.08333333,
                 "proportion": 0.0
             },
             {
@@ -3398,79 +3398,79 @@
             {
                 "depth": 1,
                 "count": 6.0,
-                "mesh_total_count": 112.33333333333334,
-                "proportion": 0.05341246290801187
+                "mesh_total_count": 112.33333333,
+                "proportion": 0.05341246
             },
             {
                 "depth": 2,
-                "count": 60.43333333333334,
-                "mesh_total_count": 1580.5309523809503,
-                "proportion": 0.038236096067777156
+                "count": 60.43333333,
+                "mesh_total_count": 1580.53095238,
+                "proportion": 0.0382361
             },
             {
                 "depth": 3,
-                "count": 182.3916666666667,
-                "mesh_total_count": 4893.806382506359,
-                "proportion": 0.037269898400282636
+                "count": 182.39166667,
+                "mesh_total_count": 4893.80638251,
+                "proportion": 0.0372699
             },
             {
                 "depth": 4,
-                "count": 344.85595238095124,
-                "mesh_total_count": 7285.63198868085,
-                "proportion": 0.04733370460060686
+                "count": 344.85595238,
+                "mesh_total_count": 7285.63198868,
+                "proportion": 0.0473337
             },
             {
                 "depth": 5,
-                "count": 301.0916666666666,
-                "mesh_total_count": 6837.7291528728665,
-                "proportion": 0.04403386854540197
+                "count": 301.09166667,
+                "mesh_total_count": 6837.72915287,
+                "proportion": 0.04403387
             },
             {
                 "depth": 6,
-                "count": 166.4238095238095,
-                "mesh_total_count": 4604.310868135073,
-                "proportion": 0.03614521570981971
+                "count": 166.42380952,
+                "mesh_total_count": 4604.31086814,
+                "proportion": 0.03614522
             },
             {
                 "depth": 7,
-                "count": 100.5452380952381,
-                "mesh_total_count": 2562.1414236906867,
-                "proportion": 0.03924265739804704
+                "count": 100.5452381,
+                "mesh_total_count": 2562.14142369,
+                "proportion": 0.03924266
             },
             {
                 "depth": 8,
-                "count": 41.70833333333334,
-                "mesh_total_count": 1729.6726624682353,
-                "proportion": 0.024113425758730402
+                "count": 41.70833333,
+                "mesh_total_count": 1729.67266247,
+                "proportion": 0.02411343
             },
             {
                 "depth": 9,
-                "count": 22.183333333333323,
-                "mesh_total_count": 927.6063311688379,
-                "proportion": 0.023914598885263143
+                "count": 22.18333333,
+                "mesh_total_count": 927.60633117,
+                "proportion": 0.0239146
             },
             {
                 "depth": 10,
-                "count": 1.3666666666666667,
-                "mesh_total_count": 422.96071428571355,
-                "proportion": 0.0032311905586188123
+                "count": 1.36666667,
+                "mesh_total_count": 422.96071429,
+                "proportion": 0.00323119
             },
             {
                 "depth": 11,
                 "count": 0.0,
-                "mesh_total_count": 72.90952380952382,
+                "mesh_total_count": 72.90952381,
                 "proportion": 0.0
             },
             {
                 "depth": 12,
                 "count": 0.0,
-                "mesh_total_count": 56.03333333333335,
+                "mesh_total_count": 56.03333333,
                 "proportion": 0.0
             },
             {
                 "depth": 13,
                 "count": 0.0,
-                "mesh_total_count": 22.333333333333332,
+                "mesh_total_count": 22.33333333,
                 "proportion": 0.0
             }
         ]

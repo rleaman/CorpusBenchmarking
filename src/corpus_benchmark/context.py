@@ -7,6 +7,7 @@ from typing import Any, Callable
 from corpus_benchmark.models.corpus import CorpusSubset, Document, Passage, Annotation, IdentifierLink
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.parsing import extract_sentences_from_texts, extract_tokens_from_texts
+from src.corpus_benchmark.metadata_handler import MetadataCache, PMCFetcher, PubMedFetcher
 
 
 @dataclass(slots=True)
@@ -255,3 +256,38 @@ def get_match_types(target: MetricTarget, annotation_filter_name: str | None = N
         )
         match_types.extend(subset_match_types)
     return match_types
+
+
+def get_loaded_cache(target: MetricTarget, cache_path: str) -> MetadataCache:
+    cache = MetadataCache(cache_path)
+    documents = get_documents(target)
+
+    missing_pmids = []
+    missing_pmcids = []
+
+    # 1. Sort IDs into 'found in cache' or 'needs fetching'
+    for doc in documents:
+        pmid = doc.infons.get("pmid")
+        pmcid = doc.infons.get("pmcid")
+
+        if pmid and not cache.get_by_pmid(pmid):
+            missing_pmids.append(pmid)
+        elif pmcid and not cache.get_by_pmcid(pmcid):
+            missing_pmcids.append(pmcid)
+
+    print(f"Target {target.name} metadata: pmid missing = {len(missing_pmids)} pmcid missing = {len(missing_pmcids)}")
+
+    # 2. Fetch missing PubMed metadata
+    if missing_pmids:
+        pubmed_fetcher = PubMedFetcher()
+        new_records = pubmed_fetcher.fetch(list(set(missing_pmids)))
+        cache.add_records(new_records)
+
+    # 3. Fetch missing PMC metadata (for docs that don't have a PMID or weren't found)
+    # Re-check PMCIDs after PubMed fetch in case a PMID fetch filled a PMC record
+    still_missing_pmcids = [p for p in set(missing_pmcids) if not cache.get_by_pmcid(p)]
+    if still_missing_pmcids:
+        pmc_fetcher = PMCFetcher()
+        new_records = pmc_fetcher.fetch(still_missing_pmcids)
+        cache.add_records(new_records)
+    return cache

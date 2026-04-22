@@ -196,4 +196,4 @@ metrics:
     comparison_suite: NLM_Chem_TrainVsTest
 
 
-output_path: "statistics/overlap_stats.json"
+output_path: "output/overlap_stats.json"
