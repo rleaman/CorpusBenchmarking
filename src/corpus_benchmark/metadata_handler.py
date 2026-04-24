@@ -8,7 +8,9 @@ import random
 import re
 import time
 from typing import Any, Dict, List, Optional
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 import xml.etree.ElementTree as ET
 
 from src.corpus_benchmark.models.corpus import DocumentIdentifierType
@@ -143,6 +145,12 @@ class MetadataFetcher(ABC):
         """Returns standard records. Must include the 'identifiers' dict in the output."""
         pass
 
+# TODO Fix PubMedFetcher to return both short and long journal names
+# TODO Fix PMCFetcher to return both short and long journal names
+# TODO Fix CrossRefDOIFetcher to return both short and long journal names (short names only available for ~90%-95% of records)
+# TODO Add EuropePMC
+# TODO Does eUtils support DOI lookup?
+# TODO Could we get the metadata from the article itself sometimes?
 
 class PubMedFetcher(MetadataFetcher):
     """Queries NCBI eUtils for metadata using PubMed IDs."""
@@ -181,6 +189,7 @@ class PubMedFetcher(MetadataFetcher):
     def _parse_article(self, element: ET.Element) -> Dict[str, Any]:
         pmid = element.findtext("./MedlineCitation/PMID")
         pmc = element.findtext("./PubmedData/ArticleIdList/ArticleId[@IdType='pmc']")
+        doi = element.findtext("./PubmedData/ArticleIdList/ArticleId[@IdType='doi']")
 
         journal = element.findtext("./MedlineCitation/Article/Journal/ISOAbbreviation")
         if not journal:
@@ -195,6 +204,8 @@ class PubMedFetcher(MetadataFetcher):
         identifiers = {DocumentIdentifierType.PMID: pmid}
         if not pmc is None:
             identifiers[DocumentIdentifierType.PMCID] = DocumentIdentifierType.PMCID.normalize(pmc)
+        if not doi is None:
+            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(pmc)
         record = {
             "identifiers": identifiers,
             "journal": journal,
@@ -216,7 +227,7 @@ class PMCFetcher(MetadataFetcher):
 
         # Normalize: API expects numeric IDs without "PMC" prefix
         pmcids = [DocumentIdentifierType.PMCID.normalize(pmcid) for pmcid in pmcids]
-        numeric_ids = [pmcid[3:]  for pmcid in pmcids]
+        numeric_ids = [pmcid[3:] for pmcid in pmcids]
         results = []
         chunks = [numeric_ids[i : i + CHUNK_SIZE] for i in range(0, len(numeric_ids), CHUNK_SIZE)]
         last_request = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
@@ -244,6 +255,7 @@ class PMCFetcher(MetadataFetcher):
         raw_pmc = element.findtext("./Id")
         pmcid = DocumentIdentifierType.PMCID.normalize(raw_pmc)
         pmid = element.findtext("./Item[@Name='ArticleIds']/Item[@Name='pmid']")
+        doi = element.findtext("./Item[@Name='ArticleIds']/Item[@Name='doi']")
         journal = element.findtext("./Item[@Name='Source']")
 
         pub_date = element.findtext("./Item[@Name='PubDate']")
@@ -265,27 +277,250 @@ class PMCFetcher(MetadataFetcher):
 
 
 class CrossrefDOIFetcher(MetadataFetcher):
+    """Queries the Crossref REST API for metadata using DOIs.
+
+    Crossref supports exact DOI lookup through ``/works/{doi}``, but for many DOIs
+    it is more efficient to query the ``/works`` endpoint with repeated ``doi``
+    filters. This implementation batches DOIs into modest URL-safe chunks, uses
+    the Crossref polite pool when ``mailto`` is provided, and honors the
+    rate-limit headers returned by Crossref.
+    """
+
+    CROSSREF_WORKS_URL = "https://api.crossref.org/works"
+    DEFAULT_BATCH_SIZE = 50
+    DEFAULT_WAIT_SECONDS = 1.0
+    MAX_RETRIES = 3
+
+    def __init__(
+        self,
+        *,
+        mailto: Optional[str] = None,
+        user_agent: str = "CorpusBenchmarking/0.1",
+        batch_size: int = DEFAULT_BATCH_SIZE,
+        wait_seconds: float = DEFAULT_WAIT_SECONDS,
+        timeout: int = 30,
+    ):
+        self.mailto = mailto
+        self.user_agent = user_agent
+        self.batch_size = batch_size
+        self.wait_seconds = wait_seconds
+        self.timeout = timeout
+        self._last_request = 0.0
+        self._dynamic_wait_seconds = wait_seconds
+
     @property
     def supported_id_type(self) -> DocumentIdentifierType:
         return DocumentIdentifierType.DOI
 
     def fetch(self, dois: List[str]) -> List[Dict[str, Any]]:
-        results = []
-        for doi in dois:
-            doi = DocumentIdentifierType.DOI.normalize(doi)
-            # FIXME Finish implementation: add batching/rate limiting here
-            url = f"https://api.crossref.org/works/{urllib.parse.quote(doi)}"
-            try:
-                with urllib.request.urlopen(url) as response:
-                    data = json.loads(response.read())
-                    msg = data["message"]
+        if not dois:
+            return []
 
-                    record = {
-                        "identifiers": {DocumentIdentifierType.DOI: doi},
-                        "journal": msg.get("container-title", [None])[0],
-                        "pub_year": msg.get("issued", {}).get("date-parts", [[None]])[0][0],
-                    }
-                    results.append(record)
-            except Exception as e:
-                print(f"DOI Fetcher Error for {doi}: {e}")
+        normalized_dois = self._dedupe_preserve_order(DocumentIdentifierType.DOI.normalize(doi) for doi in dois if doi)
+
+        results: List[Dict[str, Any]] = []
+        chunks = [normalized_dois[i : i + self.batch_size] for i in range(0, len(normalized_dois), self.batch_size)]
+
+        for i, chunk in enumerate(chunks):
+            records = self._fetch_chunk(chunk)
+            results.extend(records)
+            print(f"Crossref DOI Fetcher: Processed chunk {i+1}/{len(chunks)}")
+
         return results
+
+    def _fetch_chunk(self, dois: List[str]) -> List[Dict[str, Any]]:
+        """Fetch a DOI chunk using the Crossref works endpoint.
+
+        A query such as ``filter=doi:10.x/a,doi:10.x/b`` returns metadata for
+        those exact DOIs. Missing or non-Crossref DOIs simply do not appear in
+        the response.
+        """
+        if not dois:
+            return []
+
+        params = {
+            "filter": ",".join(f"doi:{doi}" for doi in dois),
+            "rows": str(len(dois)),
+        }
+        if self.mailto:
+            params["mailto"] = self.mailto
+
+        url = f"{self.CROSSREF_WORKS_URL}?{urllib.parse.urlencode(params)}"
+        data = self._get_json_with_retries(url)
+        if not data:
+            return []
+
+        items = data.get("message", {}).get("items", [])
+        records = []
+        seen = set()
+
+        for item in items:
+            record = self._parse_work(item)
+            doi = record["identifiers"][DocumentIdentifierType.DOI]
+            if doi in dois and doi not in seen:
+                records.append(record)
+                seen.add(doi)
+
+        # Fallback: if Crossref ever returns fewer records than expected because
+        # of filter behavior or URL length, exact /works/{doi} lookup recovers
+        # the missing records without abandoning batching for the normal case.
+        missing = [doi for doi in dois if doi not in seen]
+        if missing and len(dois) > 1:
+            for doi in missing:
+                item = self._fetch_one(doi)
+                if item:
+                    records.append(self._parse_work(item))
+
+        return records
+
+    def _fetch_one(self, doi: str) -> Optional[Dict[str, Any]]:
+        encoded_doi = urllib.parse.quote(doi, safe="")
+        params = {}
+        if self.mailto:
+            params["mailto"] = self.mailto
+        query = f"?{urllib.parse.urlencode(params)}" if params else ""
+        url = f"{self.CROSSREF_WORKS_URL}/{encoded_doi}{query}"
+        data = self._get_json_with_retries(url)
+        if not data:
+            return None
+        return data.get("message")
+
+    def _get_json_with_retries(self, url: str) -> Optional[Dict[str, Any]]:
+        for attempt in range(self.MAX_RETRIES + 1):
+            self._wait_for_rate_limit()
+            req = urllib.request.Request(url, headers=self._headers())
+
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                    self._last_request = time.monotonic()
+                    self._update_rate_limit_from_headers(response.headers)
+                    return json.loads(response.read().decode("utf-8"))
+
+            except urllib.error.HTTPError as e:
+                self._last_request = time.monotonic()
+                if e.code in (429, 503):
+                    retry_after = self._parse_retry_after(e.headers.get("Retry-After"))
+                    sleep_for = retry_after if retry_after is not None else self._backoff_seconds(attempt)
+                    print(f"Crossref DOI Fetcher: rate limited ({e.code}); retrying after {sleep_for:.1f}s")
+                    time.sleep(sleep_for)
+                    continue
+
+                if e.code == 404:
+                    return None
+
+                print(f"Crossref DOI Fetcher HTTP Error {e.code}: {e.reason}")
+                return None
+
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                if attempt >= self.MAX_RETRIES:
+                    print(f"Crossref DOI Fetcher Error: {e}")
+                    return None
+                sleep_for = self._backoff_seconds(attempt)
+                print(f"Crossref DOI Fetcher transient error: {e}; retrying after {sleep_for:.1f}s")
+                time.sleep(sleep_for)
+
+        return None
+
+    def _headers(self) -> Dict[str, str]:
+        user_agent = self.user_agent
+        if self.mailto and "mailto:" not in user_agent:
+            user_agent = f"{user_agent} (mailto:{self.mailto})"
+
+        return {
+            "Accept": "application/json",
+            "User-Agent": user_agent,
+        }
+
+    def _wait_for_rate_limit(self):
+        elapsed = time.monotonic() - self._last_request
+        wait_seconds = max(self.wait_seconds, self._dynamic_wait_seconds)
+        if elapsed < wait_seconds:
+            time.sleep(wait_seconds - elapsed)
+
+    def _update_rate_limit_from_headers(self, headers):
+        limit = headers.get("X-Rate-Limit-Limit")
+        interval = headers.get("X-Rate-Limit-Interval")
+
+        if not limit or not interval:
+            return
+
+        try:
+            limit_val = int(limit)
+            interval_seconds = self._parse_interval_seconds(interval)
+            if limit_val > 0 and interval_seconds is not None:
+                # Add a small cushion so multiple local processes or network
+                # jitter do not accidentally exceed the advertised window.
+                self._dynamic_wait_seconds = (interval_seconds / limit_val) * 1.10
+        except ValueError:
+            return
+
+    def _parse_interval_seconds(self, interval: str) -> Optional[float]:
+        match = re.fullmatch(r"\s*(\d+(?:\.\d+)?)s\s*", interval)
+        if match:
+            return float(match.group(1))
+        return None
+
+    def _parse_retry_after(self, retry_after: Optional[str]) -> Optional[float]:
+        if not retry_after:
+            return None
+        try:
+            return max(0.0, float(retry_after))
+        except ValueError:
+            return None
+
+    def _backoff_seconds(self, attempt: int) -> float:
+        return min(60.0, (2**attempt) * self.wait_seconds + random.uniform(0.0, 0.25))
+
+    def _parse_work(self, msg: Dict[str, Any]) -> Dict[str, Any]:
+        doi = DocumentIdentifierType.DOI.normalize(msg.get("DOI", ""))
+        identifiers = {DocumentIdentifierType.DOI: doi}
+
+        # TODO Unclear which key is used
+        pmid = self._first_assertion_value(msg, "pubmed")
+        if not pmid:
+            pmid = self._first_assertion_value(msg, "pmid")
+        if pmid:
+            identifiers[DocumentIdentifierType.PMID] = DocumentIdentifierType.PMID.normalize(pmid)
+
+        pmcid = self._first_assertion_value(msg, "pmcid")
+        if pmcid:
+            identifiers[DocumentIdentifierType.PMCID] = DocumentIdentifierType.PMCID.normalize(pmcid)
+
+        journal = self._first(msg.get("short-container-title"))
+        if not journal:
+            print("Using full journal")
+            journal = self._first(msg.get("container-title"))
+
+        return {
+            "identifiers": identifiers,
+            "journal": journal,
+            "pub_year": self._issued_year(msg),
+        }
+
+    def _issued_year(self, msg: Dict[str, Any]) -> Optional[str]:
+        for key in ("published-print", "published-online", "published", "issued"):
+            date_parts = msg.get(key, {}).get("date-parts")
+            if date_parts and date_parts[0]:
+                return str(date_parts[0][0])
+        return None
+
+    def _first(self, value: Any) -> Optional[Any]:
+        if isinstance(value, list) and value:
+            return value[0]
+        return value
+
+    def _first_assertion_value(self, msg: Dict[str, Any], name: str) -> Optional[str]:
+        for assertion in msg.get("assertion", []) or []:
+            if str(assertion.get("name", "")).lower() == name:
+                value = assertion.get("value")
+                return str(value) if value else None
+        return None
+
+    def _dedupe_preserve_order(self, values) -> List[str]:
+        seen = set()
+        deduped = []
+        for value in values:
+            if value and value not in seen:
+                seen.add(value)
+                deduped.append(value)
+        return deduped

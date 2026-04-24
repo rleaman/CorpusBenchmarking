@@ -19,8 +19,8 @@ class GlobalWorkspace:
         self.metadata_cache = metadata_cache
         self.fetchers: dict[DocumentIdentifierType, MetadataFetcher] = {
             DocumentIdentifierType.PMID: PubMedFetcher(),
-            #DocumentIdentifierType.DOI: CrossrefDOIFetcher(),
             DocumentIdentifierType.PMCID: PMCFetcher(),
+            DocumentIdentifierType.DOI: CrossrefDOIFetcher(),
         }
 
     def get_document_metadata(self, identifiers: dict[DocumentIdentifierType, str]) -> dict[str, Any]:
