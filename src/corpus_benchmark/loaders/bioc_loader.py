@@ -9,6 +9,7 @@ from corpus_benchmark.models.corpus import (
     BenchmarkCorpus,
     CorpusSubset,
     Document,
+    DocumentIdentifierType,
     Passage,
     Annotation,
     AnnotationSpan,
@@ -149,7 +150,7 @@ class Loader:
             accession = identifier_text
         return IdentifierLink(resource=resource, identifier=accession)
 
-class DocIDFetcher:
+class DocIDExtractor:
 
     def __init__(self, loader: Loader, doc_id_map: dict[str, str] = {}):
         self.loader = loader
@@ -157,14 +158,25 @@ class DocIDFetcher:
             raise ValueError(f"Unknown loader type: {type(loader)}")
         self.doc_id_map = doc_id_map
 
-    def get_IDs(self, doc):
+    def get_IDs(self, doc) -> dict[DocumentIdentifierType, str]:
+        raw_ids = dict()
         if isinstance(self.loader,BioCXMLLoader):
-            return self.get_BioCXML_IDs(doc)
-        if isinstance(self.loader, BioCPubtatorLoader):
-            return self.get_Pubtator_IDs(doc)
-        raise ValueError(f"Unknown loader type: {type(self.loader)}")
+            raw_ids.update(self.get_BioCXML_IDs(doc))
+        elif isinstance(self.loader, BioCPubtatorLoader):
+            raw_ids.update(self.get_Pubtator_IDs(doc))
+        else:
+            raise ValueError(f"Unknown loader type: {type(self.loader)}")
+        ids = dict()
+        for id_type, doc_id in raw_ids.items():
+            try:
+                id_type_enum = DocumentIdentifierType(id_type.lower())
+                ids[id_type_enum] = id_type_enum.normalize(doc_id)
+            except ValueError:
+                print(f"Warning: Unknown identifier type '{id_type}' configured in YAML.")   
+        return ids         
 
-    def get_BioCXML_IDs(self, doc):
+
+    def get_BioCXML_IDs(self, doc) -> dict[str, str]:
         ids = dict()
         for id_type, location in self.doc_id_map.items():
             match location:
@@ -191,7 +203,7 @@ class DocIDFetcher:
                 
         return ids
 
-    def get_Pubtator_IDs(self, doc):
+    def get_Pubtator_IDs(self, doc) -> dict[str, str]:
         ids = dict()
         for id_type, location in self.doc_id_map.items():
             if location != "__DOCUMENT_ID__":
@@ -217,7 +229,7 @@ class BioCXMLLoader(Loader):
         **kwargs,
     ):
         super().__init__(label_map, id_format_list, qualifier_map, nil_labels, None, resource_delimiter)
-        self.doc_id_fetcher = DocIDFetcher(self, doc_id_map)
+        self.doc_id_fetcher = DocIDExtractor(self, doc_id_map)
         self.passage_id_infon_key = passage_id_infon_key
         self.label_infon_key = label_infon_key
         self.id_infon_key = id_infon_key
@@ -234,21 +246,14 @@ class BioCXMLLoader(Loader):
         documents: dict[str, Document] = {}
         id_type_counts = Counter()
         for doc in collection.documents:
-            # Copy identifiers into the doc infons
-            doc_infons = {k: str(v) for k, v in doc.infons.items()}
-            ids = self.doc_id_fetcher.get_IDs(doc)
-            doc_infons.update(ids)
-            id_type_counts.update(ids.keys())
-
             passages: list[Passage] = []
-
             for passage_index, passage in enumerate(doc.passages):
                 new_passage = Passage(
                     passage_id=str(passage.infons.get(self.passage_id_infon_key, passage_index)),
                     text=passage.text,
                     offset=int(passage.offset),
                     annotations=[],
-                    infons=doc_infons,
+                    infons=passage.infons,
                 )
                 for ann in passage.annotations:
                     mention = self.get_mention(ann)
@@ -257,10 +262,13 @@ class BioCXMLLoader(Loader):
                 passages.append(new_passage)
 
             document_id = str(doc.id)
+            ids = self.doc_id_fetcher.get_IDs(doc)
+            id_type_counts.update(ids.keys())
             documents[document_id] = Document(
                 document_id=str(doc.id),
+                identifiers=ids,
                 passages=passages,
-                infons=doc_infons,
+                infons=doc.infons,
             )
         
         print(f"\tLoaded {len(collection.documents)} documents")
@@ -345,7 +353,7 @@ class BioCPubtatorLoader(Loader):
         resource_delimiter: str = ":",
     ):
         super().__init__(label_map, id_format_list, qualifier_map, nil_labels, default_resource, resource_delimiter)
-        self.doc_id_fetcher = DocIDFetcher(self, doc_id_map)
+        self.doc_id_fetcher = DocIDExtractor(self, doc_id_map)
 
     def load_subset(self, subset_name: str, path: str):
         """
@@ -392,15 +400,13 @@ class BioCPubtatorLoader(Loader):
                     title_passage.annotations.append(mention)
                 else:
                     abstract_passage.annotations.append(mention)
-            doc_infons = dict()
             ids = self.doc_id_fetcher.get_IDs(doc)
-            doc_infons.update(ids)
             id_type_counts.update(ids.keys())
             documents.append(
                 Document(
                     document_id=pmid,
-                    passages=[title_passage, abstract_passage],
-                    infons=doc_infons
+                    identifiers=ids,
+                    passages=[title_passage, abstract_passage]
                 )
             )
         print(f"\tLoaded {len(collection)} documents")

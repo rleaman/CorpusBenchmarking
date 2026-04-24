@@ -11,6 +11,9 @@ from corpus_benchmark.context import BenchmarkContext, MetricTarget
 from corpus_benchmark.models.config import BatteryConfig, DatasetBundle
 from corpus_benchmark.models.corpus import BenchmarkCorpus
 from corpus_benchmark.registry import LOADERS, SUBSET_METRICS, CROSS_METRICS
+from src.corpus_benchmark.workspace import GlobalWorkspace
+from src.corpus_benchmark.metadata_handler import MetadataCache, default_metadata_cache_filename
+
 
 def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> MetricTarget:
     """Helper to convert a DatasetBundle config into an actionable MetricTarget."""
@@ -22,10 +25,12 @@ def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> Met
         components.append((subset, context))
     return MetricTarget(name=bundle.name, components=components)
 
+
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
+    workspace = GlobalWorkspace(metadata_cache=MetadataCache(battery_config.workspace.metadata_cache_filename))
     corpora: dict[str, BenchmarkCorpus] = dict()
     contexts: dict[str, BenchmarkContext] = dict()
-    
+
     for benchmark_name, benchmark_config in battery_config.corpora.items():
         print(f"Loading corpus {benchmark_name}")
         loader_name = benchmark_config.loader.name
@@ -39,10 +44,12 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
         for filter_name, filter in benchmark_config.annotation_filters.items():
             print(f'Runner: annotation filter "{filter_name}" has definition "{filter}"')
         corpora[benchmark_name] = benchmark_corpus
-        contexts[benchmark_name] = BenchmarkContext(annotation_filters=benchmark_config.annotation_filters)
+        contexts[benchmark_name] = BenchmarkContext(
+            workspace=workspace, annotation_filters=benchmark_config.annotation_filters
+        )
 
     results: list[Any] = []
-    
+
     print("metrics = {}".format([metric_spec.metric_name for metric_spec in battery_config.metrics]))
 
     for metric_spec in battery_config.metrics:
@@ -55,9 +62,9 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
             for bundle_name in metric_spec.target_bundles:
                 bundle = battery_config.bundles[bundle_name]
                 target = _resolve_bundle(bundle, corpora, contexts)
-                
+
                 # Execute metric
-                result = metric(target, metric_spec.result_name, **getattr(metric_spec, 'params', {}))
+                result = metric(target, metric_spec.result_name, **getattr(metric_spec, "params", {}))
                 results.append(result)
         elif metric_spec.metric_name in CROSS_METRICS:
             metric = CROSS_METRICS[metric_spec.metric_name]
@@ -65,21 +72,19 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
             for bundle1_name, bundle2_name in suite.bundle_pairs:
                 bundle1 = battery_config.bundles[bundle1_name]
                 bundle2 = battery_config.bundles[bundle2_name]
-                
+
                 target1 = _resolve_bundle(bundle1, corpora, contexts)
                 target2 = _resolve_bundle(bundle2, corpora, contexts)
-                
+
                 # Execute cross-metric (requires metrics designed for two targets)
-                result = metric(target1, target2, metric_spec.result_name, **getattr(metric_spec, 'params', {}))
+                result = metric(target1, target2, metric_spec.result_name, **getattr(metric_spec, "params", {}))
                 results.append(result)
         else:
             available_metrics = []
             available_metrics.extend(SUBSET_METRICS)
             available_metrics.extend(CROSS_METRICS)
             available = ", ".join(sorted(available_metrics)) or "<none>"
-            raise ValueError(
-                f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}"
-            )
+            raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
 
     # Display context usage
     print("Context usage:")

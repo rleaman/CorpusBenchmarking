@@ -1,3 +1,6 @@
+workspace:
+    metadata_cache_filename: "data/metadata_cache.json"
+
 corpora:
     AnatEM: configs/AnatEM.yaml
     BC5CDR: configs/BC5CDR.yaml
@@ -73,11 +76,7 @@ bundles:
 metrics:
   - metric_name: journal_distribution
     target_bundles: ["AnatEM_corpus", "BC5CDR_corpus", "BioID_corpus", "CHEMDNER_corpus", "CRAFT_corpus", "CellLink_corpus", "JNLPBA_corpus", "NCBI_Disease_corpus", "NLM_Chem_corpus"]
-    params:
-      metadata_cache_filename: "data/metadata_cache.json"    
   - metric_name: publication_year_distribution
     target_bundles: ["AnatEM_corpus", "BC5CDR_corpus", "BioID_corpus", "CHEMDNER_corpus", "CRAFT_corpus", "CellLink_corpus", "JNLPBA_corpus", "NCBI_Disease_corpus", "NLM_Chem_corpus"]
-    params:
-      metadata_cache_filename: "data/metadata_cache.json"    
 
 output_path: "output/metadata_stats.json"

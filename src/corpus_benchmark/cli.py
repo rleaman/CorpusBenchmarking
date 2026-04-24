@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from corpus_benchmark.models.config import BatteryConfig, BenchmarkConfig, LoaderSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite
+from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.runner import run_benchmark
 from corpus_benchmark.results import SubsetMetricResult, CrossSubsetMetricResult
@@ -31,13 +31,17 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
     with open(path, "r", encoding="utf-8") as fp:
         raw_config: dict[str, Any] = yaml.safe_load(fp)
 
-    # 1. Load Corpora
+    # Load workspace config (using default if missing from YAML)
+    workspace_dict = raw_config.get("workspace", {})
+    workspace_config = WorkspaceConfig(**workspace_dict)
+
+    # Load Corpora
     corpora = {
         corpus_name: load_benchmark_config(corpus_path)
         for corpus_name, corpus_path in raw_config.get("corpora", {}).items()
     }
 
-    # 2. Load Dataset Bundles
+    # Load Dataset Bundles
     bundles = {
         bundle_name: DatasetBundle(
             name=bundle_name,
@@ -46,7 +50,7 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
         for bundle_name, subset_list in raw_config.get("bundles", {}).items()
     }
 
-    # 3. Load Comparison Suites
+    # Load Comparison Suites
     comparison_suites = {
         suite_name: ComparisonSuite(
             name=suite_name,
@@ -58,6 +62,7 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
 
     # 4. Initialize the full config
     return BatteryConfig(
+        workspace=workspace_config,
         corpora=corpora,
         bundles=bundles,
         comparison_suites=comparison_suites,

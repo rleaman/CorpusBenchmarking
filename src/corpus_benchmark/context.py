@@ -2,18 +2,19 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any, Callable, Dict
 
 from corpus_benchmark.models.corpus import CorpusSubset, Document, Passage, Annotation, IdentifierLink
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.parsing import extract_sentences_from_texts, extract_tokens_from_texts
-from src.corpus_benchmark.metadata_handler import MetadataCache, PMCFetcher, PubMedFetcher
+from src.corpus_benchmark.workspace import GlobalWorkspace
 
 
 @dataclass(slots=True)
 class BenchmarkContext:
     """Shared context for metrics, including a cache for expensive computations."""
 
+    workspace: GlobalWorkspace
     cache: dict[str, Any] = field(default_factory=dict)
     usage_counts: Counter[str:int] = field(default_factory=Counter)
     annotation_filters: dict[str, AnnotationFilter] = field(default_factory=dict)
@@ -31,6 +32,12 @@ class BenchmarkContext:
         if key not in self.cache:
             self.cache[key] = factory()
         return self.cache[key]
+
+def get_workspace(target: MetricTarget) -> GlobalWorkspace:
+    """Extracts the global workspace from the target's first component context."""
+    if not target.components:
+        raise ValueError("Cannot extract workspace from an empty MetricTarget")
+    return target.components[0][1].workspace
 
 
 @dataclass(slots=True)
@@ -258,36 +265,43 @@ def get_match_types(target: MetricTarget, annotation_filter_name: str | None = N
     return match_types
 
 
-def get_loaded_cache(target: MetricTarget, cache_path: str) -> MetadataCache:
-    cache = MetadataCache(cache_path)
+def get_metadata_for_target(target: MetricTarget) -> Dict[str, Dict[str, Any]]:
+    print(f"Getting metdata for target {target.name}")
+    workspace = get_workspace(target)
     documents = get_documents(target)
+    print(f"\tlen(documents) = {len(documents)}")
 
-    missing_pmids = []
-    missing_pmcids = []
+    missing_ids = {id_type: set() for id_type in workspace.fetchers.keys()}
 
-    # 1. Sort IDs into 'found in cache' or 'needs fetching'
+    # 1. Check Cache
     for doc in documents:
-        pmid = doc.infons.get("pmid")
-        pmcid = doc.infons.get("pmcid")
+        for id_type, id_val in doc.identifiers.items():
+            record = workspace.metadata_cache.get_metadata(id_type, id_val)
+            #print(f"Metadata for {id_type}:{id_val} returned {record}")
+            if not record and id_type in workspace.fetchers:
+                missing_ids[id_type].add(id_val)
 
-        if pmid and not cache.get_by_pmid(pmid):
-            missing_pmids.append(pmid)
-        elif pmcid and not cache.get_by_pmcid(pmcid):
-            missing_pmcids.append(pmcid)
+    for id_type, missing_ids_by_type in missing_ids.items():
+        print(f"\tNumber of missing {id_type} IDs: {len(missing_ids_by_type)}")
 
-    print(f"Target {target.name} metadata: pmid missing = {len(missing_pmids)} pmcid missing = {len(missing_pmcids)}")
+    # 2. Fetch missing items using the appropriate fetcher and add new records to the cache
+    new_records = []
+    for id_type, id_set in missing_ids.items():
+        if id_set:
+            fetcher = workspace.fetchers[id_type]
+            new_records.extend(fetcher.fetch(list(id_set)))
+    workspace.metadata_cache.add_records(new_records)
 
-    # 2. Fetch missing PubMed metadata
-    if missing_pmids:
-        pubmed_fetcher = PubMedFetcher()
-        new_records = pubmed_fetcher.fetch(list(set(missing_pmids)))
-        cache.add_records(new_records)
+    # 3. Get metadata for realzies
+    doc_metadata = {}
+    for doc in documents:
+        record = None
+        for id_type, id_val in doc.identifiers.items():
+            record = workspace.metadata_cache.get_metadata(id_type, id_val)
+            #print(f"Metadata for {id_type}:{id_val} returned {record}")
+            if record:
+                break # Found it!
+        doc_metadata[doc.document_id] = record if record else {}
 
-    # 3. Fetch missing PMC metadata (for docs that don't have a PMID or weren't found)
-    # Re-check PMCIDs after PubMed fetch in case a PMID fetch filled a PMC record
-    still_missing_pmcids = [p for p in set(missing_pmcids) if not cache.get_by_pmcid(p)]
-    if still_missing_pmcids:
-        pmc_fetcher = PMCFetcher()
-        new_records = pmc_fetcher.fetch(still_missing_pmcids)
-        cache.add_records(new_records)
-    return cache
+    print(f"\tlen(doc_metadata) = {len(doc_metadata)}")
+    return doc_metadata

@@ -50,9 +50,18 @@ class BenchmarkConfig:
     loader: LoaderSpec
     annotation_filters: dict[str, dict[str, Any]] = field(default_factory=dict)
 
+@dataclass(slots=True)
+class WorkspaceConfig:
+    """Global configuration for the benchmarking workspace and caches."""
+    metadata_cache_filename: str = "data/metadata_cache.json"
+    
+    # TODO This is also exactly where you'll put download/terminology settings later:
+    # corpora_download_dir: str = "corpora/"
+    # terminology_dir: str = "data/terminologies/"
 
 @dataclass(slots=True)
 class BatteryConfig:
+    workspace: WorkspaceConfig = field(default_factory=WorkspaceConfig)
     corpora: dict[str, BenchmarkConfig] = field(default_factory=dict)
     bundles: dict[str, DatasetBundle] = field(default_factory=dict)
     comparison_suites: dict[str, ComparisonSuite] = field(default_factory=dict)    
