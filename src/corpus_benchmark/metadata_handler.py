@@ -13,7 +13,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
-from src.corpus_benchmark.models.corpus import DocumentIdentifierType
+from corpus_benchmark.models.corpus import DocumentIdentifierType
 
 # Configuration
 default_metadata_cache_filename = "data/metadata_cache.json"

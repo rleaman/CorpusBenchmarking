@@ -37,22 +37,27 @@ from corpus_benchmark.metrics.unique_counts import (
     unique_mention_tokens,
     unique_identifiers,
 )
-from src.corpus_benchmark.metrics.annotation_distributions import (
+from corpus_benchmark.metrics.annotation_distributions import (
     label_distribution,
     identifier_resource_distribution,
     match_type_distribution,
 )
 
-from src.corpus_benchmark.metrics.overlaps import (
+from corpus_benchmark.metrics.overlaps import (
     token_overlap,
     mention_overlap,
     mention_token_overlap,
     identifier_overlap,
 )
 
-from src.corpus_benchmark.metrics.metadata_distribution import (
+from corpus_benchmark.metrics.metadata_distribution import (
     journal_distribution,
     publication_year_distribution,
+)
+
+from corpus_benchmark.metrics.terminology_coverage import (
+    high_level_concept_counts,
+    concept_depth_counts,
 )
 
 
@@ -96,4 +101,6 @@ __all__ = [
     "identifier_overlap",
     "journal_distribution",
     "publication_year_distribution",
+    "high_level_concept_counts",
+    "concept_depth_counts",
 ]

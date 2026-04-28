@@ -10,9 +10,9 @@ import corpus_benchmark.metrics  # noqa: F401
 from corpus_benchmark.context import BenchmarkContext, MetricTarget
 from corpus_benchmark.models.config import BatteryConfig, DatasetBundle
 from corpus_benchmark.models.corpus import BenchmarkCorpus
-from corpus_benchmark.registry import LOADERS, SUBSET_METRICS, CROSS_METRICS
-from src.corpus_benchmark.workspace import GlobalWorkspace
-from src.corpus_benchmark.metadata_handler import MetadataCache, default_metadata_cache_filename
+from corpus_benchmark.registry import LOADERS, TERMINOLOGY_LOADERS, SUBSET_METRICS, CROSS_METRICS, TERMINOLOGY_METRICS
+from corpus_benchmark.workspace import GlobalWorkspace
+from corpus_benchmark.metadata_handler import MetadataCache, default_metadata_cache_filename
 
 
 def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> MetricTarget:
@@ -31,6 +31,17 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
         metadata_cache=MetadataCache(battery_config.workspace.metadata_cache_filename),
         workspace_config=battery_config.workspace,
     )
+
+    # Initialize terminologies
+    for term_name, term_config in battery_config.terminologies.items():
+        print(f"Loading terminology {term_name}")
+        loader_name = term_config.name
+        if loader_name not in TERMINOLOGY_LOADERS:
+            available = ", ".join(sorted(TERMINOLOGY_LOADERS)) or "<none>"
+            raise ValueError(f"Unknown terminology loader '{loader_name}'. Available loaders: {available}")
+        loader = TERMINOLOGY_LOADERS[loader_name]
+        workspace.terminologies[term_name] = loader(workspace.workspace_config, **term_config.params)
+
     corpora: dict[str, BenchmarkCorpus] = dict()
     contexts: dict[str, BenchmarkContext] = dict()
 
@@ -83,10 +94,34 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
                 # Execute cross-metric (requires metrics designed for two targets)
                 result = metric(target1, target2, metric_spec.result_name, **getattr(metric_spec, "params", {}))
                 results.append(result)
+        elif metric_spec.metric_name in TERMINOLOGY_METRICS:
+            metric = TERMINOLOGY_METRICS[metric_spec.metric_name]
+            params = getattr(metric_spec, "params", {})
+            term_name = params.get("terminology_name")
+            if not term_name or term_name not in workspace.terminologies:
+                # Fallback to the first loaded terminology if only one exists
+                if len(workspace.terminologies) == 1:
+                    term_name = list(workspace.terminologies.keys())[0]
+                    terminology = workspace.terminologies[term_name]
+                else:
+                    available = ", ".join(sorted(workspace.terminologies)) or "<none>"
+                    raise ValueError(
+                        f"Metric {metric_spec.metric_name} requires a terminology_name param matching a loaded terminology. "
+                        f"Available terminologies: {available}"
+                    )
+            else:
+                terminology = workspace.terminologies[term_name]
+
+            for bundle_name in metric_spec.target_bundles:
+                bundle = battery_config.bundles[bundle_name]
+                target = _resolve_bundle(bundle, corpora, contexts)
+                result = metric(target, metric_spec.result_name, terminology=terminology, **params)
+                results.append(result)
         else:
             available_metrics = []
             available_metrics.extend(SUBSET_METRICS)
             available_metrics.extend(CROSS_METRICS)
+            available_metrics.extend(TERMINOLOGY_METRICS)
             available = ", ".join(sorted(available_metrics)) or "<none>"
             raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
 

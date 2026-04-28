@@ -22,15 +22,22 @@ from pathlib import Path
 # ── Colour palette ────────────────────────────────────────────────────────────
 
 PALETTE = [
-    "#7F77DD", "#378ADD", "#1D9E75", "#D85A30",
-    "#639922", "#D4537E", "#BA7517", "#E24B4A", "#888780",
+    "#7F77DD",
+    "#378ADD",
+    "#1D9E75",
+    "#D85A30",
+    "#639922",
+    "#D4537E",
+    "#BA7517",
+    "#E24B4A",
+    "#888780",
 ]
 
 OV_COLS = {
-    "token":   "#888780",
+    "token": "#888780",
     "men_tok": "#1D9E75",
     "mention": "#D85A30",
-    "ident":   "#7F77DD",
+    "ident": "#7F77DD",
 }
 BAR_SCALE = 0.65
 
@@ -38,58 +45,190 @@ BAR_SCALE = 0.65
 # ── Journal topic classification ──────────────────────────────────────────────
 
 EXACT_TOPICS = {
-    "Nature": "Multidisciplinary",      "Science": "Multidisciplinary",
-    "Cell": "Cell & Dev Biology",       "Blood": "Clinical Medicine",
-    "Gut": "Clinical Medicine",          "Pain": "Neuroscience",
-    "Brain": "Neuroscience",            "Neurology": "Neuroscience",
-    "Circulation": "Cardiology & Vasc","Lancet": "Clinical Medicine",
-    "Langmuir": "Chemistry & Materials","Small": "Chemistry & Materials",
-    "Leukemia": "Oncology",             "Stroke": "Cardiology & Vasc",
-    "Diabetes": "Clinical Medicine",    "Oncogene": "Oncology",
-    "Immunity": "Immunology",           "Neuron": "Neuroscience",
-    "Bone": "Clinical Medicine",        "Nanoscale": "Chemistry & Materials",
-    "RNA": "Biochemistry & Mol Bio",    "Structure": "Biochemistry & Mol Bio",
+    "Nature": "Multidisciplinary",
+    "Science": "Multidisciplinary",
+    "Cell": "Cell & Dev Biology",
+    "Blood": "Clinical Medicine",
+    "Gut": "Clinical Medicine",
+    "Pain": "Neuroscience",
+    "Brain": "Neuroscience",
+    "Neurology": "Neuroscience",
+    "Circulation": "Cardiology & Vasc",
+    "Lancet": "Clinical Medicine",
+    "Langmuir": "Chemistry & Materials",
+    "Small": "Chemistry & Materials",
+    "Leukemia": "Oncology",
+    "Stroke": "Cardiology & Vasc",
+    "Diabetes": "Clinical Medicine",
+    "Oncogene": "Oncology",
+    "Immunity": "Immunology",
+    "Neuron": "Neuroscience",
+    "Bone": "Clinical Medicine",
+    "Nanoscale": "Chemistry & Materials",
+    "RNA": "Biochemistry & Mol Bio",
+    "Structure": "Biochemistry & Mol Bio",
     "Gut Microbes": "Biochemistry & Mol Bio",
 }
 
 TOPIC_RULES = [
-    ("Genetics & Genomics",       ["genet","genom","hered","mutat","chromosom","cytogenet","bioinform"]),
-    ("Neuroscience",              ["neuro","brain","psychiatr","psychol","epilep","cephalalg","alzheim"]),
-    ("Oncology",                  ["cancer","oncol","tumor","tumour","carcinogen","anticancer","leuk","lymphom"]),
-    ("Immunology",                ["immunol","allerg","mucosal"]),
-    ("Cell & Dev Biology",        ["cell biol","dev biol","stem cell","cell death","develop","embryol",
-                                   "tissue eng","reprod biol","cell mol","cell res","cell prolif",
-                                   "cell commun","cell cycle","cell tissue","cell metab","cell rep",
-                                   "cell stem","cell genom"]),
-    ("Biochemistry & Mol Bio",    ["biochem","mol biol","biol chem","biophys","febs","faseb",
-                                   "proteom","glycobiol","nucleic acid","mol microbiol","mol ecol",
-                                   "mol endocrinol","mol pharmacol","mol cell","mol syst","mol med"]),
-    ("Pharmacology & Toxicology", ["pharmacol","toxicol","xenobiotica","antimicrob","drug","pharm"]),
-    ("Cardiology & Vasc",         ["cardiol","heart","hypertens","cardiovasc","thromb","vasc","arteri"]),
-    ("Chemistry & Materials",     ["chem","nano","polym","colloid","mater","beilstein","chirality","ultrason"]),
-    ("Clinical Medicine",         ["clin","intern med","n engl j med","jama","hosp","surg","obstet",
-                                   "pediatr","nephrol","hepatol","gastroent","ophthalm","dermatol",
-                                   "anesth","emerg","radiol","urol","rheumatol","endocr","diabet",
-                                   "kidney","liver","infect","transplant","forensic","nutr",
-                                   "phytother","planta med","fitoterap","vet ","environ health"]),
-    ("Multidisciplinary",         ["plos","sci rep","nat commun","elife","proc natl acad","bmc",
-                                   "int j mol sci","front ","biomed res","commun biol","sci adv",
-                                   "peerj","gigascience","sci data","adv sci"]),
+    (
+        "Genetics & Genomics",
+        ["genet", "genom", "hered", "mutat", "chromosom", "cytogenet", "bioinform"],
+    ),
+    (
+        "Neuroscience",
+        ["neuro", "brain", "psychiatr", "psychol", "epilep", "cephalalg", "alzheim"],
+    ),
+    (
+        "Oncology",
+        [
+            "cancer",
+            "oncol",
+            "tumor",
+            "tumour",
+            "carcinogen",
+            "anticancer",
+            "leuk",
+            "lymphom",
+        ],
+    ),
+    ("Immunology", ["immunol", "allerg", "mucosal"]),
+    (
+        "Cell & Dev Biology",
+        [
+            "cell biol",
+            "dev biol",
+            "stem cell",
+            "cell death",
+            "develop",
+            "embryol",
+            "tissue eng",
+            "reprod biol",
+            "cell mol",
+            "cell res",
+            "cell prolif",
+            "cell commun",
+            "cell cycle",
+            "cell tissue",
+            "cell metab",
+            "cell rep",
+            "cell stem",
+            "cell genom",
+        ],
+    ),
+    (
+        "Biochemistry & Mol Bio",
+        [
+            "biochem",
+            "mol biol",
+            "biol chem",
+            "biophys",
+            "febs",
+            "faseb",
+            "proteom",
+            "glycobiol",
+            "nucleic acid",
+            "mol microbiol",
+            "mol ecol",
+            "mol endocrinol",
+            "mol pharmacol",
+            "mol cell",
+            "mol syst",
+            "mol med",
+        ],
+    ),
+    (
+        "Pharmacology & Toxicology",
+        ["pharmacol", "toxicol", "xenobiotica", "antimicrob", "drug", "pharm"],
+    ),
+    (
+        "Cardiology & Vasc",
+        ["cardiol", "heart", "hypertens", "cardiovasc", "thromb", "vasc", "arteri"],
+    ),
+    (
+        "Chemistry & Materials",
+        [
+            "chem",
+            "nano",
+            "polym",
+            "colloid",
+            "mater",
+            "beilstein",
+            "chirality",
+            "ultrason",
+        ],
+    ),
+    (
+        "Clinical Medicine",
+        [
+            "clin",
+            "intern med",
+            "n engl j med",
+            "jama",
+            "hosp",
+            "surg",
+            "obstet",
+            "pediatr",
+            "nephrol",
+            "hepatol",
+            "gastroent",
+            "ophthalm",
+            "dermatol",
+            "anesth",
+            "emerg",
+            "radiol",
+            "urol",
+            "rheumatol",
+            "endocr",
+            "diabet",
+            "kidney",
+            "liver",
+            "infect",
+            "transplant",
+            "forensic",
+            "nutr",
+            "phytother",
+            "planta med",
+            "fitoterap",
+            "vet ",
+            "environ health",
+        ],
+    ),
+    (
+        "Multidisciplinary",
+        [
+            "plos",
+            "sci rep",
+            "nat commun",
+            "elife",
+            "proc natl acad",
+            "bmc",
+            "int j mol sci",
+            "front ",
+            "biomed res",
+            "commun biol",
+            "sci adv",
+            "peerj",
+            "gigascience",
+            "sci data",
+            "adv sci",
+        ],
+    ),
 ]
 
 TOPIC_COLORS = {
-    "Genetics & Genomics":        "#7F77DD",
-    "Pharmacology & Toxicology":  "#1D9E75",
-    "Multidisciplinary":          "#AFA9EC",
-    "Chemistry & Materials":      "#D85A30",
-    "Neuroscience":               "#378ADD",
-    "Biochemistry & Mol Bio":     "#BA7517",
-    "Clinical Medicine":          "#5DCAA5",
-    "Cell & Dev Biology":         "#639922",
-    "Oncology":                   "#E24B4A",
-    "Cardiology & Vasc":          "#888780",
-    "Immunology":                 "#D4537E",
-    "Other":                      "#D3D1C7",
+    "Genetics & Genomics": "#7F77DD",
+    "Pharmacology & Toxicology": "#1D9E75",
+    "Multidisciplinary": "#AFA9EC",
+    "Chemistry & Materials": "#D85A30",
+    "Neuroscience": "#378ADD",
+    "Biochemistry & Mol Bio": "#BA7517",
+    "Clinical Medicine": "#5DCAA5",
+    "Cell & Dev Biology": "#639922",
+    "Oncology": "#E24B4A",
+    "Cardiology & Vasc": "#888780",
+    "Immunology": "#D4537E",
+    "Other": "#D3D1C7",
 }
 ALL_TOPICS = list(TOPIC_COLORS.keys())
 
@@ -120,6 +259,7 @@ def compute_topic_dist(journal_dist: dict) -> dict:
 
 
 # ── Corpus statistics helpers ─────────────────────────────────────────────────
+
 
 def _get(data, metric, field="value", default=None):
     for item in data:
@@ -161,48 +301,56 @@ def _id_info(data):
     if not named:
         return dict(has_ids=False, partial=False, label="none", css_class="no")
     if null_frac > 0.05:
-        return dict(has_ids=True, partial=True,
-                    label=f"{', '.join(named)} (partial)", css_class="part")
-    return dict(has_ids=True, partial=False,
-                label=", ".join(named), css_class="yes")
+        return dict(
+            has_ids=True,
+            partial=True,
+            label=f"{', '.join(named)} (partial)",
+            css_class="part",
+        )
+    return dict(has_ids=True, partial=False, label=", ".join(named), css_class="yes")
 
 
 def _total_ann(data):
     details = _get(data, "label_distribution", "details") or {}
-    counts  = details.get("counts", {})
+    counts = details.get("counts", {})
     if counts:
         return sum(counts.values())
     apd = _stat(data, "annotations_per_document_stats", "mean", 0)
-    dc  = _get(data, "document_count", default=0)
+    dc = _get(data, "document_count", default=0)
     return int(round(apd * dc))
 
 
 def summarise(name, data):
-    ld   = _get(data, "label_distribution") or {}
+    ld = _get(data, "label_distribution") or {}
     info = _id_info(data)
     return dict(
-        name        = name.replace("_corpus", "").replace("_", "-"),
-        raw_name    = name,
-        doc_count   = _get(data, "document_count", default=0),
-        token_count = _get(data, "token_count", default=0),
-        n_types     = len(ld),
-        types       = list(ld.keys()),
-        entropy     = round(_entropy(data), 2),
-        total_ann   = _total_ann(data),
-        ann_per_doc = round(_stat(data, "annotations_per_document_stats",    "mean", 0), 2),
-        men_per_doc = round(_stat(data, "unique_mentions_per_document_stats","mean", 0), 2),
-        ids_per_doc = round(_stat(data, "unique_identifiers_per_document_stats","mean", 0), 2),
-        ambiguity   = round(_stat(data, "ambiguity_degree_stats", "mean", 1.0), 3),
-        variation   = _stat(data, "variation_degree_stats", "mean"),
-        id_vocab    = info["label"],
-        id_class    = info["css_class"],
-        has_ids     = info["has_ids"],
-        overlap     = None,
-        metadata    = None,
+        name=name.replace("_corpus", "").replace("_", "-"),
+        raw_name=name,
+        doc_count=_get(data, "document_count", default=0),
+        token_count=_get(data, "token_count", default=0),
+        n_types=len(ld),
+        types=list(ld.keys()),
+        entropy=round(_entropy(data), 2),
+        total_ann=_total_ann(data),
+        ann_per_doc=round(_stat(data, "annotations_per_document_stats", "mean", 0), 2),
+        men_per_doc=round(
+            _stat(data, "unique_mentions_per_document_stats", "mean", 0), 2
+        ),
+        ids_per_doc=round(
+            _stat(data, "unique_identifiers_per_document_stats", "mean", 0), 2
+        ),
+        ambiguity=round(_stat(data, "ambiguity_degree_stats", "mean", 1.0), 3),
+        variation=_stat(data, "variation_degree_stats", "mean"),
+        id_vocab=info["label"],
+        id_class=info["css_class"],
+        has_ids=info["has_ids"],
+        overlap=None,
+        metadata=None,
     )
 
 
 # ── Overlap helpers ───────────────────────────────────────────────────────────
+
 
 def _norm(s):
     s = s.lower()
@@ -233,8 +381,10 @@ def _split_sizes(metrics):
         if m["metric_name"] == "token_overlap":
             d = m.get("details", {})
             tr = next((v for k, v in d.items() if "train" in k.lower()), 0)
-            te = next((v for k, v in d.items()
-                       if "test" in k.lower() or "dev" in k.lower()), 0)
+            te = next(
+                (v for k, v in d.items() if "test" in k.lower() or "dev" in k.lower()),
+                0,
+            )
             return int(tr), int(te)
     return 0, 0
 
@@ -247,11 +397,12 @@ def load_overlaps(path):
         nk = _norm(_corpus_from_key(key))
         tr, te = _split_sizes(metrics)
         result[nk] = {
-            "token_overlap":         _ov_val(metrics, "token_overlap"),
+            "token_overlap": _ov_val(metrics, "token_overlap"),
             "mention_token_overlap": _ov_val(metrics, "mention_token_overlap"),
-            "mention_overlap":       _ov_val(metrics, "mention_overlap"),
-            "identifier_overlap":    _ov_val(metrics, "identifier_overlap"),
-            "train_size": tr, "test_size": te,
+            "mention_overlap": _ov_val(metrics, "mention_overlap"),
+            "identifier_overlap": _ov_val(metrics, "identifier_overlap"),
+            "train_size": tr,
+            "test_size": te,
         }
     return result
 
@@ -263,9 +414,11 @@ def attach_overlaps(corpora, overlaps):
 
 # ── Metadata helpers ──────────────────────────────────────────────────────────
 
+
 def _process_metadata(jd_raw, yd_raw):
-    j_clean = {k: v for k, v in (jd_raw or {}).items()
-               if k not in ("Unknown", None) and v}
+    j_clean = {
+        k: v for k, v in (jd_raw or {}).items() if k not in ("Unknown", None) and v
+    }
 
     if not j_clean:
         journal = None
@@ -273,9 +426,9 @@ def _process_metadata(jd_raw, yd_raw):
         sj = sorted(j_clean.items(), key=lambda x: -x[1])
         journal = {
             "n_journals": len(j_clean),
-            "top1_name":  sj[0][0],
-            "top1_pct":   round(sj[0][1] * 100, 1),
-            "top3_pct":   round(sum(v for _, v in sj[:3]) * 100, 1),
+            "top1_name": sj[0][0],
+            "top1_pct": round(sj[0][1] * 100, 1),
+            "top3_pct": round(sum(v for _, v in sj[:3]) * 100, 1),
         }
 
     y_clean = {}
@@ -294,21 +447,22 @@ def _process_metadata(jd_raw, yd_raw):
             d = (yr // 10) * 10
             decades[d] = round(decades.get(d, 0) + frac * 100, 1)
         year = {
-            "year_min":  min(y_clean),
-            "year_max":  max(y_clean),
-            "span":      max(y_clean) - min(y_clean),
+            "year_min": min(y_clean),
+            "year_max": max(y_clean),
+            "span": max(y_clean) - min(y_clean),
             "mode_year": max(y_clean, key=lambda yr: y_clean[yr]),
-            "decades":   decades,
-            "year_pcts": {yr: round(frac * 100, 2)
-                          for yr, frac in sorted(y_clean.items())},
+            "decades": decades,
+            "year_pcts": {
+                yr: round(frac * 100, 2) for yr, frac in sorted(y_clean.items())
+            },
         }
 
     topic_dist = compute_topic_dist(j_clean) if j_clean else None
 
     return {
-        "journal":      journal,
-        "year":         year,
-        "topic_dist":   topic_dist,
+        "journal": journal,
+        "year": year,
+        "topic_dist": topic_dist,
         "has_metadata": journal is not None or year is not None,
     }
 
@@ -318,10 +472,22 @@ def load_metadata(path):
         raw = json.load(f)
     result = {}
     for corpus_name, metrics in raw.items():
-        jd = next((m.get("value", {}) for m in metrics
-                   if m.get("metric_name") == "journal_distribution"), {})
-        yd = next((m.get("value", {}) for m in metrics
-                   if m.get("metric_name") == "publication_year_distribution"), {})
+        jd = next(
+            (
+                m.get("value", {})
+                for m in metrics
+                if m.get("metric_name") == "journal_distribution"
+            ),
+            {},
+        )
+        yd = next(
+            (
+                m.get("value", {})
+                for m in metrics
+                if m.get("metric_name") == "publication_year_distribution"
+            ),
+            {},
+        )
         result[_norm(corpus_name)] = _process_metadata(jd, yd)
     return result
 
@@ -333,11 +499,12 @@ def attach_metadata(corpora, metadata):
 
 # ── Topic table builder (pure Python → HTML) ──────────────────────────────────
 
+
 def build_topic_table(corpora) -> str:
     """Generate an HTML table: rows = topics, columns = corpora with topic data."""
     with_td = sorted(
         [c for c in corpora if (c.get("metadata") or {}).get("topic_dist")],
-        key=lambda c: c["name"]
+        key=lambda c: c["name"],
     )
     if not with_td:
         return "<p style='color:var(--color-text-secondary);font-size:13px'>No topic data available.</p>"
@@ -356,18 +523,18 @@ def build_topic_table(corpora) -> str:
         if max(vals) < 1.0:
             continue
         col = TOPIC_COLORS.get(topic, "#D3D1C7")
-        mx  = max(vals)
+        mx = max(vals)
         td_cells = "".join(
             f'<td class="r" style="font-weight:{"600" if v == mx and v >= 1 else "400"};'
             f'color:{"var(--color-text-primary)" if v >= 1 else "var(--color-text-tertiary)"}">'
             f'{"—" if v < 1 else f"{v:.0f}%"}</td>'
             for v in vals
         )
-        dot = (f'<span style="display:inline-block;width:8px;height:8px;border-radius:2px;'
-               f'background:{col};margin-right:6px;vertical-align:middle"></span>')
-        rows.append(
-            f'<tr><td class="l">{dot}{topic}</td>{td_cells}</tr>'
+        dot = (
+            f'<span style="display:inline-block;width:8px;height:8px;border-radius:2px;'
+            f'background:{col};margin-right:6px;vertical-align:middle"></span>'
         )
+        rows.append(f'<tr><td class="l">{dot}{topic}</td>{td_cells}</tr>')
 
     # Footer: totals (sum of shown rows, should be ~100)
     total_cells = ""
@@ -401,36 +568,59 @@ def build_topic_table(corpora) -> str:
 
 # ── Metadata chart data ───────────────────────────────────────────────────────
 
+
 def _meta_chart_data(corpora, colours):
     ci = {c["name"]: i for i, c in enumerate(corpora)}
-    def col(name): return colours[ci.get(name, 0) % len(colours)]
+
+    def col(name):
+        return colours[ci.get(name, 0) % len(colours)]
 
     # Journal diversity
-    by_jdiv   = sorted(corpora, key=lambda c:
-        -(((c.get("metadata") or {}).get("journal") or {}).get("n_journals", 0)))
-    jdiv_vals = [((c.get("metadata") or {}).get("journal") or {}).get("n_journals", 0)
-                 for c in by_jdiv]
+    by_jdiv = sorted(
+        corpora,
+        key=lambda c: -(
+            ((c.get("metadata") or {}).get("journal") or {}).get("n_journals", 0)
+        ),
+    )
+    jdiv_vals = [
+        ((c.get("metadata") or {}).get("journal") or {}).get("n_journals", 0)
+        for c in by_jdiv
+    ]
 
     # Temporal range
     with_yr = [c for c in corpora if (c.get("metadata") or {}).get("year")]
-    by_yr   = sorted(with_yr, key=lambda c: c["metadata"]["year"]["year_min"])
+    by_yr = sorted(with_yr, key=lambda c: c["metadata"]["year"]["year_min"])
 
     # Concentration
-    with_j  = [c for c in corpora if (c.get("metadata") or {}).get("journal")]
+    with_j = [c for c in corpora if (c.get("metadata") or {}).get("journal")]
     by_conc = sorted(with_j, key=lambda c: -c["metadata"]["journal"]["top1_pct"])
 
     # Decade stacked
     all_dec = sorted({d for c in by_yr for d in c["metadata"]["year"]["decades"]})
-    dec_pal = ["#55534ecc","#888780cc","#B4B2A9cc","#7F77DDcc",
-               "#378ADDcc","#D4537Ecc","#D85A30cc","#639922cc"]
+    dec_pal = [
+        "#55534ecc",
+        "#888780cc",
+        "#B4B2A9cc",
+        "#7F77DDcc",
+        "#378ADDcc",
+        "#D4537Ecc",
+        "#D85A30cc",
+        "#639922cc",
+    ]
 
-    def dec_lbl(d): return f"≤{d+9}" if d <= 1970 else f"{d}s"
+    def dec_lbl(d):
+        return f"≤{d+9}" if d <= 1970 else f"{d}s"
 
     decade_ds = [
-        {"label": dec_lbl(d),
-         "data": [round(c["metadata"]["year"]["decades"].get(d, 0), 1) for c in by_yr],
-         "backgroundColor": dec_pal[i % len(dec_pal)],
-         "borderWidth": 0, "borderRadius": 0}
+        {
+            "label": dec_lbl(d),
+            "data": [
+                round(c["metadata"]["year"]["decades"].get(d, 0), 1) for c in by_yr
+            ],
+            "backgroundColor": dec_pal[i % len(dec_pal)],
+            "borderWidth": 0,
+            "borderRadius": 0,
+        }
         for i, d in enumerate(all_dec)
     ]
 
@@ -439,36 +629,54 @@ def _meta_chart_data(corpora, colours):
     if by_yr:
         sel = [by_yr[0], by_yr[-1]] if len(by_yr) > 1 else [by_yr[0]]
         for c in sel:
-            pts = [{"x": yr, "y": pct}
-                   for yr, pct in sorted(c["metadata"]["year"]["year_pcts"].items())]
-            yby_ds.append({"label": c["name"], "data": pts,
-                            "backgroundColor": col(c["name"]) + "88",
-                            "borderWidth": 0, "borderRadius": 1})
+            pts = [
+                {"x": yr, "y": pct}
+                for yr, pct in sorted(c["metadata"]["year"]["year_pcts"].items())
+            ]
+            yby_ds.append(
+                {
+                    "label": c["name"],
+                    "data": pts,
+                    "backgroundColor": col(c["name"]) + "88",
+                    "borderWidth": 0,
+                    "borderRadius": 1,
+                }
+            )
 
-    yr_x_min = (by_yr[0]["metadata"]["year"]["year_min"]  - 5) if by_yr else 1960
+    yr_x_min = (by_yr[0]["metadata"]["year"]["year_min"] - 5) if by_yr else 1960
     yr_x_max = (by_yr[-1]["metadata"]["year"]["year_max"] + 3) if by_yr else 2030
 
     return dict(
-        jdiv_labels   = json.dumps([c["name"] for c in by_jdiv]),
-        jdiv_data     = json.dumps(jdiv_vals),
-        jdiv_bg       = json.dumps([col(c["name"]) + ("cc" if jdiv_vals[i] > 0 else "22")
-                                    for i, c in enumerate(by_jdiv)]),
-        yr_labels     = json.dumps([c["name"] for c in by_yr]),
-        yr_ranges     = json.dumps([[c["metadata"]["year"]["year_min"],
-                                     c["metadata"]["year"]["year_max"]] for c in by_yr]),
-        yr_modes      = json.dumps([c["metadata"]["year"]["mode_year"] for c in by_yr]),
-        yr_bg         = json.dumps([col(c["name"]) + "bb" for c in by_yr]),
-        conc_labels   = json.dumps([c["name"] for c in by_conc]),
-        conc_top1     = json.dumps([c["metadata"]["journal"]["top1_pct"] for c in by_conc]),
-        conc_top3     = json.dumps([c["metadata"]["journal"]["top3_pct"] for c in by_conc]),
-        conc_bg1      = json.dumps([col(c["name"]) + "dd" for c in by_conc]),
-        conc_bg3      = json.dumps([col(c["name"]) + "44" for c in by_conc]),
-        decade_ds     = json.dumps(decade_ds),
-        decade_labels = json.dumps([c["name"] for c in by_yr]),
-        yby_ds        = json.dumps(yby_ds),
-        yr_x_min      = yr_x_min,
-        yr_x_max      = yr_x_max,
-        n_with_meta   = sum(1 for c in corpora if (c.get("metadata") or {}).get("has_metadata")),
+        jdiv_labels=json.dumps([c["name"] for c in by_jdiv]),
+        jdiv_data=json.dumps(jdiv_vals),
+        jdiv_bg=json.dumps(
+            [
+                col(c["name"]) + ("cc" if jdiv_vals[i] > 0 else "22")
+                for i, c in enumerate(by_jdiv)
+            ]
+        ),
+        yr_labels=json.dumps([c["name"] for c in by_yr]),
+        yr_ranges=json.dumps(
+            [
+                [c["metadata"]["year"]["year_min"], c["metadata"]["year"]["year_max"]]
+                for c in by_yr
+            ]
+        ),
+        yr_modes=json.dumps([c["metadata"]["year"]["mode_year"] for c in by_yr]),
+        yr_bg=json.dumps([col(c["name"]) + "bb" for c in by_yr]),
+        conc_labels=json.dumps([c["name"] for c in by_conc]),
+        conc_top1=json.dumps([c["metadata"]["journal"]["top1_pct"] for c in by_conc]),
+        conc_top3=json.dumps([c["metadata"]["journal"]["top3_pct"] for c in by_conc]),
+        conc_bg1=json.dumps([col(c["name"]) + "dd" for c in by_conc]),
+        conc_bg3=json.dumps([col(c["name"]) + "44" for c in by_conc]),
+        decade_ds=json.dumps(decade_ds),
+        decade_labels=json.dumps([c["name"] for c in by_yr]),
+        yby_ds=json.dumps(yby_ds),
+        yr_x_min=yr_x_min,
+        yr_x_max=yr_x_max,
+        n_with_meta=sum(
+            1 for c in corpora if (c.get("metadata") or {}).get("has_metadata")
+        ),
     )
 
 
@@ -994,52 +1202,75 @@ document.getElementById('tabs').addEventListener('click', e=>{{
 
 # ── Output builders ───────────────────────────────────────────────────────────
 
+
 def _sorted_hbar(corpora, key, colours):
-    pairs = [(c["name"], c.get(key), colours[i % len(colours)])
-             for i, c in enumerate(corpora)]
+    pairs = [
+        (c["name"], c.get(key), colours[i % len(colours)])
+        for i, c in enumerate(corpora)
+    ]
     pairs.sort(key=lambda x: (x[1] is None, -(x[1] or 0)))
-    return (json.dumps([p[0] for p in pairs]),
-            json.dumps([p[1] if p[1] is not None else 0 for p in pairs]),
-            json.dumps([col if (val is not None and val > 0) else col + "33"
-                        for _, val, col in pairs]))
+    return (
+        json.dumps([p[0] for p in pairs]),
+        json.dumps([p[1] if p[1] is not None else 0 for p in pairs]),
+        json.dumps(
+            [
+                col if (val is not None and val > 0) else col + "33"
+                for _, val, col in pairs
+            ]
+        ),
+    )
 
 
 def _all_hbar(corpora, key, colours):
-    return (json.dumps([c["name"] for c in corpora]),
-            json.dumps([c.get(key, 0) or 0 for c in corpora]),
-            json.dumps([colours[i % len(colours)] for i in range(len(corpora))]))
+    return (
+        json.dumps([c["name"] for c in corpora]),
+        json.dumps([c.get(key, 0) or 0 for c in corpora]),
+        json.dumps([colours[i % len(colours)] for i in range(len(corpora))]),
+    )
 
 
 def _variation_data(corpora, colours):
-    pairs = [(c["name"], c["variation"], colours[i % len(colours)])
-             for i, c in enumerate(corpora) if c["variation"] is not None]
+    pairs = [
+        (c["name"], c["variation"], colours[i % len(colours)])
+        for i, c in enumerate(corpora)
+        if c["variation"] is not None
+    ]
     pairs.sort(key=lambda x: -x[1])
-    return (json.dumps([p[0] for p in pairs]),
-            json.dumps([round(p[1], 2) for p in pairs]),
-            json.dumps([p[2] for p in pairs]))
+    return (
+        json.dumps([p[0] for p in pairs]),
+        json.dumps([round(p[1], 2) for p in pairs]),
+        json.dumps([p[2] for p in pairs]),
+    )
 
 
 def _bar_td(val, col):
     if val is None:
         return "<td class='na'>—</td>"
     w = min(val / BAR_SCALE, 1.0) * 100
-    return (f"<td class='bar-cell'><div class='bar-wrap'>"
-            f"<div class='bar-bg'><div class='bar-fill' "
-            f"style='width:{w:.0f}%;background:{col}'></div></div>"
-            f"<span class='bar-val'>{val * 100:.1f}%</span></div></td>")
+    return (
+        f"<td class='bar-cell'><div class='bar-wrap'>"
+        f"<div class='bar-bg'><div class='bar-fill' "
+        f"style='width:{w:.0f}%;background:{col}'></div></div>"
+        f"<span class='bar-val'>{val * 100:.1f}%</span></div></td>"
+    )
 
 
 def cascade_datasets_js(corpora, colours):
     with_ov = [c for c in corpora if c.get("overlap")]
     ds = []
     for i, c in enumerate(with_ov):
-        ov  = c["overlap"]
-        pts = [ov.get("token_overlap"), ov.get("mention_token_overlap"),
-               ov.get("mention_overlap"), ov.get("identifier_overlap")]
+        ov = c["overlap"]
+        pts = [
+            ov.get("token_overlap"),
+            ov.get("mention_token_overlap"),
+            ov.get("mention_overlap"),
+            ov.get("identifier_overlap"),
+        ]
         pct = [round(v * 100, 1) if v is not None else None for v in pts]
         col = colours[i % len(colours)]
         ds.append(
-            "{" + f"label:{json.dumps(c['name'])},data:{json.dumps(pct)},"
+            "{"
+            + f"label:{json.dumps(c['name'])},data:{json.dumps(pct)},"
             + f"borderColor:{json.dumps(col)},backgroundColor:{json.dumps(col)},"
             + f"pointRadius:{json.dumps([4 if v is not None else 0 for v in pts])},"
             + "pointHoverRadius:[6,6,6,6],borderWidth:2,spanGaps:false,tension:0.1}"
@@ -1048,20 +1279,22 @@ def cascade_datasets_js(corpora, colours):
 
 
 def build_overlap_panels(corpora):
-    with_ov = sorted([c for c in corpora if c.get("overlap")],
-                     key=lambda c: -(c["overlap"].get("token_overlap") or 0))
+    with_ov = sorted(
+        [c for c in corpora if c.get("overlap")],
+        key=lambda c: -(c["overlap"].get("token_overlap") or 0),
+    )
     rows = []
     for c in with_ov:
         ov = c["overlap"]
         tr = f"{ov['train_size']:,}" if ov.get("train_size") else "—"
-        te = f"{ov['test_size']:,}"  if ov.get("test_size")  else "—"
+        te = f"{ov['test_size']:,}" if ov.get("test_size") else "—"
         rows.append(
             "<tr>"
             f"<td class='l'><strong>{c['name']}</strong></td><td>{tr} → {te}</td>"
-            + _bar_td(ov.get("token_overlap"),        OV_COLS["token"])
+            + _bar_td(ov.get("token_overlap"), OV_COLS["token"])
             + _bar_td(ov.get("mention_token_overlap"), OV_COLS["men_tok"])
-            + _bar_td(ov.get("mention_overlap"),       OV_COLS["mention"])
-            + _bar_td(ov.get("identifier_overlap"),    OV_COLS["ident"])
+            + _bar_td(ov.get("mention_overlap"), OV_COLS["mention"])
+            + _bar_td(ov.get("identifier_overlap"), OV_COLS["ident"])
             + f"<td><span class='pill p-{c['id_class']}'>{c['id_vocab']}</span></td>"
             "</tr>"
         )
@@ -1084,17 +1317,17 @@ def build_overlap_panels(corpora):
         f'<th>Mention tokens<span class="sub">Jaccard</span></th>'
         f'<th>Mention strings<span class="sub">Jaccard</span></th>'
         f'<th>Identifiers<span class="sub">Jaccard</span></th>'
-        f'<th>ID vocab</th></tr></thead>'
+        f"<th>ID vocab</th></tr></thead>"
         f'<tbody>{"".join(rows)}</tbody></table></div>'
         f'<div class="fn">All values are Jaccard similarity (intersection / union) between splits.</div></div>\n'
         f'<div class="panel" id="p7">'
         f'<div class="leg" id="cascLeg"></div>'
         f'<div class="cw" style="height:380px">'
         f'<canvas id="c7" role="img" aria-label="Overlap cascade across four abstraction levels.">'
-        f'Overlap cascade from token vocabulary to identifier level.</canvas></div>'
+        f"Overlap cascade from token vocabulary to identifier level.</canvas></div>"
         f'<p class="note">Each line traces one corpus across four abstraction levels. '
-        f'Lines that terminate before the identifier level indicate corpora without concept normalization.</p>'
-        f'</div>'
+        f"Lines that terminate before the identifier level indicate corpora without concept normalization.</p>"
+        f"</div>"
     )
     return tabs, panels
 
@@ -1118,10 +1351,16 @@ def build_id_status_html(corpora):
 def build_table_rows(corpora):
     rows = []
     for c in corpora:
-        var = f"{c['variation']:.2f}" if c["variation"] is not None else \
-              '<span style="color:#aaa">n/a</span>'
-        ids = f"{c['ids_per_doc']:.2f}" if c["has_ids"] else \
-              '<span style="color:#aaa">—</span>'
+        var = (
+            f"{c['variation']:.2f}"
+            if c["variation"] is not None
+            else '<span style="color:#aaa">n/a</span>'
+        )
+        ids = (
+            f"{c['ids_per_doc']:.2f}"
+            if c["has_ids"]
+            else '<span style="color:#aaa">—</span>'
+        )
         rows.append(
             "<tr>"
             f"<td class='l'><strong>{c['name']}</strong></td>"
@@ -1139,24 +1378,25 @@ def build_table_rows(corpora):
 
 # ── Main build ────────────────────────────────────────────────────────────────
 
+
 def build_html(corpora):
-    colours  = PALETTE[:]
-    n        = len(corpora)
-    has_ov   = any(c.get("overlap") for c in corpora)
+    colours = PALETTE[:]
+    n = len(corpora)
+    has_ov = any(c.get("overlap") for c in corpora)
     has_meta = any(c.get("metadata") for c in corpora)
 
     ann_vals = [c["ann_per_doc"] for c in corpora]
-    amb_vals = [c["ambiguity"]   for c in corpora]
-    h_ann    = max(300, n * 40 + 80)
-    amb_lo   = round(max(0.95, min(amb_vals) - 0.02), 2)
-    amb_hi   = round(max(amb_vals) + 0.02, 2)
+    amb_vals = [c["ambiguity"] for c in corpora]
+    h_ann = max(300, n * 40 + 80)
+    amb_lo = round(max(0.95, min(amb_vals) - 0.02), 2)
+    amb_hi = round(max(amb_vals) + 0.02, 2)
 
     c1_l, c1_d, c1_b = _sorted_hbar(corpora, "ann_per_doc", colours)
     c2_l, c2_d, c2_b = _sorted_hbar(corpora, "ids_per_doc", colours)
     c3_l, c3_d, c3_b = _all_hbar(corpora, "ambiguity", colours)
     c4_l, c4_d, c4_b = _variation_data(corpora, colours)
-    c5_l, c5_d, c5_b = _sorted_hbar(corpora, "n_types",  colours)
-    c6_l, c6_d, c6_b = _sorted_hbar(corpora, "entropy",  colours)
+    c5_l, c5_d, c5_b = _sorted_hbar(corpora, "n_types", colours)
+    c6_l, c6_d, c6_b = _sorted_hbar(corpora, "entropy", colours)
 
     if has_ov:
         ov_tabs, ov_panels = build_overlap_panels(corpora)
@@ -1175,7 +1415,8 @@ def build_html(corpora):
     if has_term:
         term_data_for_panels = {
             _norm(c["raw_name"]): c["terminology"]
-            for c in corpora if c.get("terminology")
+            for c in corpora
+            if c.get("terminology")
         }
         term_tabs, term_panels = build_terminology_panels(term_data_for_panels)
         term_panel_js = (
@@ -1187,33 +1428,45 @@ def build_html(corpora):
         term_tabs = term_panels = term_panel_js = ""
 
     return HTML.format(
-        n_corpora       = n,
-        n_with_ids      = sum(1 for c in corpora if c["has_ids"]),
-        ann_min         = f"{min(ann_vals):.1f}",
-        ann_max         = f"{max(ann_vals):.1f}",
-        amb_min         = f"{min(amb_vals):.2f}",
-        amb_max         = f"{max(amb_vals):.2f}",
-        amb_min_scale   = amb_lo,
-        amb_max_scale   = amb_hi,
-        h_ann           = h_ann,
-        legend_html     = build_legend_html(corpora, colours),
-        id_status_html  = build_id_status_html(corpora),
-        table_rows      = build_table_rows(corpora),
-        overlap_tabs    = ov_tabs,
-        overlap_panels  = ov_panels,
-        meta_tabs       = meta_tabs,
-        meta_panels     = meta_panels,
-        meta_panel_js   = meta_panel_js,
-        term_tabs       = term_tabs,
-        term_panels     = term_panels,
-        term_panel_js   = term_panel_js,
-        cascade_datasets= cascade_ds,
-        c1_labels=c1_l, c1_data=c1_d, c1_bg=c1_b,
-        c2_labels=c2_l, c2_data=c2_d, c2_bg=c2_b,
-        c3_labels=c3_l, c3_data=c3_d, c3_bg=c3_b,
-        c4_labels=c4_l, c4_data=c4_d, c4_bg=c4_b,
-        c5_labels=c5_l, c5_data=c5_d, c5_bg=c5_b,
-        c6_labels=c6_l, c6_data=c6_d, c6_bg=c6_b,
+        n_corpora=n,
+        n_with_ids=sum(1 for c in corpora if c["has_ids"]),
+        ann_min=f"{min(ann_vals):.1f}",
+        ann_max=f"{max(ann_vals):.1f}",
+        amb_min=f"{min(amb_vals):.2f}",
+        amb_max=f"{max(amb_vals):.2f}",
+        amb_min_scale=amb_lo,
+        amb_max_scale=amb_hi,
+        h_ann=h_ann,
+        legend_html=build_legend_html(corpora, colours),
+        id_status_html=build_id_status_html(corpora),
+        table_rows=build_table_rows(corpora),
+        overlap_tabs=ov_tabs,
+        overlap_panels=ov_panels,
+        meta_tabs=meta_tabs,
+        meta_panels=meta_panels,
+        meta_panel_js=meta_panel_js,
+        term_tabs=term_tabs,
+        term_panels=term_panels,
+        term_panel_js=term_panel_js,
+        cascade_datasets=cascade_ds,
+        c1_labels=c1_l,
+        c1_data=c1_d,
+        c1_bg=c1_b,
+        c2_labels=c2_l,
+        c2_data=c2_d,
+        c2_bg=c2_b,
+        c3_labels=c3_l,
+        c3_data=c3_d,
+        c3_bg=c3_b,
+        c4_labels=c4_l,
+        c4_data=c4_d,
+        c4_bg=c4_b,
+        c5_labels=c5_l,
+        c5_data=c5_d,
+        c5_bg=c5_b,
+        c6_labels=c6_l,
+        c6_data=c6_d,
+        c6_bg=c6_b,
     )
 
 
@@ -1225,6 +1478,7 @@ def load_corpora(path):
 
 # ── Terminology coverage helpers ──────────────────────────────────────────────
 
+
 def load_terminology(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -1233,16 +1487,36 @@ def load_terminology(path):
 def _process_one_term(name, data):
     """
     Process terminology stats for one corpus.
-    Supports both old format (count only) and new format (with proportion +
-    mesh_total_count per branch and depth).  When proportion is present it is
-    used directly as the recall metric; otherwise it is estimated from counts.
+    Supports both:
+    1. Framework style: a list of metric results with 'metric_name' and 'value'.
+    2. Legacy style: a dict with 'high_level_counts' and 'depth_counts' directly.
     """
-    n_in        = data["n_input_ids"]
-    n_miss      = data["n_missing_ids"]
-    unique_miss = len(set(data.get("missing_ids", [])))
+    if isinstance(data, list):
+        # Framework style
+        hlc_metric = next(
+            (m for m in data if m["metric_name"] == "high_level_concept_counts"), {}
+        )
+        hlc = hlc_metric.get("value", [])
+        details = hlc_metric.get("details", {})
+        n_in = details.get("n_input_ids", 0)
+        n_miss = details.get("n_missing_ids", 0)
+        miss_ids = details.get("missing_ids", [])
 
-    # Detect new format: first high_level_counts entry has 'proportion' key
-    hlc = data.get("high_level_counts", [])
+        dc_metric = next(
+            (m for m in data if m["metric_name"] == "concept_depth_counts"), {}
+        )
+        dc = dc_metric.get("value", [])
+    else:
+        # Legacy/direct style
+        n_in = data.get("n_input_ids", 0)
+        n_miss = data.get("n_missing_ids", 0)
+        miss_ids = data.get("missing_ids", [])
+        hlc = data.get("high_level_counts", [])
+        dc = data.get("depth_counts", [])
+
+    unique_miss = len(set(miss_ids))
+
+    # Detect new format (proportions present)
     new_format = bool(hlc) and "proportion" in hlc[0]
 
     # ── Branch map ─────────────────────────────────────────────────────────────
@@ -1250,13 +1524,12 @@ def _process_one_term(name, data):
     for item in hlc:
         code = item["branch_code"]
         branch_map[code] = {
-            "label":         item["label"],
-            "treetop":       item["treetop"],
-            "treetop_name":  item["treetop_name"],
-            "count":         item["count"],
-            # New format fields (default to None for old format)
-            "mesh_total":    item.get("mesh_total_count"),
-            "proportion":    item.get("proportion"),   # fraction 0–1
+            "label": item["label"],
+            "treetop": item["treetop"],
+            "treetop_name": item["treetop_name"],
+            "count": item["count"],
+            "mesh_total": item.get("mesh_total_count"),
+            "proportion": item.get("proportion"),
         }
 
     # ── Treetop aggregation ────────────────────────────────────────────────────
@@ -1266,84 +1539,99 @@ def _process_one_term(name, data):
     gt = sum(tt.values()) or 1
 
     # ── C-branch (disease) recall ──────────────────────────────────────────────
-    c_items   = {k: v for k, v in branch_map.items() if v["treetop"] == "C"}
-    c_total   = sum(v["count"] for v in c_items.values()) or 1
+    c_items = {k: v for k, v in branch_map.items() if v["treetop"] == "C"}
+    c_total = sum(v["count"] for v in c_items.values()) or 1
 
     if new_format:
         # proportion is recall against MeSH (0–1); convert to %
-        c_recall = {k: round(v["proportion"] * 100, 2)
-                    for k, v in c_items.items() if v["proportion"] is not None}
-        c_mesh   = {k: round(v["mesh_total"], 1)
-                    for k, v in c_items.items() if v["mesh_total"] is not None}
+        c_recall = {
+            k: round(v["proportion"] * 100, 2)
+            for k, v in c_items.items()
+            if v["proportion"] is not None
+        }
+        c_mesh = {
+            k: round(v["mesh_total"], 1)
+            for k, v in c_items.items()
+            if v["mesh_total"] is not None
+        }
     else:
         # Fallback: proportion within this corpus's C annotations
         c_recall = {k: round(v["count"] / c_total * 100, 2) for k, v in c_items.items()}
-        c_mesh   = {}
+        c_mesh = {}
 
     # ── D-branch (chemical) recall ─────────────────────────────────────────────
-    d_items   = {k: v for k, v in branch_map.items() if v["treetop"] == "D"}
-    d_total   = sum(v["count"] for v in d_items.values()) or 1
+    d_items = {k: v for k, v in branch_map.items() if v["treetop"] == "D"}
+    d_total = sum(v["count"] for v in d_items.values()) or 1
 
     if new_format:
-        d_recall = {k: round(v["proportion"] * 100, 2)
-                    for k, v in d_items.items() if v["proportion"] is not None}
-        d_mesh   = {k: round(v["mesh_total"], 1)
-                    for k, v in d_items.items() if v["mesh_total"] is not None}
+        d_recall = {
+            k: round(v["proportion"] * 100, 2)
+            for k, v in d_items.items()
+            if v["proportion"] is not None
+        }
+        d_mesh = {
+            k: round(v["mesh_total"], 1)
+            for k, v in d_items.items()
+            if v["mesh_total"] is not None
+        }
     else:
         d_recall = {k: round(v["count"] / d_total * 100, 2) for k, v in d_items.items()}
-        d_mesh   = {}
+        d_mesh = {}
 
     branch_labels = {k: v["label"] for k, v in branch_map.items()}
 
     # ── Depth ──────────────────────────────────────────────────────────────────
-    dc = data.get("depth_counts", [])
+    # dc = data.get("depth_counts", [])
     if new_format:
         # Use proportion directly (recall against MeSH at that depth)
-        depth_recall = {str(d["depth"]): round(d["proportion"] * 100, 3)
-                        for d in dc}
-        depth_mesh   = {str(d["depth"]): round(d.get("mesh_total_count", 0), 1)
-                        for d in dc}
+        depth_recall = {str(d["depth"]): round(d["proportion"] * 100, 3) for d in dc}
+        depth_mesh = {
+            str(d["depth"]): round(d.get("mesh_total_count", 0), 1) for d in dc
+        }
     else:
-        depth_total  = sum(d["count"] for d in dc) or 1
-        depth_recall = {str(d["depth"]): round(d["count"] / depth_total * 100, 2)
-                        for d in dc}
-        depth_mesh   = {}
+        depth_total = sum(d["count"] for d in dc) or 1
+        depth_recall = {
+            str(d["depth"]): round(d["count"] / depth_total * 100, 2) for d in dc
+        }
+        depth_mesh = {}
 
     # Mean depth (weighted by count)
     depth_total_ct = sum(d["count"] for d in dc) or 1
     mean_depth = sum(d["depth"] * d["count"] / depth_total_ct for d in dc)
 
     return {
-        "display_name":     name.replace("_", "-"),
-        "new_format":       new_format,
-        "annotation_scope": ("Diseases + Chemicals" if (c_total > 1 and d_total > 1)
-                              else "Diseases" if c_total > 1 else "Chemicals"),
-        "n_input_ids":      n_in,
-        "n_missing_ids":    n_miss,
-        "unique_missing":   unique_miss,
-        "coverage_pct":     round((n_in - n_miss) / n_in * 100, 2) if n_in > 0 else 0,
-        "missing_pct":      round(n_miss / n_in * 100, 2) if n_in > 0 else 0,
-        "treetop_pct":      {k: round(v / gt * 100, 1) for k, v in tt.items()},
+        "display_name": name.replace("_", "-"),
+        "new_format": new_format,
+        "annotation_scope": (
+            "Diseases + Chemicals"
+            if (c_total > 1 and d_total > 1)
+            else "Diseases" if c_total > 1 else "Chemicals"
+        ),
+        "n_input_ids": n_in,
+        "n_missing_ids": n_miss,
+        "unique_missing": unique_miss,
+        "coverage_pct": round((n_in - n_miss) / n_in * 100, 2) if n_in > 0 else 0,
+        "missing_pct": round(n_miss / n_in * 100, 2) if n_in > 0 else 0,
+        "treetop_pct": {k: round(v / gt * 100, 1) for k, v in tt.items()},
         # Recall metrics (new format) or corpus-composition metrics (old format)
-        "c_recall":         c_recall,   # % of MeSH branch covered
-        "d_recall":         d_recall,
-        "c_mesh":           c_mesh,     # total MeSH concepts in branch
-        "d_mesh":           d_mesh,
+        "c_recall": c_recall,  # % of MeSH branch covered
+        "d_recall": d_recall,
+        "c_mesh": c_mesh,  # total MeSH concepts in branch
+        "d_mesh": d_mesh,
         # Keep old names as aliases for backward compat with panel builder
-        "c_branches":       c_recall,
-        "d_branches":       d_recall,
-        "branch_labels":    branch_labels,
-        "depth_pct":        depth_recall,
-        "depth_mesh":       depth_mesh,
-        "mean_depth":       round(mean_depth, 2),
-        "has_c":            c_total > 1,
-        "has_d":            d_total > 1,
+        "c_branches": c_recall,
+        "d_branches": d_recall,
+        "branch_labels": branch_labels,
+        "depth_pct": depth_recall,
+        "depth_mesh": depth_mesh,
+        "mean_depth": round(mean_depth, 2),
+        "has_c": c_total > 1,
+        "has_d": d_total > 1,
     }
 
 
 def process_terminology(raw):
-    return {_norm(name): _process_one_term(name, data)
-            for name, data in raw.items()}
+    return {_norm(name): _process_one_term(name, data) for name, data in raw.items()}
 
 
 def attach_terminology(corpora, term_data):
@@ -1355,10 +1643,11 @@ def attach_terminology(corpora, term_data):
 
 # Fixed colour assignments for the three supported corpora
 _TERM_COLS = {
-    "bc5cdr":       "#378ADD",
-    "ncbidisease":  "#E24B4A",
-    "nlmchem":      "#888780",
+    "bc5cdr": "#378ADD",
+    "ncbidisease": "#E24B4A",
+    "nlmchem": "#888780",
 }
+
 
 def _term_col(nk, fallback="#888780"):
     return _TERM_COLS.get(nk, fallback)
@@ -1372,25 +1661,30 @@ def build_terminology_panels(term_data):
     if not term_data:
         return "", ""
 
-    entries = list(term_data.items())   # [(norm_key, stats), ...]
-    corps   = [v["display_name"] for _, v in entries]
+    entries = list(term_data.items())  # [(norm_key, stats), ...]
+    corps = [v["display_name"] for _, v in entries]
     cols_js = json.dumps([_term_col(nk) for nk, _ in entries])
 
     # ── Coverage ──────────────────────────────────────────────────────────────
-    n_in   = json.dumps([v["n_input_ids"]   for _, v in entries])
+    n_in = json.dumps([v["n_input_ids"] for _, v in entries])
     n_miss = json.dumps([v["n_missing_ids"] for _, v in entries])
     n_uniq = json.dumps([v["unique_missing"] for _, v in entries])
-    cov    = json.dumps([v["coverage_pct"]  for _, v in entries])
-    miss_p = json.dumps([v["missing_pct"]   for _, v in entries])
+    cov = json.dumps([v["coverage_pct"] for _, v in entries])
+    miss_p = json.dumps([v["missing_pct"] for _, v in entries])
 
     total_instances = sum(v["n_input_ids"] for _, v in entries)
-    total_missing   = sum(v["n_missing_ids"] for _, v in entries)
-    mean_cov        = round((total_instances - total_missing) / total_instances * 100, 1)
+    total_missing = sum(v["n_missing_ids"] for _, v in entries)
+    mean_cov = round((total_instances - total_missing) / total_instances * 100, 1)
 
     # Count shared deprecated IDs
-    id_sets = [set(term_data[nk].get("unique_missing_set", []))
-               if "unique_missing_set" in term_data[nk]
-               else set() for nk, _ in entries]
+    id_sets = [
+        (
+            set(term_data[nk].get("unique_missing_set", []))
+            if "unique_missing_set" in term_data[nk]
+            else set()
+        )
+        for nk, _ in entries
+    ]
     # Recompute from processed data — we don't have the raw set but can note it
     shared_note = "2 deprecated IDs (C056507, C061870) appear across multiple corpora"
 
@@ -1401,19 +1695,20 @@ def build_terminology_panels(term_data):
         for ttname, pct in v["treetop_pct"].items():
             all_tt[ttname] = max(all_tt.get(ttname, 0), pct)
     # Keep only those with ≥ 0.1% in at least one corpus, sorted by max descending
-    top_tt = sorted([(k, mx) for k, mx in all_tt.items() if mx >= 0.1],
-                    key=lambda x: -x[1])
+    top_tt = sorted(
+        [(k, mx) for k, mx in all_tt.items() if mx >= 0.1], key=lambda x: -x[1]
+    )
 
     TT_COLORS = {
-        "Diseases":                        "#E24B4Acc",
-        "Chemicals and Drugs":             "#378ADDcc",
-        "Psychiatry and Psychology":       "#D4537Ecc",
-        "Anatomy":                         "#7F77DDcc",
-        "Biological Sciences":             "#639922cc",
-        "Technology and Food and Beverages":"#BA7517cc",
+        "Diseases": "#E24B4Acc",
+        "Chemicals and Drugs": "#378ADDcc",
+        "Psychiatry and Psychology": "#D4537Ecc",
+        "Anatomy": "#7F77DDcc",
+        "Biological Sciences": "#639922cc",
+        "Technology and Food and Beverages": "#BA7517cc",
         "Analytical, Diagnostic and Therapeutic Techniques and Equipment": "#D85A30cc",
-        "Organisms":                       "#1D9E75cc",
-        "Health Care":                     "#888780cc",
+        "Organisms": "#1D9E75cc",
+        "Health Care": "#888780cc",
     }
     TT_SHORT = {
         "Diseases": "Diseases (C)",
@@ -1434,35 +1729,42 @@ def build_terminology_panels(term_data):
             continue
         short = TT_SHORT.get(ttname, ttname)
         color = TT_COLORS.get(ttname, "#D3D1C7cc")
-        tt_datasets.append({
-            "label": short, "data": data_arr,
-            "backgroundColor": color, "borderWidth": 0, "borderRadius": 0
-        })
+        tt_datasets.append(
+            {
+                "label": short,
+                "data": data_arr,
+                "backgroundColor": color,
+                "borderWidth": 0,
+                "borderRadius": 0,
+            }
+        )
     tt_ds_js = json.dumps(tt_datasets)
 
     # ── Depth ─────────────────────────────────────────────────────────────────
-    max_depth = max(
-        (int(d) for _, v in entries for d in v["depth_pct"]), default=10
-    )
+    max_depth = max((int(d) for _, v in entries for d in v["depth_pct"]), default=10)
     depth_labels = list(range(1, max_depth + 1))
     depth_ds = []
     dashes = [[], [5, 3], [2, 2], [8, 4]]
     for i, (nk, v) in enumerate(entries):
         pts = [round(v["depth_pct"].get(str(d), 0), 2) for d in depth_labels]
-        depth_ds.append({
-            "label":           v["display_name"],
-            "data":            pts,
-            "borderColor":     _term_col(nk),
-            "backgroundColor": _term_col(nk) + "22",
-            "fill":            False,
-            "borderWidth":     2,
-            "pointRadius":     4,
-            "tension":         0.3,
-            "borderDash":      dashes[i % len(dashes)],
-        })
+        depth_ds.append(
+            {
+                "label": v["display_name"],
+                "data": pts,
+                "borderColor": _term_col(nk),
+                "backgroundColor": _term_col(nk) + "22",
+                "fill": False,
+                "borderWidth": 2,
+                "pointRadius": 4,
+                "tension": 0.3,
+                "borderDash": dashes[i % len(dashes)],
+            }
+        )
     depth_labels_js = json.dumps(depth_labels)
-    depth_ds_js     = json.dumps(depth_ds)
-    mean_depths_js  = json.dumps([(v["display_name"], v["mean_depth"]) for _, v in entries])
+    depth_ds_js = json.dumps(depth_ds)
+    mean_depths_js = json.dumps(
+        [(v["display_name"], v["mean_depth"]) for _, v in entries]
+    )
 
     # ── Disease branch comparison ─────────────────────────────────────────────
     # Corpora with disease annotations
@@ -1474,34 +1776,50 @@ def build_terminology_panels(term_data):
     # Keep branches with ≥ 1% in at least one corpus, sort by combined sum
     dis_shown = sorted(
         [(code, mx) for code, mx in dis_branch_union.items() if mx >= 1.0],
-        key=lambda x: -sum(v["c_branches"].get(x[0], 0) for _, v in dis_entries)
+        key=lambda x: -sum(v["c_branches"].get(x[0], 0) for _, v in dis_entries),
     )
     dis_labels = []
     for code, _ in dis_shown:
         # Shorten long labels
-        raw_lbl = next((v["branch_labels"].get(code, code)
-                        for _, v in dis_entries if code in v["branch_labels"]), code)
-        lbl = (raw_lbl
-               .replace("Congenital, Hereditary, and Neonatal Diseases and Abnormalities",
-                        "Congenital/Hereditary")
-               .replace(" Diseases", "")
-               .replace(" Disease", "")
-               .replace("Pathological Conditions, Signs and Symptoms", "Pathological Cond.")
-               .replace("Chemically-Induced Disorders", "Chemically-Induced")
-               .replace(" and ", "/"))
+        raw_lbl = next(
+            (
+                v["branch_labels"].get(code, code)
+                for _, v in dis_entries
+                if code in v["branch_labels"]
+            ),
+            code,
+        )
+        lbl = (
+            raw_lbl.replace(
+                "Congenital, Hereditary, and Neonatal Diseases and Abnormalities",
+                "Congenital/Hereditary",
+            )
+            .replace(" Diseases", "")
+            .replace(" Disease", "")
+            .replace(
+                "Pathological Conditions, Signs and Symptoms", "Pathological Cond."
+            )
+            .replace("Chemically-Induced Disorders", "Chemically-Induced")
+            .replace(" and ", "/")
+        )
         dis_labels.append(f"{code} {lbl}")
 
     dis_datasets = []
     for nk, v in dis_entries:
-        dis_datasets.append({
-            "label": v["display_name"],
-            "data":  [round(v["c_branches"].get(code, 0), 2) for code, _ in dis_shown],
-            "backgroundColor": _term_col(nk) + "bb",
-            "borderWidth": 0, "borderRadius": 2,
-        })
-    dis_labels_js  = json.dumps(dis_labels)
-    dis_ds_js      = json.dumps(dis_datasets)
-    dis_h          = max(350, len(dis_shown) * 50 + 100)
+        dis_datasets.append(
+            {
+                "label": v["display_name"],
+                "data": [
+                    round(v["c_branches"].get(code, 0), 2) for code, _ in dis_shown
+                ],
+                "backgroundColor": _term_col(nk) + "bb",
+                "borderWidth": 0,
+                "borderRadius": 2,
+            }
+        )
+    dis_labels_js = json.dumps(dis_labels)
+    dis_ds_js = json.dumps(dis_datasets)
+    dis_h = max(350, len(dis_shown) * 50 + 100)
 
     # ── Chemical branch comparison ────────────────────────────────────────────
     chem_entries = [(nk, v) for nk, v in entries if v["has_d"]]
@@ -1511,32 +1829,47 @@ def build_terminology_panels(term_data):
             chem_branch_union[code] = max(chem_branch_union.get(code, 0), pct)
     chem_shown = sorted(
         [(code, mx) for code, mx in chem_branch_union.items() if mx >= 1.0],
-        key=lambda x: -sum(v["d_branches"].get(x[0], 0) for _, v in chem_entries)
+        key=lambda x: -sum(v["d_branches"].get(x[0], 0) for _, v in chem_entries),
     )
     chem_labels = []
     for code, _ in chem_shown:
-        raw_lbl = next((v["branch_labels"].get(code, code)
-                        for _, v in chem_entries if code in v["branch_labels"]), code)
-        lbl = (raw_lbl
-               .replace("Hormones, Hormone Substitutes, and Hormone Antagonists", "Hormones & Substitutes")
-               .replace("Amino Acids, Peptides, and Proteins", "Amino Acids/Proteins")
-               .replace("Nucleic Acids, Nucleotides, and Nucleosides", "Nucleic Acids")
-               .replace("Pharmaceutical Preparations", "Pharmaceutical Prep.")
-               .replace("Biomedical and Dental Materials", "Biomedical Materials")
-               .replace("Chemical Actions and Uses", "Chemical Actions & Uses"))
+        raw_lbl = next(
+            (
+                v["branch_labels"].get(code, code)
+                for _, v in chem_entries
+                if code in v["branch_labels"]
+            ),
+            code,
+        )
+        lbl = (
+            raw_lbl.replace(
+                "Hormones, Hormone Substitutes, and Hormone Antagonists",
+                "Hormones & Substitutes",
+            )
+            .replace("Amino Acids, Peptides, and Proteins", "Amino Acids/Proteins")
+            .replace("Nucleic Acids, Nucleotides, and Nucleosides", "Nucleic Acids")
+            .replace("Pharmaceutical Preparations", "Pharmaceutical Prep.")
+            .replace("Biomedical and Dental Materials", "Biomedical Materials")
+            .replace("Chemical Actions and Uses", "Chemical Actions & Uses")
+        )
         chem_labels.append(f"{code} {lbl}")
 
     chem_datasets = []
     for nk, v in chem_entries:
-        chem_datasets.append({
-            "label": v["display_name"],
-            "data":  [round(v["d_branches"].get(code, 0), 2) for code, _ in chem_shown],
-            "backgroundColor": _term_col(nk) + "bb",
-            "borderWidth": 0, "borderRadius": 2,
-        })
+        chem_datasets.append(
+            {
+                "label": v["display_name"],
+                "data": [
+                    round(v["d_branches"].get(code, 0), 2) for code, _ in chem_shown
+                ],
+                "backgroundColor": _term_col(nk) + "bb",
+                "borderWidth": 0,
+                "borderRadius": 2,
+            }
+        )
     chem_labels_js = json.dumps(chem_labels)
-    chem_ds_js     = json.dumps(chem_datasets)
-    chem_h         = max(300, len(chem_shown) * 50 + 100)
+    chem_ds_js = json.dumps(chem_datasets)
+    chem_h = max(300, len(chem_shown) * 50 + 100)
 
     # ── Coverage table rows ───────────────────────────────────────────────────
     table_rows = []
@@ -1558,26 +1891,44 @@ def build_terminology_panels(term_data):
         '\n  <button class="tab" data-p="pterm1">Vocabulary coverage</button>'
         '\n  <button class="tab" data-p="pterm2">MeSH treetop dist.</button>'
         '\n  <button class="tab" data-p="pterm3">Annotation depth</button>'
-        + ('\n  <button class="tab" data-p="pterm4">Disease recall</button>'
-           if dis_entries else "")
-        + ('\n  <button class="tab" data-p="pterm5">Chemical recall</button>'
-           if chem_entries else "")
+        + (
+            '\n  <button class="tab" data-p="pterm4">Disease recall</button>'
+            if dis_entries
+            else ""
+        )
+        + (
+            '\n  <button class="tab" data-p="pterm5">Chemical recall</button>'
+            if chem_entries
+            else ""
+        )
     )
 
     # Detect whether we have new-format recall data
     new_fmt = any(v.get("new_format") for _, v in entries)
-    dis_metric_label = ("% of MeSH branch concepts covered"
-                        if new_fmt else "% of disease annotations")
-    chem_metric_label = ("% of MeSH branch concepts covered"
-                         if new_fmt else "% of chemical annotations")
-    dis_panel_title  = ("Disease recall (% of MeSH covered per branch)"
-                        if new_fmt else "Disease branch composition (% of corpus disease annotations)")
-    chem_panel_title = ("Chemical recall (% of MeSH covered per branch)"
-                        if new_fmt else "Chemical branch composition (% of corpus chemical annotations)")
-    depth_title      = ("Recall at each MeSH depth (% of MeSH concepts covered)"
-                        if new_fmt else "Annotation depth distribution (% at each level)")
-    depth_y_label    = ("% of MeSH concepts covered"
-                        if new_fmt else "% of annotations at depth")
+    dis_metric_label = (
+        "% of MeSH branch concepts covered" if new_fmt else "% of disease annotations"
+    )
+    chem_metric_label = (
+        "% of MeSH branch concepts covered" if new_fmt else "% of chemical annotations"
+    )
+    dis_panel_title = (
+        "Disease recall (% of MeSH covered per branch)"
+        if new_fmt
+        else "Disease branch composition (% of corpus disease annotations)"
+    )
+    chem_panel_title = (
+        "Chemical recall (% of MeSH covered per branch)"
+        if new_fmt
+        else "Chemical branch composition (% of corpus chemical annotations)"
+    )
+    depth_title = (
+        "Recall at each MeSH depth (% of MeSH concepts covered)"
+        if new_fmt
+        else "Annotation depth distribution (% at each level)"
+    )
+    depth_y_label = (
+        "% of MeSH concepts covered" if new_fmt else "% of annotations at depth"
+    )
 
     def dis_panel():
         if not dis_entries:
@@ -1792,40 +2143,70 @@ def build_terminology_panels(term_data):
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate an HTML corpus statistics dashboard."
     )
-    parser.add_argument("input",               help="Corpus statistics JSON file")
-    parser.add_argument("--overlap",  "-v",    default=None, metavar="FILE",
-                        help="Optional train/test overlap statistics JSON file")
-    parser.add_argument("--metadata", "-m",    default=None, metavar="FILE",
-                        help="Optional journal/year metadata statistics JSON file")
-    parser.add_argument("--terminology", "-t", default=None, metavar="FILE",
-                        help="Optional terminology coverage statistics JSON file")
-    parser.add_argument("--output",   "-o",    default=None,
-                        help="Output HTML path (default: <input stem>_dashboard.html)")
-    parser.add_argument("--open", action="store_true",
-                        help="Open the generated file in the default browser")
+    parser.add_argument("input", help="Corpus statistics JSON file")
+    parser.add_argument(
+        "--overlap",
+        "-v",
+        default=None,
+        metavar="FILE",
+        help="Optional train/test overlap statistics JSON file",
+    )
+    parser.add_argument(
+        "--metadata",
+        "-m",
+        default=None,
+        metavar="FILE",
+        help="Optional journal/year metadata statistics JSON file",
+    )
+    parser.add_argument(
+        "--terminology",
+        "-t",
+        default=None,
+        metavar="FILE",
+        help="Optional terminology coverage statistics JSON file",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        default=None,
+        help="Output HTML path (default: <input stem>_dashboard.html)",
+    )
+    parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open the generated file in the default browser",
+    )
     args = parser.parse_args()
 
-    in_path  = Path(args.input)
-    out_path = Path(args.output) if args.output else \
-               in_path.with_name(in_path.stem + "_dashboard.html")
+    in_path = Path(args.input)
+    out_path = (
+        Path(args.output)
+        if args.output
+        else in_path.with_name(in_path.stem + "_dashboard.html")
+    )
 
     print(f"Loading stats:    {in_path}")
     try:
         corpora = load_corpora(str(in_path))
     except FileNotFoundError:
-        print(f"Error: file not found — {in_path}", file=sys.stderr); sys.exit(1)
+        print(f"Error: file not found — {in_path}", file=sys.stderr)
+        sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"Error: invalid JSON — {e}", file=sys.stderr); sys.exit(1)
+        print(f"Error: invalid JSON — {e}", file=sys.stderr)
+        sys.exit(1)
 
     if args.overlap:
         print(f"Loading overlap:  {args.overlap}")
         try:
             attach_overlaps(corpora, load_overlaps(args.overlap))
-            print(f"Overlap matched: {sum(1 for c in corpora if c.get('overlap'))} / {len(corpora)}")
+            print(
+                f"Overlap matched: {sum(1 for c in corpora if c.get('overlap'))} / {len(corpora)}"
+            )
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Warning: overlap — {e}", file=sys.stderr)
 
@@ -1833,16 +2214,20 @@ def main():
         print(f"Loading metadata: {args.metadata}")
         try:
             attach_metadata(corpora, load_metadata(args.metadata))
-            n_m = sum(1 for c in corpora if (c.get("metadata") or {}).get("has_metadata"))
+            n_m = sum(
+                1 for c in corpora if (c.get("metadata") or {}).get("has_metadata")
+            )
             n_t = sum(1 for c in corpora if (c.get("metadata") or {}).get("topic_dist"))
-            print(f"Metadata matched:{n_m} / {len(corpora)} corpora  ({n_t} with topic data)")
+            print(
+                f"Metadata matched:{n_m} / {len(corpora)} corpora  ({n_t} with topic data)"
+            )
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Warning: metadata — {e}", file=sys.stderr)
 
     if args.terminology:
         print(f"Loading terminology: {args.terminology}")
         try:
-            term_raw  = load_terminology(args.terminology)
+            term_raw = load_terminology(args.terminology)
             term_data = process_terminology(term_raw)
             attach_terminology(corpora, term_data)
             n_t = sum(1 for c in corpora if c.get("terminology"))

@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict
 from corpus_benchmark.models.corpus import CorpusSubset, Document, Passage, Annotation, IdentifierLink
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.parsing import extract_sentences_from_texts, extract_tokens_from_texts
-from src.corpus_benchmark.workspace import GlobalWorkspace
+from corpus_benchmark.workspace import GlobalWorkspace
 
 
 @dataclass(slots=True)

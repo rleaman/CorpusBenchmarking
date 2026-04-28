@@ -2,17 +2,20 @@ from __future__ import annotations
 from typing import Any, Dict
 
 
-from src.corpus_benchmark.metadata_handler import (
+from corpus_benchmark.metadata_handler import (
     MetadataCache,
     MetadataFetcher,
     PMCFetcher,
     PubMedFetcher,
     CrossrefDOIFetcher,
 )
-from src.corpus_benchmark.models.corpus import DocumentIdentifierType
-from src.corpus_benchmark.acquisition import AcquisitionManager
-from src.corpus_benchmark.models.config import WorkspaceConfig
+from corpus_benchmark.models.corpus import DocumentIdentifierType
+from corpus_benchmark.acquisition import AcquisitionManager
+from corpus_benchmark.models.config import WorkspaceConfig
 from corpus_benchmark.models.corpus import Document
+
+
+from corpus_benchmark.models.terminologies import TerminologyResource
 
 
 class GlobalWorkspace:
@@ -20,10 +23,14 @@ class GlobalWorkspace:
 
     metadata_cache: MetadataCache
     acquisition_manager: AcquisitionManager
+    workspace_config: WorkspaceConfig
+    terminologies: dict[str, TerminologyResource]
 
     def __init__(self, metadata_cache: MetadataCache, workspace_config: WorkspaceConfig):
         self.metadata_cache = metadata_cache
+        self.workspace_config = workspace_config
         self.acquisition_manager = AcquisitionManager(workspace_config)
+        self.terminologies = {}
         # TODO Make the fetchers configurable
         self.fetchers: dict[DocumentIdentifierType, MetadataFetcher] = {
             DocumentIdentifierType.PMID: PubMedFetcher(),

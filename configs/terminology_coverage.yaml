@@ -1,0 +1,45 @@
+terminologies:
+  mesh:
+    name: mesh_xml
+    params:
+      year: 2026
+
+corpora:
+    BC5CDR: configs/BC5CDR.yaml
+    NCBI_Disease: configs/NCBI_Disease.yaml
+    NLM_Chem: configs/NLM_Chem.yaml
+
+bundles:
+  BC5CDR_corpus:
+    - corpus_name: BC5CDR
+      subset_name: train
+    - corpus_name: BC5CDR
+      subset_name: dev
+    - corpus_name: BC5CDR
+      subset_name: test
+  NCBI_Disease_corpus:
+    - corpus_name: NCBI_Disease
+      subset_name: train
+    - corpus_name: NCBI_Disease
+      subset_name: dev
+    - corpus_name: NCBI_Disease
+      subset_name: test
+  NLM_Chem_corpus:
+    - corpus_name: NLM_Chem
+      subset_name: train
+    - corpus_name: NLM_Chem
+      subset_name: dev
+    - corpus_name: NLM_Chem
+      subset_name: test
+
+metrics:
+  - metric_name: high_level_concept_counts
+    target_bundles: ["BC5CDR_corpus", "NCBI_Disease_corpus", "NLM_Chem_corpus"]
+    params:
+      terminology_name: mesh
+  - metric_name: concept_depth_counts
+    target_bundles: ["BC5CDR_corpus", "NCBI_Disease_corpus", "NLM_Chem_corpus"]
+    params:
+      terminology_name: mesh
+
+output_path: "output/terminology_coverage_stats.json"

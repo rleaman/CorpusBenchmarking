@@ -74,14 +74,14 @@ class WorkspaceConfig:
     """Global configuration for the benchmarking workspace and caches."""
     metadata_cache_filename: str = "data/metadata_cache.json"
     corpora_download_dir: str = "corpora/"
-    
-    # TODO Add terminology settings:
-    # terminology_dir: str = "data/terminologies/"
+    terminology_dir: str = "data/terminologies/"
+
 
 @dataclass(slots=True)
 class BatteryConfig:
     workspace: WorkspaceConfig = field(default_factory=WorkspaceConfig)
     corpora: dict[str, BenchmarkConfig] = field(default_factory=dict)
+    terminologies: dict[str, LoaderSpec] = field(default_factory=dict)
     bundles: dict[str, DatasetBundle] = field(default_factory=dict)
     comparison_suites: dict[str, ComparisonSuite] = field(default_factory=dict)    
     metrics: list[MetricSpec] = field(default_factory=list)

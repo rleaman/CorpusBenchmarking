@@ -6,7 +6,7 @@ from typing import Dict
 from corpus_benchmark.context import MetricTarget, get_documents
 from corpus_benchmark.registry import register_subset_metric
 from corpus_benchmark.results import SubsetMetricResult
-from src.corpus_benchmark.context import get_metadata_for_target
+from corpus_benchmark.context import get_metadata_for_target
 
 PRECISION = 8  # Number of decimal places
 

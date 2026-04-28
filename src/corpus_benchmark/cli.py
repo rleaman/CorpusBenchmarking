@@ -46,6 +46,12 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
         for corpus_name, corpus_path in raw_config.get("corpora", {}).items()
     }
 
+    # Load Terminologies
+    terminologies = {
+        term_name: LoaderSpec(**term_dict)
+        for term_name, term_dict in raw_config.get("terminologies", {}).items()
+    }
+
     # Load Dataset Bundles
     bundles = {
         bundle_name: DatasetBundle(
@@ -69,6 +75,7 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
     return BatteryConfig(
         workspace=workspace_config,
         corpora=corpora,
+        terminologies=terminologies,
         bundles=bundles,
         comparison_suites=comparison_suites,
         metrics=[MetricSpec(**metric) for metric in raw_config.get("metrics", [])],
