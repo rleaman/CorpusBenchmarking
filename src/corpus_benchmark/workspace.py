@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Any
+from typing import Any, Dict
+
 
 from src.corpus_benchmark.metadata_handler import (
     MetadataCache,
@@ -9,43 +10,61 @@ from src.corpus_benchmark.metadata_handler import (
     CrossrefDOIFetcher,
 )
 from src.corpus_benchmark.models.corpus import DocumentIdentifierType
+from src.corpus_benchmark.acquisition import AcquisitionManager
+from src.corpus_benchmark.models.config import WorkspaceConfig
+from corpus_benchmark.models.corpus import Document
+
 
 class GlobalWorkspace:
     """Manages persistent, cross-run resources like caches and downloaded files."""
 
     metadata_cache: MetadataCache
+    acquisition_manager: AcquisitionManager
 
-    def __init__(self, metadata_cache: MetadataCache):
+    def __init__(self, metadata_cache: MetadataCache, workspace_config: WorkspaceConfig):
         self.metadata_cache = metadata_cache
+        self.acquisition_manager = AcquisitionManager(workspace_config)
+        # TODO Make the fetchers configurable
         self.fetchers: dict[DocumentIdentifierType, MetadataFetcher] = {
             DocumentIdentifierType.PMID: PubMedFetcher(),
             DocumentIdentifierType.PMCID: PMCFetcher(),
             DocumentIdentifierType.DOI: CrossrefDOIFetcher(),
         }
 
-    def get_document_metadata(self, identifiers: dict[DocumentIdentifierType, str]) -> dict[str, Any]:
-        """
-        Attempts to find metadata using the provided identifiers.
-        If missing, it automatically fetches, caches, and returns it.
-        """
-        # 1. Try cache first
-        for id_type, id_val in identifiers.items():
-            record = self.metadata_cache.get_metadata(id_type, id_val)
-            if record:
-                return record
+    def get_document_metadata(self, documents: list[Document])  -> Dict[str, Dict[str, Any]]:
+        missing_ids = {id_type: set() for id_type in self.fetchers.keys()}
+        # 1. Check Cache
+        for doc in documents:
+            for id_type, id_val in doc.identifiers.items():
+                record = self.metadata_cache.get_metadata(id_type, id_val)
+                #print(f"Metadata for {id_type}:{id_val} returned {record}")
+                if not record and id_type in self.fetchers:
+                    missing_ids[id_type].add(id_val)
 
-        # 2. If not in cache, try fetching using the first supported identifier
-        for id_type, id_val in identifiers.items():
-            if id_type in self.fetchers:
-                # Fetch returns a list of records; we only asked for one
-                new_records = self.fetchers[id_type].fetch([id_val])
-                if new_records:
-                    self.metadata_cache.add_records(new_records)
-                    return new_records[0]
+        for id_type, missing_ids_by_type in missing_ids.items():
+            print(f"\tNumber of missing {id_type} IDs: {len(missing_ids_by_type)}")
 
-        # 3. Give up
-        return {}
+        # 2. Fetch missing items using the appropriate fetcher and add new records to the cache
+        new_records = []
+        for id_type, id_set in missing_ids.items():
+            if id_set:
+                fetcher = self.fetchers[id_type]
+                new_records.extend(fetcher.fetch(list(id_set)))
+        self.metadata_cache.add_records(new_records)
+
+        # 3. Get metadata for realzies
+        doc_metadata = {}
+        for doc in documents:
+            record = None
+            for id_type, id_val in doc.identifiers.items():
+                record = self.metadata_cache.get_metadata(id_type, id_val)
+                #print(f"Metadata for {id_type}:{id_val} returned {record}")
+                if record:
+                    break # Found it!
+            doc_metadata[doc.document_id] = record if record else {}
+
+        print(f"\tlen(doc_metadata) = {len(doc_metadata)}")
+        return doc_metadata
 
     # Future additions:
-    # acquisition_manager: AcquisitionManager
     # terminologies: dict[str, TerminologyResource]

@@ -9,8 +9,8 @@ python -m corpus_benchmark.cli configs/metadata_stats.yaml
 grep -h "<infon key=\"MESH\">" corpora/BC5CDR/*.xml | sed "s/<infon key=\"MESH\">//g" | sed "s/<\/infon>//g" | tr "|" "\n" | sort | grep -v "-" > corpora/BC5CDR/mesh_ids.txt
 
 # Get IDs for NCBI_Disease
-cat corpora/NCBI_Disease/* | cut -sf 6 | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | sed "s/MESH://g" | tr "|" "\n" | tr "+" "\n" | sort | grep -v "OMIM:" > corpora/NCBI_Disease/mesh_ids.txt
-cat corpora/NCBI_Disease/* | cut -sf 6 | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | sed "s/MESH://g" | tr "|" "\n" | tr "+" "\n" | sort | grep "OMIM:" > corpora/NCBI_Disease/omim_ids.txt
+cat corpora/NCBI_Disease/*.txt | cut -sf 6 | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | sed "s/MESH://g" | tr "|" "\n" | tr "+" "\n" | sort | grep -v "OMIM:" > corpora/NCBI_Disease/mesh_ids.txt
+cat corpora/NCBI_Disease/*.txt | cut -sf 6 | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | sed "s/MESH://g" | tr "|" "\n" | tr "+" "\n" | sort | grep "OMIM:" > corpora/NCBI_Disease/omim_ids.txt
 
 # Get IDs for NLM_Chem
 cat corpora/NLM_Chem/*.xml | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | grep "<infon key=\"identifier\">" | sed "s/<infon key=\"identifier\">//g" | sed "s/<\/infon>//g" | tr "," "\n" | grep -v "-" | sed "s/MESH://g" | sort > corpora/NLM_Chem/mesh_ids.txt

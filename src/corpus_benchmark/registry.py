@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Any
 
 LOADERS: dict[str, Callable[..., Any]] = {}
+CONVERTERS: dict[str, Callable[..., Any]] = {}
 SUBSET_METRICS: dict[str, Callable[..., Any]] = {}
 CROSS_METRICS: dict[str, Callable[..., Any]] = {}
 
@@ -20,6 +21,18 @@ def register_loader(name: str):
     return decorator
 
 
+def register_converter(name: str):
+    """Register a custom acquisition converter/mapper."""
+
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        if name in CONVERTERS:
+            raise ValueError(f"Converter '{name}' is already registered.")
+        CONVERTERS[name] = func
+        return func
+
+    return decorator
+
+
 def register_subset_metric(name: str):
     """Register a metric under a stable symbolic name."""
 
@@ -30,6 +43,7 @@ def register_subset_metric(name: str):
         return func
 
     return decorator
+
 
 def register_cross_metric(name: str):
     """Register a metric under a stable symbolic name."""

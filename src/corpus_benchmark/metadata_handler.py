@@ -155,6 +155,8 @@ class MetadataFetcher(ABC):
 class PubMedFetcher(MetadataFetcher):
     """Queries NCBI eUtils for metadata using PubMed IDs."""
 
+    last_request: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
+
     @property
     def supported_id_type(self) -> DocumentIdentifierType:
         return DocumentIdentifierType.PMID
@@ -166,10 +168,9 @@ class PubMedFetcher(MetadataFetcher):
         results = []
         random.shuffle(pmids)
         chunks = [pmids[i : i + CHUNK_SIZE] for i in range(0, len(pmids), CHUNK_SIZE)]
-        last_request = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
 
         for i, chunk in enumerate(chunks):
-            diff = (datetime.datetime.now() - last_request).total_seconds()
+            diff = (datetime.datetime.now() - self.last_request).total_seconds()
             if diff < WAIT_SECONDS:
                 time.sleep(WAIT_SECONDS - diff)
 
@@ -177,7 +178,7 @@ class PubMedFetcher(MetadataFetcher):
             try:
                 with urllib.request.urlopen(url) as response:
                     root = ET.fromstring(response.read())
-                last_request = datetime.datetime.now()
+                self.last_request = datetime.datetime.now()
 
                 for article in root.findall("./PubmedArticle"):
                     results.append(self._parse_article(article))
@@ -205,17 +206,20 @@ class PubMedFetcher(MetadataFetcher):
         if not pmc is None:
             identifiers[DocumentIdentifierType.PMCID] = DocumentIdentifierType.PMCID.normalize(pmc)
         if not doi is None:
-            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(pmc)
+            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(doi)
         record = {
             "identifiers": identifiers,
             "journal": journal,
             "pub_year": year,
         }
+        #print(f"PubMedFetcher._parse_article() returning: {record}")
         return record
 
 
 class PMCFetcher(MetadataFetcher):
     """Queries NCBI eUtils for metadata using PMC IDs."""
+
+    last_request: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
 
     @property
     def supported_id_type(self) -> DocumentIdentifierType:
@@ -230,10 +234,9 @@ class PMCFetcher(MetadataFetcher):
         numeric_ids = [pmcid[3:] for pmcid in pmcids]
         results = []
         chunks = [numeric_ids[i : i + CHUNK_SIZE] for i in range(0, len(numeric_ids), CHUNK_SIZE)]
-        last_request = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
 
         for i, chunk in enumerate(chunks):
-            diff = (datetime.datetime.now() - last_request).total_seconds()
+            diff = (datetime.datetime.now() - self.last_request).total_seconds()
             if diff < WAIT_SECONDS:
                 time.sleep(WAIT_SECONDS - diff)
 
@@ -241,7 +244,7 @@ class PMCFetcher(MetadataFetcher):
             try:
                 with urllib.request.urlopen(url) as response:
                     root = ET.fromstring(response.read())
-                last_request = datetime.datetime.now()
+                self.last_request = datetime.datetime.now()
 
                 for docsum in root.findall("./DocSum"):
                     results.append(self._parse_docsum(docsum))
@@ -268,6 +271,8 @@ class PMCFetcher(MetadataFetcher):
         identifiers = {DocumentIdentifierType.PMCID: pmcid}
         if not pmid is None:
             identifiers[DocumentIdentifierType.PMID] = DocumentIdentifierType.PMID.normalize(pmid)
+        if not doi is None:
+            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(doi)
         record = {
             "identifiers": identifiers,
             "journal": journal,

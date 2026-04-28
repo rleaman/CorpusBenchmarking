@@ -27,12 +27,16 @@ def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> Met
 
 
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
-    workspace = GlobalWorkspace(metadata_cache=MetadataCache(battery_config.workspace.metadata_cache_filename))
+    workspace = GlobalWorkspace(
+        metadata_cache=MetadataCache(battery_config.workspace.metadata_cache_filename),
+        workspace_config=battery_config.workspace,
+    )
     corpora: dict[str, BenchmarkCorpus] = dict()
     contexts: dict[str, BenchmarkContext] = dict()
 
     for benchmark_name, benchmark_config in battery_config.corpora.items():
         print(f"Loading corpus {benchmark_name}")
+        workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
         loader_name = benchmark_config.loader.name
         if loader_name not in LOADERS:
             available = ", ".join(sorted(LOADERS)) or "<none>"

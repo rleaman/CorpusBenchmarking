@@ -1,5 +1,10 @@
 name: BC5CDR
 
+acquisition:
+  source_url: "https://ftp.ncbi.nlm.nih.gov/pub/lu/BC5CDR/CDR_Data.zip"
+  format: "zip"
+  converter: "bc5cdr_converter"
+  
 loader:
   name: bioc_xml
   params:

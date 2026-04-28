@@ -33,6 +33,7 @@ class BenchmarkContext:
             self.cache[key] = factory()
         return self.cache[key]
 
+
 def get_workspace(target: MetricTarget) -> GlobalWorkspace:
     """Extracts the global workspace from the target's first component context."""
     if not target.components:
@@ -266,42 +267,11 @@ def get_match_types(target: MetricTarget, annotation_filter_name: str | None = N
 
 
 def get_metadata_for_target(target: MetricTarget) -> Dict[str, Dict[str, Any]]:
-    print(f"Getting metdata for target {target.name}")
+    """
+    Retrieves metadata for all documents in a target.
+    Returns a dictionary mapping document_id to its metadata record.
+    """
     workspace = get_workspace(target)
     documents = get_documents(target)
-    print(f"\tlen(documents) = {len(documents)}")
+    return workspace.get_document_metadata(documents)
 
-    missing_ids = {id_type: set() for id_type in workspace.fetchers.keys()}
-
-    # 1. Check Cache
-    for doc in documents:
-        for id_type, id_val in doc.identifiers.items():
-            record = workspace.metadata_cache.get_metadata(id_type, id_val)
-            #print(f"Metadata for {id_type}:{id_val} returned {record}")
-            if not record and id_type in workspace.fetchers:
-                missing_ids[id_type].add(id_val)
-
-    for id_type, missing_ids_by_type in missing_ids.items():
-        print(f"\tNumber of missing {id_type} IDs: {len(missing_ids_by_type)}")
-
-    # 2. Fetch missing items using the appropriate fetcher and add new records to the cache
-    new_records = []
-    for id_type, id_set in missing_ids.items():
-        if id_set:
-            fetcher = workspace.fetchers[id_type]
-            new_records.extend(fetcher.fetch(list(id_set)))
-    workspace.metadata_cache.add_records(new_records)
-
-    # 3. Get metadata for realzies
-    doc_metadata = {}
-    for doc in documents:
-        record = None
-        for id_type, id_val in doc.identifiers.items():
-            record = workspace.metadata_cache.get_metadata(id_type, id_val)
-            #print(f"Metadata for {id_type}:{id_val} returned {record}")
-            if record:
-                break # Found it!
-        doc_metadata[doc.document_id] = record if record else {}
-
-    print(f"\tlen(doc_metadata) = {len(doc_metadata)}")
-    return doc_metadata

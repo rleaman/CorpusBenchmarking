@@ -11,6 +11,24 @@ class LoaderSpec:
     params: dict[str, Any] = field(default_factory=dict)
 
 @dataclass(slots=True)
+class AcquisitionSpec:
+    source_urls: list[str] = field(default_factory=list)
+    format: str | None = None
+    converter: str | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> 'AcquisitionSpec':
+        urls = data.get("source_urls", [])
+        # Support both 'source_url' (single) and 'source_urls' (list) for convenience
+        if "source_url" in data:
+            urls.append(data["source_url"])
+        return cls(
+            source_urls=urls,
+            format=data.get("format"),
+            converter=data.get("converter")
+        )
+
+@dataclass(slots=True)
 class SubsetRef:
     """Explicit pointer to a specific subset within a specific corpus."""
     corpus_name: str
@@ -49,14 +67,15 @@ class BenchmarkConfig:
     name: str
     loader: LoaderSpec
     annotation_filters: dict[str, dict[str, Any]] = field(default_factory=dict)
+    acquisition: AcquisitionSpec | None = None
 
 @dataclass(slots=True)
 class WorkspaceConfig:
     """Global configuration for the benchmarking workspace and caches."""
     metadata_cache_filename: str = "data/metadata_cache.json"
+    corpora_download_dir: str = "corpora/"
     
-    # TODO This is also exactly where you'll put download/terminology settings later:
-    # corpora_download_dir: str = "corpora/"
+    # TODO Add terminology settings:
     # terminology_dir: str = "data/terminologies/"
 
 @dataclass(slots=True)

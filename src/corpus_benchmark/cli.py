@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite
+from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, AcquisitionSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.runner import run_benchmark
 from corpus_benchmark.results import SubsetMetricResult, CrossSubsetMetricResult
@@ -21,10 +21,15 @@ def load_benchmark_config(path: str | Path) -> BenchmarkConfig:
         for name, raw_filter in raw_config.get("filters", {}).items()
     }
 
+    # Load acquisition safely
+    acq_raw = raw_config.get("acquisition")
+    acquisition = AcquisitionSpec.from_dict(acq_raw) if acq_raw else None
+
     return BenchmarkConfig(
         name=str(raw_config["name"]),
         loader=LoaderSpec(**raw_config["loader"]),
         annotation_filters=annotation_filters,
+        acquisition=acquisition, 
     )
 
 def load_battery_config(path: str | Path) -> BatteryConfig:
@@ -96,6 +101,7 @@ def main() -> None:
         print("Usage: python -m corpus_benchmark.cli <config.yaml>", file=sys.stderr)
         raise SystemExit(2)
 
+    print(f"Loading battery config from {sys.argv[1]}")
     battery_config = load_battery_config(Path(sys.argv[1]))
     print(f"Loaded {len(battery_config.corpora)} corpora, {len(battery_config.metrics)} metrics")
 
