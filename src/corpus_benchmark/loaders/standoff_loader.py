@@ -94,7 +94,7 @@ def load_JNLPBA_standoff(
         A value of ``None`` suppresses that label.
     """
     docid_map = read_docid_map(MUID_PMID_map_path)
-    print(f"TRACE: len(docid_map) = {len(docid_map)}")
+    #print(f"TRACE: len(docid_map) = {len(docid_map)}")
 
     loader = JNLPBA_StandoffLoader(
         docid_map=docid_map,
@@ -381,7 +381,7 @@ class JNLPBA_StandoffLoader(StandoffLoader):
         if not docid_mapped:
             raise ValueError(f"docid {docid} from filename_docid {filename_docid} not found in docid_map")
         ids = {DocumentIdentifierType.PMID: DocumentIdentifierType.PMID.normalize(docid_mapped)}
-        print(f"TRACE ids for {docid} = {ids}")
+        #print(f"TRACE ids for {docid} = {ids}")
         return ids
 
 class AnatEM_StandoffLoader(StandoffLoader):
@@ -406,5 +406,5 @@ class AnatEM_StandoffLoader(StandoffLoader):
         docid_fields = filename_docid.split("-")
         docid = docid_type.normalize(docid_fields[1])
         ids = {docid_type: docid}
-        print(f"TRACE ids for {docid} = {ids}")
+        #print(f"TRACE ids for {docid} = {ids}")
         return ids
