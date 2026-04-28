@@ -145,12 +145,17 @@ class MetadataFetcher(ABC):
         """Returns standard records. Must include the 'identifiers' dict in the output."""
         pass
 
-# TODO Fix PubMedFetcher to return both short and long journal names
-# TODO Fix PMCFetcher to return both short and long journal names
-# TODO Fix CrossRefDOIFetcher to return both short and long journal names (short names only available for ~90%-95% of records)
-# TODO Add EuropePMC
-# TODO Does eUtils support DOI lookup?
+# TODO Refactor these classes so they represent the API & query: eUtils/efetch & eUtils/esummary
+# TODO Refactor so each fetcher can support more than one ID type
+# TODO Have each API grab both long & short journal names, if possible (CrossRef doesn't always have short journal name)
+# TODO Add a representation and metadata for journals 
+# TODO How do we make the Fetcher parameters configurable? 
+# TODO How do we tell the program which Fetchers to use for which IDs?
+
 # TODO Could we get the metadata from the article itself sometimes?
+# TODO Consider adding Fetchers for more APIs, e.g., Europe PMC 
+# TODO Consider adding a eUtils/esearch fetcher to support DOI lookup
+
 
 class PubMedFetcher(MetadataFetcher):
     """Queries NCBI eUtils for metadata using PubMed IDs."""

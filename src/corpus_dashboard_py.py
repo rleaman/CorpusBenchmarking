@@ -44,6 +44,8 @@ BAR_SCALE = 0.65
 
 # ── Journal topic classification ──────────────────────────────────────────────
 
+# TODO Move the journal topic classification to a representation/metadata for journals
+
 EXACT_TOPICS = {
     "Nature": "Multidisciplinary",
     "Science": "Multidisciplinary",

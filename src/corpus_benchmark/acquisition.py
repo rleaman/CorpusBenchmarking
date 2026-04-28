@@ -72,4 +72,6 @@ class AcquisitionManager:
                 raise FileNotFoundError(
                     f"After acquisition, expected file '{path}' for split '{split}' is still missing!"
                 )
-        
+        print(f"  Corpus '{corpus_name}' acquired and content verified")
+
+
