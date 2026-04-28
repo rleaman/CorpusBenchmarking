@@ -12,6 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from collections import Counter
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
 
@@ -32,25 +33,37 @@ class MetadataCache:
         self.id_index: Dict[str, Dict[str, Any]] = {}
         self._load_cache()
 
+    # TODO Fix cache to deduplicate on load
+
     def _load_cache(self):
         if self.cache_path.exists():
             try:
                 print(f"Loading metadata cache from {self.cache_path}")
                 with open(self.cache_path, "r", encoding="utf-8") as f:
                     self.records = json.load(f)
+                    id_type_counts = Counter()
+                    not_indexed_count = 0
                     for rec in self.records:
-                        if rec.get("pmid"):
-                            key = self._make_key(DocumentIdentifierType.PMID, rec["pmid"])
+                        added = self._add_record(rec)
+                        indexed = False
+                        ids = rec["identifiers"]
+                        for id_type in DocumentIdentifierType:
+                            if not id_type in ids:
+                                continue
+                            key = self._make_key(id_type, ids[id_type])
                             self.id_index[key] = rec
-                        if rec.get("pmc"):
-                            key = self._make_key(DocumentIdentifierType.PMCID, rec["pmc"])
-                            self.id_index[key] = rec
-                        if rec.get("doi"):
-                            key = self._make_key(DocumentIdentifierType.DOI, rec["doi"])
-                            self.id_index[key] = rec
-                print(f"Loaded {len(self.records)} records")
-            except (json.JSONDecodeError, TypeError):
+                            indexed = True
+                            id_type_counts[id_type] += 1
+                        if not indexed:
+                            not_indexed_count += 1
+                print(f"Loaded {len(self.id_index)} keys to {len(self.records)} records")
+                for id_type, id_type_count in id_type_counts.items():
+                    print(f"  Loaded {id_type_count} keys of type {id_type}")
+                if not_indexed_count > 0:                    
+                    print("WARN The number of unindexed records is {not_indexed_count}")
+            except (json.JSONDecodeError, TypeError) as e:
                 print(f"Warning: Could not decode cache at {self.cache_path}. Starting fresh.")
+                print(f"  Error was: {e}")
                 self.records = []
 
     def _make_key(self, id_type: DocumentIdentifierType, id_val: str) -> str:
