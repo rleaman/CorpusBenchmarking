@@ -35,7 +35,7 @@ class GlobalWorkspace:
         self.fetchers: dict[DocumentIdentifierType, MetadataFetcher] = {
             DocumentIdentifierType.PMID: PubMedFetcher(),
             DocumentIdentifierType.PMCID: PMCFetcher(),
-            DocumentIdentifierType.DOI: CrossrefDOIFetcher(),
+            # DocumentIdentifierType.DOI: CrossrefDOIFetcher(),
         }
 
     def get_document_metadata(self, documents: list[Document])  -> Dict[str, Dict[str, Any]]:

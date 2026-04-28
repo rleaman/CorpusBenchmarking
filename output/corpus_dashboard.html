@@ -89,6 +89,11 @@
   <button class="tab" data-p="p8">Journal metadata</button>
   <button class="tab" data-p="p9">Temporal coverage</button>
   <button class="tab" data-p="p10">Journal topics</button>
+  <button class="tab" data-p="pterm1">Vocabulary coverage</button>
+  <button class="tab" data-p="pterm2">MeSH treetop dist.</button>
+  <button class="tab" data-p="pterm3">Annotation depth</button>
+  <button class="tab" data-p="pterm4">Disease recall</button>
+  <button class="tab" data-p="pterm5">Chemical recall</button>
 </div>
 
 <div class="panel sel" id="p1">
@@ -419,6 +424,205 @@
 </script>
 
 
+<div class="panel" id="pterm1">
+  <p class="sec">Vocabulary coverage summary</p>
+  <div style="overflow-x:auto;margin-bottom:1.5rem">
+  <table><thead><tr>
+    <th class="l">Corpus</th>
+    <th class="l">Annotation scope</th>
+    <th class="r">Total instances</th>
+    <th class="r">Missing (instances)</th>
+    <th class="r">Unique deprecated IDs</th>
+    <th class="r">Coverage</th>
+  </tr></thead><tbody><tr><td class='l'><strong>BC5CDR-corpus</strong></td><td class='l'>Diseases + Chemicals</td><td class='r'>29,562</td><td class='r'>84 (0.28%)</td><td class='r'>84</td><td class='r'><strong>99.72%</strong></td></tr>
+<tr><td class='l'><strong>NCBI-Disease-corpus</strong></td><td class='l'>Diseases + Chemicals</td><td class='r'>7,070</td><td class='r'>96 (1.36%)</td><td class='r'>96</td><td class='r'><strong>98.64%</strong></td></tr>
+<tr><td class='l'><strong>NLM-Chem-corpus</strong></td><td class='l'>Chemicals</td><td class='r'>41,300</td><td class='r'>15 (0.04%)</td><td class='r'>15</td><td class='r'><strong>99.96%</strong></td></tr></tbody></table>
+  </div>
+  <p class="sec">Coverage rate</p>
+  <div class="cw" style="height:190px">
+    <canvas id="tmc1" role="img" aria-label="Horizontal stacked bar: vocabulary coverage per corpus.">
+      Coverage rates for all corpora.
+    </canvas>
+  </div>
+  <div class="fn">
+    <strong>Missing (instances)</strong>: annotation occurrences mapping to deprecated MeSH IDs.&nbsp;
+    <strong>Unique deprecated IDs</strong>: distinct deprecated concept identifiers regardless of frequency.
+    Note: 2 deprecated IDs (C056507, C061870) appear across multiple corpora.
+  </div>
+</div>
+
+<div class="panel" id="pterm2">
+  <p class="sec">MeSH treetop distribution per corpus</p>
+  <div class="cw" style="height:240px">
+    <canvas id="tmc2" role="img" aria-label="Stacked horizontal bar: MeSH treetop distribution.">
+      MeSH treetop distribution.
+    </canvas>
+  </div>
+  <p class="note">Each bar shows the proportion of annotations in each major MeSH tree.
+  Disease-only corpora are almost entirely C-branch; chemical-only corpora are almost entirely D-branch.
+  A mixed corpus (e.g. BC5CDR) shows contributions from both.</p>
+</div>
+
+<div class="panel" id="pterm3">
+  <p class="sec">Annotation depth distribution (% at each MeSH hierarchy level)</p>
+  <div class="cw" style="height:300px">
+    <canvas id="tmc3" role="img" aria-label="Line chart: depth distribution comparison.">
+      Depth distribution for all corpora.
+    </canvas>
+  </div>
+  <div class="fn">
+    Mean annotation depth: BC5CDR-corpus 4.61 | NCBI-Disease-corpus 4.4 | NLM-Chem-corpus 4.44.
+    Depth 1 = MeSH root level. Higher depths indicate more specific concept annotations.
+  </div>
+</div>
+
+
+<div class="panel" id="pterm4">
+  <p class="sec">Disease recall (% of MeSH covered per branch)</p>
+  <div class="cw" style="height:1200px">
+    <canvas id="tmc4" role="img" aria-label="Grouped horizontal bar: disease branches.">
+      Disease branch comparison between corpora with disease annotations.
+    </canvas>
+  </div>
+  <p class="note">Proportion = unique corpus concept count in branch ÷ total MeSH concepts in that branch. Sorted by max across corpora.
+  Only branches with ≥1% in at least one corpus are shown.</p>
+</div>
+
+<div class="panel" id="pterm5">
+  <p class="sec">Chemical recall (% of MeSH covered per branch)</p>
+  <div class="cw" style="height:900px">
+    <canvas id="tmc5" role="img" aria-label="Grouped horizontal bar: chemical branches.">
+      Chemical branch comparison between corpora with chemical annotations.
+    </canvas>
+  </div>
+  <p class="note">Proportion = unique corpus concept count in branch ÷ total MeSH concepts in that branch. Sorted by max across corpora.
+  Only branches with ≥1% in at least one corpus are shown.</p>
+</div>
+
+<script>
+(function() {
+  const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+  const tc = dk ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)';
+  const gc = dk ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)';
+
+  const TCORPS = ["BC5CDR-corpus", "NCBI-Disease-corpus", "NLM-Chem-corpus"];
+  const TCOLS  = ["#378ADD", "#E24B4A", "#888780"];
+
+  window.initTerm1 = function() {
+    new Chart('tmc1', {
+      type:'bar',
+      data:{
+        labels:TCORPS,
+        datasets:[
+          { label:'Found in MeSH (%)', data:[99.72, 98.64, 99.96],
+             backgroundColor:TCOLS.map(c=>c+'bb'), borderWidth:0, borderRadius:3 },
+          { label:'Missing from MeSH (%)', data:[0.28, 1.36, 0.04],
+             backgroundColor:TCOLS.map(()=>'#E24B4A44'), borderWidth:0, borderRadius:3 }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ display:true, position:'top', align:'end',
+          labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc } },
+          tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(2)}%` } } },
+        scales:{
+          x:{ stacked:true, min:0, max:100,
+               title:{display:true,text:'Coverage (%)',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} },
+          y:{ stacked:true, ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+
+  window.initTerm2 = function() {
+    new Chart('tmc2', {
+      type:'bar',
+      data:{ labels:TCORPS, datasets:[{"label": "Chemicals & Drugs (D)", "data": [51.6, 0.2, 99.4], "backgroundColor": "#378ADDcc", "borderWidth": 0, "borderRadius": 0}, {"label": "Diseases (C)", "data": [44.3, 95.8, 0.0], "backgroundColor": "#E24B4Acc", "borderWidth": 0, "borderRadius": 0}, {"label": "Psychiatry & Psych (F)", "data": [3.4, 1.6, 0.0], "backgroundColor": "#D4537Ecc", "borderWidth": 0, "borderRadius": 0}, {"label": "Anatomy (A)", "data": [0.0, 1.8, 0.0], "backgroundColor": "#7F77DDcc", "borderWidth": 0, "borderRadius": 0}, {"label": "Biological Sciences (G)", "data": [0.7, 0.5, 0.0], "backgroundColor": "#639922cc", "borderWidth": 0, "borderRadius": 0}, {"label": "Technology & Food (J)", "data": [0.0, 0.0, 0.5], "backgroundColor": "#BA7517cc", "borderWidth": 0, "borderRadius": 0}, {"label": "Organisms (B)", "data": [0.1, 0.0, 0.0], "backgroundColor": "#1D9E75cc", "borderWidth": 0, "borderRadius": 0}, {"label": "Techniques (E)", "data": [0.1, 0.0, 0.0], "backgroundColor": "#D85A30cc", "borderWidth": 0, "borderRadius": 0}] },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ display:true, position:'right',
+          labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc,padding:8 } },
+          tooltip:{ mode:'index', intersect:false,
+            callbacks:{ label: ctx =>
+              ctx.parsed.x >= 0.1 ? ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` : null
+            } } },
+        scales:{
+          x:{ stacked:true, min:0, max:100,
+               title:{display:true,text:'Share of corpus (%)',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} },
+          y:{ stacked:true, ticks:{color:tc,font:{size:12}}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+
+  window.initTerm3 = function() {
+    new Chart('tmc3', {
+      type:'line',
+      data:{ labels:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], datasets:[{"label": "BC5CDR-corpus", "data": [396.14, 62.55, 106.64, 103.44, 96.49, 84.72, 73.98, 33.38, 54.71, 16.06, 18.47, 0.0, 0.0], "borderColor": "#378ADD", "backgroundColor": "#378ADD22", "fill": false, "borderWidth": 2, "pointRadius": 4, "tension": 0.3, "borderDash": []}, {"label": "NCBI-Disease-corpus", "data": [287.54, 18.66, 18.55, 24.45, 22.12, 18.5, 12.02, 3.97, 9.07, 2.34, 0.0, 0.0, 0.0], "borderColor": "#E24B4A", "backgroundColor": "#E24B4A22", "fill": false, "borderWidth": 2, "pointRadius": 4, "tension": 0.3, "borderDash": [5, 3]}, {"label": "NLM-Chem-corpus", "data": [167.36, 153.77, 117.99, 135.88, 111.23, 76.96, 77.2, 46.5, 34.71, 1.2, 0.0, 0.0, 0.0], "borderColor": "#888780", "backgroundColor": "#88878022", "fill": false, "borderWidth": 2, "pointRadius": 4, "tension": 0.3, "borderDash": [2, 2]}] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:true, position:'top', align:'end',
+          labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc } },
+          tooltip:{ callbacks:{ label: ctx =>
+            ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
+          } } },
+        scales:{
+          x:{ title:{display:true,text:'MeSH hierarchy depth',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11}}, grid:{color:gc} },
+          y:{ min:0,
+               title:{display:true,text:'% of annotations',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+
+  window.initTerm4 = function() {
+    if (!document.getElementById('tmc4')) return;
+    new Chart('tmc4', {
+      type:'bar',
+      data:{ labels:["C25 Chemically-Induced", "C14 Cardiovascular", "C10 Nervous System", "C12 Urogenital", "C23 Pathological Cond.", "C16 Congenital/Hereditary", "C18 Nutritional/Metabolic", "C15 Hemic/Lymphatic", "C19 Endocrine System", "C06 Digestive System", "C04 Neoplasms", "C20 Immune System", "C11 Eye", "C05 Musculoskeletal", "C17 Skin/Connective Tissue", "C08 Respiratory Tract", "C09 Otorhinolaryngologic", "C07 Stomatognathic", "C01 Infections", "C26 Wounds/Injuries", "C22 Animal", "C24 Occupational"], datasets:[{"label": "BC5CDR-corpus", "data": [1056.88, 713.74, 460.74, 453.67, 479.07, 38.91, 168.25, 340.03, 210.24, 235.15, 104.21, 126.89, 112.88, 80.83, 95.39, 123.26, 82.59, 28.63, 50.92, 49.45, 7.43, 2.67], "backgroundColor": "#378ADDbb", "borderWidth": 0, "borderRadius": 2}, {"label": "NCBI-Disease-corpus", "data": [4.21, 41.34, 179.95, 99.17, 42.44, 458.92, 304.07, 126.22, 158.03, 126.13, 187.98, 124.1, 135.29, 132.88, 92.36, 2.28, 25.6, 34.0, 10.2, 2.42, 0.0, 3.56], "backgroundColor": "#E24B4Abb", "borderWidth": 0, "borderRadius": 2}] },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ display:true, position:'top', align:'end',
+          labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc } },
+          tooltip:{ callbacks:{ label: ctx =>
+            ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%`
+          } } },
+        scales:{
+          x:{ title:{display:true,text:'% of disease annotations',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} },
+          y:{ ticks:{color:tc,font:{size:11}}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+
+  window.initTerm5 = function() {
+    if (!document.getElementById('tmc5')) return;
+    new Chart('tmc5', {
+      type:'bar',
+      data:{ labels:["D01 Inorganic Chemicals", "D10 Lipids", "D09 Carbohydrates", "D02 Organic Chemicals", "D03 Heterocyclic Compounds", "D13 Nucleic Acids", "D04 Polycyclic Compounds", "D26 Pharmaceutical Prep.", "D25 Biomedical Materials", "D05 Macromolecular Substances", "D23 Biological Factors", "D06 Hormones & Substitutes", "D12 Amino Acids/Proteins", "D27 Chemical Actions & Uses", "D08 Enzymes and Coenzymes", "D20 Complex Mixtures"], datasets:[{"label": "BC5CDR-corpus", "data": [249.45, 103.16, 210.01, 324.34, 368.65, 136.79, 297.73, 66.39, 3.89, 7.28, 55.27, 162.75, 26.18, 45.59, 1.79, 17.54], "backgroundColor": "#378ADDbb", "borderWidth": 0, "borderRadius": 2}, {"label": "NCBI-Disease-corpus", "data": [0.93, 0.71, 0.22, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.63, 0.0], "backgroundColor": "#E24B4Abb", "borderWidth": 0, "borderRadius": 2}, {"label": "NLM-Chem-corpus", "data": [1593.69, 904.6, 691.06, 504.36, 361.26, 569.97, 379.86, 517.47, 372.86, 225.47, 154.91, 24.67, 144.68, 2.86, 31.95, 9.16], "backgroundColor": "#888780bb", "borderWidth": 0, "borderRadius": 2}] },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ display:true, position:'top', align:'end',
+          labels:{ boxWidth:10,boxHeight:10,borderRadius:2,font:{size:11},color:tc } },
+          tooltip:{ callbacks:{ label: ctx =>
+            ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%`
+          } } },
+        scales:{
+          x:{ title:{display:true,text:'% of chemical annotations',color:tc,font:{size:11}},
+               ticks:{color:tc,font:{size:11},callback:v=>v+'%'}, grid:{color:gc} },
+          y:{ ticks:{color:tc,font:{size:11}}, grid:{color:gc} }
+        }
+      }
+    });
+  };
+})();
+</script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -521,7 +725,11 @@ const panels={
   p2:initC2, p3:()=>{initC3();initC4();}, p4:()=>{initC5();initC6();}, p7:initC7,
   p8:window.initMeta1,
   p9:window.initMeta2,
-  
+  pterm1:window.initTerm1,
+  pterm2:window.initTerm2,
+  pterm3:window.initTerm3,
+  pterm4:window.initTerm4,
+  pterm5:window.initTerm5,
 };
 
 document.getElementById('tabs').addEventListener('click', e=>{
