@@ -180,32 +180,32 @@
     },
     {
       "metric_name": "mention_overlap",
-      "value": 0.13929785,
+      "value": 0.15544041,
       "details": {
-        "len(CRAFT_train)": 635,
-        "len(CRAFT_test)": 371,
-        "intersection": 123,
-        "union": 883
+        "len(CRAFT_train)": 7500,
+        "len(CRAFT_test)": 4319,
+        "intersection": 1590,
+        "union": 10229
       }
     },
     {
       "metric_name": "mention_token_overlap",
-      "value": 0.28604651,
+      "value": 0.29267034,
       "details": {
-        "len(CRAFT_train)": 328,
-        "len(CRAFT_test)": 225,
-        "intersection": 123,
-        "union": 430
+        "len(CRAFT_train)": 4578,
+        "len(CRAFT_test)": 2935,
+        "intersection": 1701,
+        "union": 5812
       }
     },
     {
       "metric_name": "identifier_overlap",
-      "value": 0.31046931,
+      "value": 0.24578313,
       "details": {
-        "len(CRAFT_train)": 219,
-        "len(CRAFT_test)": 144,
-        "intersection": 86,
-        "union": 277
+        "len(CRAFT_train)": 3568,
+        "len(CRAFT_test)": 2119,
+        "intersection": 1122,
+        "union": 4565
       }
     }
   ],

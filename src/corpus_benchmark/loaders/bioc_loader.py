@@ -22,13 +22,26 @@ from corpus_benchmark.models.corpus import (
 )
 from corpus_benchmark.registry import register_loader
 from corpus_benchmark.parsing import parse_identifier_format_list, parse_qualifier_map, IdentifierFormat
+from corpus_benchmark.loaders.splits import apply_document_split
 
 logger = logging.getLogger(__name__)
 
 
+def _resolve_load_paths(paths: dict[str, str] | None, path: str | None) -> dict[str, str]:
+    if paths and path:
+        raise ValueError("Configure either loader.params.paths or loader.params.path, not both")
+    if paths:
+        return paths
+    if path:
+        return {"all": path}
+    raise ValueError("Loader requires either loader.params.paths or loader.params.path")
+
+
 @register_loader("bioc_xml")
 def load_bioc_xml(
-    paths: dict[str, str],
+    paths: dict[str, str] | None = None,
+    path: str | None = None,
+    split: dict | None = None,
     doc_id_map: dict[str, str] = {},
     passage_id_infon_key: str | None = None,
     label_infon_key: str = "type",
@@ -59,15 +72,17 @@ def load_bioc_xml(
         resource_delimiter,
         **kwargs,
     )
+    load_paths = _resolve_load_paths(paths, path)
     subsets = dict()
-    for subset_name, subset_path in paths.items():
+    for subset_name, subset_path in load_paths.items():
         subsets[subset_name] = loader.load_subset(subset_name, subset_path)
-    return BenchmarkCorpus(
+    corpus = BenchmarkCorpus(
         subsets=subsets,
         metadata={
             "source_format": "BioC XML",
         },
     )
+    return apply_document_split(corpus, split)
 
 
 class Loader:
@@ -307,8 +322,10 @@ class BioCXMLLoader(Loader):
 
 @register_loader("pubtator")
 def load_pubtator(
-    paths: dict[str, str],
-    doc_id_map: dict[str, str] = {"pmid", "__DOCUMENT_ID__"},
+    paths: dict[str, str] | None = None,
+    path: str | None = None,
+    split: dict | None = None,
+    doc_id_map: dict[str, str] = {"pmid": "__DOCUMENT_ID__"},
     label_map: dict[str, str | None] = {},
     id_format_list: list[list[str]] = [],
     qualifier_map: dict[str, str] = {},
@@ -332,22 +349,24 @@ def load_pubtator(
         default_resource,
         resource_delimiter,
     )
+    load_paths = _resolve_load_paths(paths, path)
     subsets = dict()
-    for subset_name, subset_path in paths.items():
+    for subset_name, subset_path in load_paths.items():
         subsets[subset_name] = loader.load_subset(subset_name, subset_path)
-    return BenchmarkCorpus(
+    corpus = BenchmarkCorpus(
         subsets=subsets,
         metadata={
             "source_format": "Pubtator",
         },
     )
+    return apply_document_split(corpus, split)
 
 
 class BioCPubtatorLoader(Loader):
 
     def __init__(
         self,
-        doc_id_map: dict[str, str] = {"pmid", "__DOCUMENT_ID__"},
+        doc_id_map: dict[str, str] = {"pmid": "__DOCUMENT_ID__"},
         label_map: dict[str, str | None] = {},
         id_format_list: list[IdentifierFormat] = [],
         qualifier_map: dict[str, MatchType] = {},

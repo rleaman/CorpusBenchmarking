@@ -12,18 +12,14 @@ from corpus_benchmark.registry import CONVERTERS
 logger = logging.getLogger(__name__)
 
 class AcquisitionManager:
+
     def __init__(self, workspace_config: WorkspaceConfig):
         self.download_dir = Path(workspace_config.corpora_download_dir)
 
     def ensure_corpus_ready(self, corpus_name: str, config: BenchmarkConfig) -> None:
         """Ensures that the required corpus files exist locally, acquiring them if necessary."""
-        # 1. Check if all target paths already exist
-        paths = config.loader.params.get("paths", {})
-        all_exist = True
-        for split, path in paths.items():
-            if not Path(path).exists():
-                all_exist = False
-                break
+        paths = _expected_loader_paths(config)
+        all_exist = bool(paths) and all(Path(path).exists() for path in paths.values())
         
         if all_exist:
             return  # Corpus is already ready!
@@ -70,11 +66,22 @@ class AcquisitionManager:
             converter_func(corpus_dir, config)
 
         # 5. Final validation: Check if paths exist after acquisition is complete
-        for split, path in paths.items():
+        for label, path in paths.items():
             if not Path(path).exists():
                 raise FileNotFoundError(
-                    f"After acquisition, expected file '{path}' for split '{split}' is still missing!"
+                    f"After acquisition, expected file '{path}' for '{label}' is still missing!"
                 )
         logger.info(f"  Corpus '{corpus_name}' acquired and content verified")
 
+def _expected_loader_paths(config: BenchmarkConfig) -> dict[str, str]:
+    params = config.loader.params
+    paths = dict(params.get("paths", {}))
+    if "path" in params:
+        paths["path"] = params["path"]
 
+    split_config = params.get("split") or {}
+    for split_name, split_path in (split_config.get("files") or {}).items():
+        paths[f"split:{split_name}"] = split_path
+    if "mapping_path" in split_config:
+        paths["split:mapping"] = split_config["mapping_path"]
+    return paths

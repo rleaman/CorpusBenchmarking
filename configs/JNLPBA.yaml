@@ -1,5 +1,7 @@
 name: JNLPBA
 
+cache_filename: corpora/JNLPBA.json.gz
+
 acquisition:
   source_url: "https://github.com/spyysalo/jnlpba/archive/refs/heads/master.zip"
   format: "zip"

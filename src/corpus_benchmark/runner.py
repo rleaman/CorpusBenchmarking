@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import json
+from pathlib import Path
 from typing import Any
 
 # Ensure built-in loaders and metrics are registered.
@@ -9,7 +11,7 @@ import corpus_benchmark.metrics  # noqa: F401
 
 # NOTE: "noqa: F401" means "Ignore error 'Module imported but not used'"
 from corpus_benchmark.context import BenchmarkContext, MetricTarget
-from corpus_benchmark.models.config import BatteryConfig, DatasetBundle
+from corpus_benchmark.models.config import BatteryConfig, DatasetBundle, BenchmarkConfig
 from corpus_benchmark.models.corpus import BenchmarkCorpus
 from corpus_benchmark.registry import LOADERS, TERMINOLOGY_LOADERS, SUBSET_METRICS, CROSS_METRICS, TERMINOLOGY_METRICS
 from corpus_benchmark.workspace import GlobalWorkspace
@@ -28,6 +30,31 @@ def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> Met
         components.append((subset, context))
     return MetricTarget(name=bundle.name, components=components)
 
+def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_config:BenchmarkConfig) -> BenchmarkCorpus: 
+    # 1. Try to load from cache
+    if benchmark_config.cache_filename:
+        try:
+            logger.info(f"Loading corpus \"{benchmark_name}\" from cache at {benchmark_config.cache_filename}")
+            return BenchmarkCorpus.from_json(benchmark_config.cache_filename)
+        except Exception as e:
+            logger.warning(f"Could not load cache at {benchmark_config.cache_filename} for corpus \"{benchmark_name}\". Starting fresh. Error was {e}")
+    # 2. Make sure files downloaded
+    logger.info(f"Loading corpus {benchmark_name}")
+    workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
+    # 3. Load from corpus-specific formats
+    loader_name = benchmark_config.loader.name
+    if loader_name not in LOADERS:
+        available = ", ".join(sorted(LOADERS)) or "<none>"
+        raise ValueError(f"Unknown loader '{benchmark_config.loader.name}'. Available loaders: {available}")
+    loader = LOADERS[loader_name]
+    benchmark_corpus = loader(**benchmark_config.loader.params)
+    # 4. Try to save to cache
+    if benchmark_config.cache_filename:
+        logger.info(f"Saving corpus \"{benchmark_name}\" to cache at {benchmark_config.cache_filename}")
+        cache_path = Path(benchmark_config.cache_filename)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        benchmark_corpus.to_json(cache_path)
+    return benchmark_corpus
 
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
     workspace = GlobalWorkspace(
@@ -49,14 +76,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
     contexts: dict[str, BenchmarkContext] = dict()
 
     for benchmark_name, benchmark_config in battery_config.corpora.items():
-        logger.info("Loading corpus %s", benchmark_name)
-        workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
-        loader_name = benchmark_config.loader.name
-        if loader_name not in LOADERS:
-            available = ", ".join(sorted(LOADERS)) or "<none>"
-            raise ValueError(f"Unknown loader '{benchmark_config.loader.name}'. Available loaders: {available}")
-        loader = LOADERS[loader_name]
-        benchmark_corpus = loader(**benchmark_config.loader.params)
+        benchmark_corpus = _load_corpus(workspace, benchmark_name, benchmark_config)
         document_count = sum(len(corpus_subset.documents) for corpus_subset in benchmark_corpus.subsets.values())
         logger.info("Loaded %s documents in %s subsets", document_count, len(benchmark_corpus.subsets))
         for filter_name, filter in benchmark_config.annotation_filters.items():

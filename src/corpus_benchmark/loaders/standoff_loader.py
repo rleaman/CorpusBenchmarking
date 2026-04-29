@@ -33,9 +33,20 @@ from corpus_benchmark.models.corpus import (
     Passage,
 )
 from corpus_benchmark.loaders.bioc_loader import Loader
+from corpus_benchmark.loaders.splits import apply_document_split
 from corpus_benchmark.registry import register_loader
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_load_paths(paths: dict[str, str] | None, path: str | None) -> dict[str, str]:
+    if paths and path:
+        raise ValueError("Configure either loader.params.paths or loader.params.path, not both")
+    if paths:
+        return paths
+    if path:
+        return {"all": path}
+    raise ValueError("Loader requires either loader.params.paths or loader.params.path")
 
 
 def read_docid_map(filename: str | Path) -> dict[str, str]:
@@ -78,8 +89,10 @@ def read_docid_map(filename: str | Path) -> dict[str, str]:
 
 @register_loader("JNLPBA_standoff")
 def load_JNLPBA_standoff(
-    paths: dict[str, str],
     MUID_PMID_map_path: str,
+    paths: dict[str, str] | None = None,
+    path: str | None = None,
+    split: dict | None = None,
     label_map: dict[str, str | None] = {},
 ) -> BenchmarkCorpus:
     """Load the JNLPBA standoff corpus into the benchmark corpus model.
@@ -104,17 +117,21 @@ def load_JNLPBA_standoff(
         label_map=label_map,
     )
 
-    subsets = {subset_name: loader.load_subset(subset_name, subset_path) for subset_name, subset_path in paths.items()}
+    load_paths = _resolve_load_paths(paths, path)
+    subsets = {subset_name: loader.load_subset(subset_name, subset_path) for subset_name, subset_path in load_paths.items()}
 
-    return BenchmarkCorpus(
+    corpus = BenchmarkCorpus(
         subsets=subsets,
         metadata={"source_format": "JNLPBA standoff"},
     )
+    return apply_document_split(corpus, split)
 
 
 @register_loader("AnatEM_standoff")
 def load_AnatEM_standoff(
-    paths: dict[str, str],
+    paths: dict[str, str] | None = None,
+    path: str | None = None,
+    split: dict | None = None,
     label_map: dict[str, str | None] = {},
 ) -> BenchmarkCorpus:
     """Load the JNLPBA standoff corpus into the benchmark corpus model.
@@ -132,12 +149,14 @@ def load_AnatEM_standoff(
         label_map=label_map,
     )
 
-    subsets = {subset_name: loader.load_subset(subset_name, subset_path) for subset_name, subset_path in paths.items()}
+    load_paths = _resolve_load_paths(paths, path)
+    subsets = {subset_name: loader.load_subset(subset_name, subset_path) for subset_name, subset_path in load_paths.items()}
 
-    return BenchmarkCorpus(
+    corpus = BenchmarkCorpus(
         subsets=subsets,
         metadata={"source_format": "AnatEM standoff"},
     )
+    return apply_document_split(corpus, split)
 
 
 class StandoffLoader(Loader):

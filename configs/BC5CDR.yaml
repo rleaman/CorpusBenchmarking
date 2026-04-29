@@ -1,5 +1,7 @@
 name: BC5CDR
 
+cache_filename: corpora/BC5CDR.json.gz
+
 acquisition:
   source_url: "https://ftp.ncbi.nlm.nih.gov/pub/lu/BC5CDR/CDR_Data.zip"
   format: "zip"

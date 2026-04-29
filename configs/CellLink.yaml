@@ -1,5 +1,7 @@
 name: CellLink
 
+cache_filename: corpora/CellLink.json.gz
+
 loader:
   name: bioc_xml
   params:

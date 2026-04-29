@@ -29,7 +29,7 @@ class AcquisitionSpec:
         return cls(
             source_urls=urls,
             format=data.get("format"),
-            converter=data.get("converter")
+            converter=data.get("converter"),
         )
 
 @dataclass(slots=True)
@@ -72,6 +72,8 @@ class BenchmarkConfig:
     loader: LoaderSpec
     annotation_filters: dict[str, dict[str, Any]] = field(default_factory=dict)
     acquisition: AcquisitionSpec | None = None
+    cache_filename: str | None = None
+
 
 @dataclass(slots=True)
 class WorkspaceConfig:

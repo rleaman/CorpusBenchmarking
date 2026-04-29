@@ -40,6 +40,7 @@ def load_benchmark_config(path: str | Path) -> BenchmarkConfig:
         loader=LoaderSpec(**raw_config["loader"]),
         annotation_filters=annotation_filters,
         acquisition=acquisition, 
+        cache_filename=raw_config.get("cache_filename")
     )
 
 def load_battery_config(path: str | Path) -> BatteryConfig:
