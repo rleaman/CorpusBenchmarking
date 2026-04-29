@@ -960,15 +960,13 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "null": 0.91881188,
-        "OMIM": 0.08090523,
-        "MESH": 0.00028289
+        "MESH": 0.91909477,
+        "OMIM": 0.08090523
       },
       "details": {
         "counts": {
-          "null": 6496,
-          "OMIM": 572,
-          "MESH": 2
+          "MESH": 6498,
+          "OMIM": 572
         },
         "total": 7070
       }

@@ -30,10 +30,6 @@ class LinkRelation(str, Enum):
     RELATED_SET = "related_set"  # e.g. CellLink-style related match set
     ALTERNATIVE = "alternative"  # optional: true either/or ambiguity
 
-
-str | Path = str | Path
-
-
 def _enum_value(value: Enum | str | None) -> str | None:
     """Return the JSON-safe value for an enum-like field."""
     if value is None:

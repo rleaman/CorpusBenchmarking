@@ -405,12 +405,12 @@ class BioCPubtatorLoader(Loader):
                 offset=abstract_offset,
                 annotations=[],
             )
-            for ann in doc.annotations:
+            for ann_index, ann in enumerate(doc.annotations):
                 label = self.get_label(ann.type)
                 if label is None:
                     continue
                 mention = Annotation(
-                    mention_id=str(ann.id),
+                    mention_id=str(ann_index + 1),
                     text=ann.text,
                     spans=[
                         AnnotationSpan(
