@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import json
+import logging
 import math
 import re
 import sys
@@ -40,6 +41,7 @@ OV_COLS = {
     "ident": "#7F77DD",
 }
 BAR_SCALE = 0.65
+logger = logging.getLogger(__name__)
 
 
 # ── Journal topic classification ──────────────────────────────────────────────
@@ -2192,54 +2194,54 @@ def main():
         else in_path.with_name(in_path.stem + "_dashboard.html")
     )
 
-    print(f"Loading stats:    {in_path}")
+    logger.info("Loading stats: %s", in_path)
     try:
         corpora = load_corpora(str(in_path))
     except FileNotFoundError:
-        print(f"Error: file not found — {in_path}", file=sys.stderr)
+        logger.error("Error: file not found - %s", in_path)
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"Error: invalid JSON — {e}", file=sys.stderr)
+        logger.error("Error: invalid JSON - %s", e)
         sys.exit(1)
 
     if args.overlap:
-        print(f"Loading overlap:  {args.overlap}")
+        logger.info("Loading overlap: %s", args.overlap)
         try:
             attach_overlaps(corpora, load_overlaps(args.overlap))
-            print(
-                f"Overlap matched: {sum(1 for c in corpora if c.get('overlap'))} / {len(corpora)}"
+            logger.info(
+                "Overlap matched: %s / %s",
+                sum(1 for c in corpora if c.get("overlap")),
+                len(corpora),
             )
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Warning: overlap — {e}", file=sys.stderr)
+            logger.warning("Warning: overlap - %s", e)
 
     if args.metadata:
-        print(f"Loading metadata: {args.metadata}")
+        logger.info("Loading metadata: %s", args.metadata)
         try:
             attach_metadata(corpora, load_metadata(args.metadata))
             n_m = sum(
                 1 for c in corpora if (c.get("metadata") or {}).get("has_metadata")
             )
             n_t = sum(1 for c in corpora if (c.get("metadata") or {}).get("topic_dist"))
-            print(
-                f"Metadata matched:{n_m} / {len(corpora)} corpora  ({n_t} with topic data)"
-            )
+            logger.info("Metadata matched: %s / %s corpora (%s with topic data)", n_m, len(corpora), n_t)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Warning: metadata — {e}", file=sys.stderr)
+            logger.warning("Warning: metadata - %s", e)
 
     if args.terminology:
-        print(f"Loading terminology: {args.terminology}")
+        logger.info("Loading terminology: %s", args.terminology)
         try:
             term_raw = load_terminology(args.terminology)
             term_data = process_terminology(term_raw)
             attach_terminology(corpora, term_data)
             n_t = sum(1 for c in corpora if c.get("terminology"))
-            print(f"Terminology matched: {n_t} / {len(corpora)} corpora")
+            logger.info("Terminology matched: %s / %s corpora", n_t, len(corpora))
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Warning: terminology — {e}", file=sys.stderr)
+            logger.warning("Warning: terminology - %s", e)
 
-    print(f"Corpora:          {len(corpora)} ({', '.join(c['name'] for c in corpora)})")
+    logger.info("Corpora: %s (%s)", len(corpora), ", ".join(c["name"] for c in corpora))
     out_path.write_text(build_html(corpora), encoding="utf-8")
-    print(f"Written:          {out_path}")
+    logger.info("Written: %s", out_path)
     if args.open:
         webbrowser.open(out_path.resolve().as_uri())
 

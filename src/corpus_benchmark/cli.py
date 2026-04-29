@@ -1,16 +1,26 @@
 from __future__ import annotations
 
 import json
+import logging
 import sys
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, AcquisitionSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite
+from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, AcquisitionSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite, LoggingConfig
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.runner import run_benchmark
 from corpus_benchmark.results import SubsetMetricResult, CrossSubsetMetricResult
+
+logger = logging.getLogger(__name__)
+
+def setup_logging(config: LoggingConfig) -> None:
+    logging.basicConfig(
+        level=getattr(logging, config.level.upper(), logging.INFO),
+        format=config.format,
+        filename=config.filename,
+    )
 
 def load_benchmark_config(path: str | Path) -> BenchmarkConfig:
     with open(path, "r", encoding="utf-8") as fp:
@@ -39,6 +49,10 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
     # Load workspace config (using default if missing from YAML)
     workspace_dict = raw_config.get("workspace", {})
     workspace_config = WorkspaceConfig(**workspace_dict)
+
+    # Load logging config
+    logging_dict = raw_config.get("logging", {})
+    logging_config = LoggingConfig(**logging_dict)
 
     # Load Corpora
     corpora = {
@@ -74,6 +88,7 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
     # 4. Initialize the full config
     return BatteryConfig(
         workspace=workspace_config,
+        logging=logging_config,
         corpora=corpora,
         terminologies=terminologies,
         bundles=bundles,
@@ -108,9 +123,11 @@ def main() -> None:
         print("Usage: python -m corpus_benchmark.cli <config.yaml>", file=sys.stderr)
         raise SystemExit(2)
 
-    print(f"Loading battery config from {sys.argv[1]}")
     battery_config = load_battery_config(Path(sys.argv[1]))
-    print(f"Loaded {len(battery_config.corpora)} corpora, {len(battery_config.metrics)} metrics")
+    setup_logging(battery_config.logging)
+
+    logger.info(f"Loading battery config from {sys.argv[1]}")
+    logger.info(f"Loaded {len(battery_config.corpora)} corpora, {len(battery_config.metrics)} metrics")
 
     results = run_benchmark(battery_config)
     payload = serialize_results(results)
@@ -121,7 +138,7 @@ def main() -> None:
     else:
         print(json.dumps(payload, indent=2))
 
-    print("Done.")
+    logger.info("Done.")
 
 if __name__ == "__main__":
     main()

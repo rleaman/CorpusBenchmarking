@@ -1,7 +1,10 @@
+import logging
 import shutil
 from pathlib import Path
 from corpus_benchmark.registry import register_converter
 from corpus_benchmark.models.config import BenchmarkConfig
+
+logger = logging.getLogger(__name__)
 
 @register_converter("bc5cdr_converter")
 def convert_bc5cdr(corpus_dir: Path, config: BenchmarkConfig):
@@ -25,7 +28,7 @@ def convert_bc5cdr(corpus_dir: Path, config: BenchmarkConfig):
         target_path = Path(expected_paths[split])
         
         if src_path.exists() and not target_path.exists():
-            print(f"    Moving {src_path.name} to target location")
+            logger.info(f"    Moving {src_path.name} to target location")
             shutil.move(src_path, target_path)
             
     # Optional cleanup of extracted temp files

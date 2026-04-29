@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass, field
+import logging
 from typing import Any, Callable, Dict
 
 from corpus_benchmark.models.corpus import CorpusSubset, Document, Passage, Annotation, IdentifierLink
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.parsing import extract_sentences_from_texts, extract_tokens_from_texts
 from corpus_benchmark.workspace import GlobalWorkspace
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -30,7 +33,10 @@ class BenchmarkContext:
     def get_or_compute(self, key: str, factory: Callable[[], Any]) -> Any:
         self.usage_counts[key] += 1
         if key not in self.cache:
+            logger.debug("Cache miss for %s", key)
             self.cache[key] = factory()
+        else:
+            logger.debug("Cache hit for %s", key)
         return self.cache[key]
 
 
@@ -274,4 +280,3 @@ def get_metadata_for_target(target: MetricTarget) -> Dict[str, Dict[str, Any]]:
     workspace = get_workspace(target)
     documents = get_documents(target)
     return workspace.get_document_metadata(documents)
-

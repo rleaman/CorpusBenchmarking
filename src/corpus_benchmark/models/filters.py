@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import logging
 from typing import Any, Iterable
 
 from corpus_benchmark.models.corpus import (
@@ -10,6 +11,8 @@ from corpus_benchmark.models.corpus import (
     LinkRelation,
     MatchType,
 )
+
+logger = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class AnnotationFilter:

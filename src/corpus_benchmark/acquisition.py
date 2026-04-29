@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tarfile
 import urllib.request
 import zipfile
@@ -7,6 +8,8 @@ from pathlib import Path
 
 from corpus_benchmark.models.config import BenchmarkConfig, WorkspaceConfig
 from corpus_benchmark.registry import CONVERTERS
+
+logger = logging.getLogger(__name__)
 
 class AcquisitionManager:
     def __init__(self, workspace_config: WorkspaceConfig):
@@ -30,7 +33,7 @@ class AcquisitionManager:
                 f"Files for corpus '{corpus_name}' are missing, and no acquisition spec was provided."
             )
 
-        print(f"Acquiring corpus '{corpus_name}'...")
+        logger.info(f"Acquiring corpus '{corpus_name}'...")
         corpus_dir = self.download_dir / corpus_name
         corpus_dir.mkdir(parents=True, exist_ok=True)
 
@@ -40,7 +43,7 @@ class AcquisitionManager:
             filename = url.split("/")[-1]
             dest_path = corpus_dir / filename
             if not dest_path.exists():
-                print(f"  Downloading {url} -> {dest_path}")
+                logger.info(f"  Downloading {url} -> {dest_path}")
                 # For robust implementation, consider adding headers or handling redirects here
                 urllib.request.urlretrieve(url, dest_path)
             downloaded_files.append(dest_path)
@@ -49,12 +52,12 @@ class AcquisitionManager:
         fmt = config.acquisition.format
         if fmt == "zip":
             for file_path in downloaded_files:
-                print(f"  Extracting {file_path}")
+                logger.info(f"  Extracting {file_path}")
                 with zipfile.ZipFile(file_path, 'r') as zip_ref:
                     zip_ref.extractall(corpus_dir)
         elif fmt in ["tar", "tar.gz", "tgz"]:
             for file_path in downloaded_files:
-                print(f"  Extracting {file_path}")
+                logger.info(f"  Extracting {file_path}")
                 with tarfile.open(file_path, 'r:*') as tar_ref:
                     tar_ref.extractall(corpus_dir)
 
@@ -63,7 +66,7 @@ class AcquisitionManager:
             converter_func = CONVERTERS.get(config.acquisition.converter)
             if not converter_func:
                 raise ValueError(f"Converter '{config.acquisition.converter}' not found in registry.")
-            print(f"  Running converter '{config.acquisition.converter}'")
+            logger.info(f"  Running converter '{config.acquisition.converter}'")
             converter_func(corpus_dir, config)
 
         # 5. Final validation: Check if paths exist after acquisition is complete
@@ -72,6 +75,6 @@ class AcquisitionManager:
                 raise FileNotFoundError(
                     f"After acquisition, expected file '{path}' for split '{split}' is still missing!"
                 )
-        print(f"  Corpus '{corpus_name}' acquired and content verified")
+        logger.info(f"  Corpus '{corpus_name}' acquired and content verified")
 
 

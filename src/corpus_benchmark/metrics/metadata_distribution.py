@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from collections import Counter
 from typing import Dict
 
@@ -7,6 +8,8 @@ from corpus_benchmark.context import MetricTarget, get_documents
 from corpus_benchmark.registry import register_subset_metric
 from corpus_benchmark.results import SubsetMetricResult
 from corpus_benchmark.context import get_metadata_for_target
+
+logger = logging.getLogger(__name__)
 
 PRECISION = 8  # Number of decimal places
 

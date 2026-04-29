@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import logging
+
 from corpus_benchmark.context import MetricTarget, get_tokens, get_mentions, get_mention_tokens, get_identifiers
 from corpus_benchmark.registry import register_cross_metric
 from corpus_benchmark.results import CrossSubsetMetricResult
+
+logger = logging.getLogger(__name__)
 
 PRECISION = 8  # Number of decimal places
 

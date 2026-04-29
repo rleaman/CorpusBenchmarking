@@ -1,5 +1,10 @@
 """Benchmark metrics."""
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.debug("Imported corpus_benchmark.metrics package")
+
 # Import metrics so they register themselves.
 from corpus_benchmark.metrics.basic_counts import (
     document_count,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 # Ensure built-in loaders and metrics are registered.
@@ -13,6 +14,8 @@ from corpus_benchmark.models.corpus import BenchmarkCorpus
 from corpus_benchmark.registry import LOADERS, TERMINOLOGY_LOADERS, SUBSET_METRICS, CROSS_METRICS, TERMINOLOGY_METRICS
 from corpus_benchmark.workspace import GlobalWorkspace
 from corpus_benchmark.metadata_handler import MetadataCache, default_metadata_cache_filename
+
+logger = logging.getLogger(__name__)
 
 
 def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> MetricTarget:
@@ -34,7 +37,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
 
     # Initialize terminologies
     for term_name, term_config in battery_config.terminologies.items():
-        print(f"Loading terminology {term_name}")
+        logger.info("Loading terminology %s", term_name)
         loader_name = term_config.name
         if loader_name not in TERMINOLOGY_LOADERS:
             available = ", ".join(sorted(TERMINOLOGY_LOADERS)) or "<none>"
@@ -46,7 +49,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
     contexts: dict[str, BenchmarkContext] = dict()
 
     for benchmark_name, benchmark_config in battery_config.corpora.items():
-        print(f"Loading corpus {benchmark_name}")
+        logger.info("Loading corpus %s", benchmark_name)
         workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
         loader_name = benchmark_config.loader.name
         if loader_name not in LOADERS:
@@ -55,9 +58,9 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
         loader = LOADERS[loader_name]
         benchmark_corpus = loader(**benchmark_config.loader.params)
         document_count = sum(len(corpus_subset.documents) for corpus_subset in benchmark_corpus.subsets.values())
-        print(f"Loaded {document_count} documents in {len(benchmark_corpus.subsets)} subsets")
+        logger.info("Loaded %s documents in %s subsets", document_count, len(benchmark_corpus.subsets))
         for filter_name, filter in benchmark_config.annotation_filters.items():
-            print(f'Runner: annotation filter "{filter_name}" has definition "{filter}"')
+            logger.debug('Runner annotation filter "%s" has definition "%s"', filter_name, filter)
         corpora[benchmark_name] = benchmark_corpus
         contexts[benchmark_name] = BenchmarkContext(
             workspace=workspace, annotation_filters=benchmark_config.annotation_filters
@@ -65,13 +68,13 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
 
     results: list[Any] = []
 
-    print("metrics = {}".format([metric_spec.metric_name for metric_spec in battery_config.metrics]))
+    logger.info("Metrics configured: %s", [metric_spec.metric_name for metric_spec in battery_config.metrics])
 
     for metric_spec in battery_config.metrics:
         if not metric_spec.enabled:
             continue
 
-        print(f"Calculating metric {metric_spec.result_name}")
+        logger.info("Calculating metric %s", metric_spec.result_name)
         if metric_spec.metric_name in SUBSET_METRICS:
             metric = SUBSET_METRICS[metric_spec.metric_name]
             for bundle_name in metric_spec.target_bundles:
@@ -126,10 +129,10 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
             raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
 
     # Display context usage
-    print("Context usage:")
+    logger.info("Context usage:")
     for benchmark_name, benchmark_context in contexts.items():
-        print(f"{benchmark_name}:")
+        logger.info("%s:", benchmark_name)
         for context_key, usage_count in benchmark_context.usage_counts.items():
-            print(f"\t{context_key}: {usage_count}")
+            logger.info("  %s: %s", context_key, usage_count)
 
     return results

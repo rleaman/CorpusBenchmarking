@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 from typing import Any, Dict
 
 
@@ -16,6 +17,8 @@ from corpus_benchmark.models.corpus import Document
 
 
 from corpus_benchmark.models.terminologies import TerminologyResource
+
+logger = logging.getLogger(__name__)
 
 
 class GlobalWorkspace:
@@ -49,7 +52,7 @@ class GlobalWorkspace:
                     missing_ids[id_type].add(id_val)
 
         for id_type, missing_ids_by_type in missing_ids.items():
-            print(f"\tNumber of missing {id_type} IDs: {len(missing_ids_by_type)}")
+            logger.info("Number of missing %s IDs: %s", id_type, len(missing_ids_by_type))
 
         # 2. Fetch missing items using the appropriate fetcher and add new records to the cache
         new_records = []
@@ -70,7 +73,7 @@ class GlobalWorkspace:
                     break # Found it!
             doc_metadata[doc.document_id] = record if record else {}
 
-        print(f"\tlen(doc_metadata) = {len(doc_metadata)}")
+        logger.debug("Resolved metadata for %s documents", len(doc_metadata))
         return doc_metadata
 
     # Future additions:

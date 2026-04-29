@@ -19,6 +19,7 @@ starts at ``len(title) + 1``.
 
 from __future__ import annotations
 
+import logging
 from abc import abstractmethod
 from pathlib import Path
 
@@ -33,6 +34,8 @@ from corpus_benchmark.models.corpus import (
 )
 from corpus_benchmark.loaders.bioc_loader import Loader
 from corpus_benchmark.registry import register_loader
+
+logger = logging.getLogger(__name__)
 
 
 def read_docid_map(filename: str | Path) -> dict[str, str]:
@@ -94,7 +97,7 @@ def load_JNLPBA_standoff(
         A value of ``None`` suppresses that label.
     """
     docid_map = read_docid_map(MUID_PMID_map_path)
-    #print(f"TRACE: len(docid_map) = {len(docid_map)}")
+    logger.debug(f"TRACE: len(docid_map) = {len(docid_map)}")
 
     loader = JNLPBA_StandoffLoader(
         docid_map=docid_map,
@@ -188,7 +191,7 @@ class StandoffLoader(Loader):
         if not subset_path.is_dir():
             raise ValueError(f'Standoff subset path is not a directory: "{subset_path}"')
 
-        print(f"Loading subset {subset_name} from {subset_path}")
+        logger.info(f"Loading subset {subset_name} from {subset_path}")
 
         documents: list[Document] = []
         annotation_count = 0
@@ -204,7 +207,7 @@ class StandoffLoader(Loader):
             annotation_count += sum(len(p.annotations) for p in doc.passages)
             documents.append(doc)
 
-        print(f"\tLoaded {len(documents)} documents and {annotation_count} annotations")
+        logger.info(f"\tLoaded {len(documents)} documents and {annotation_count} annotations")
         return CorpusSubset(name=subset_name, documents=documents)
 
     def load_document(self, document_id, text_path, annotation_path) -> Document:
@@ -381,7 +384,7 @@ class JNLPBA_StandoffLoader(StandoffLoader):
         if not docid_mapped:
             raise ValueError(f"docid {docid} from filename_docid {filename_docid} not found in docid_map")
         ids = {DocumentIdentifierType.PMID: DocumentIdentifierType.PMID.normalize(docid_mapped)}
-        #print(f"TRACE ids for {docid} = {ids}")
+        logger.debug(f"TRACE ids for {docid} = {ids}")
         return ids
 
 class AnatEM_StandoffLoader(StandoffLoader):
@@ -406,5 +409,5 @@ class AnatEM_StandoffLoader(StandoffLoader):
         docid_fields = filename_docid.split("-")
         docid = docid_type.normalize(docid_fields[1])
         ids = {docid_type: docid}
-        #print(f"TRACE ids for {docid} = {ids}")
+        logger.debug(f"TRACE ids for {docid} = {ids}")
         return ids

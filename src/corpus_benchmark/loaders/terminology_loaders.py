@@ -1,5 +1,6 @@
 import collections
 import gzip
+import logging
 import pathlib
 import pickle
 import sys
@@ -10,6 +11,8 @@ from typing import Dict, List, Optional, Iterator, Set, Iterable
 from corpus_benchmark.models.config import WorkspaceConfig
 from corpus_benchmark.models.terminologies import TerminologyResource, TerminologyConcept
 from corpus_benchmark.registry import register_terminology_loader
+
+logger = logging.getLogger(__name__)
 
 TREETOP_NAMES: Dict[str, str] = {
     "A": "Anatomy",
@@ -99,11 +102,11 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
     
     cache_path = terminology_dir / f"{name}.pkl"
     if cache_path.exists():
-        print(f"Loading cached terminology {name} from {cache_path}")
+        logger.info(f"Loading cached terminology {name} from {cache_path}")
         with open(cache_path, "rb") as f:
             return pickle.load(f)
 
-    print(f"Building terminology {name}")
+    logger.info(f"Building terminology {name}")
     
     # Check for provided paths first
     local_paths = {
@@ -137,7 +140,7 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
             if not dest.exists() and not gz_dest.exists():
                 # Try to download .gz first
                 url = f"{base_url}/{gz_filename}"
-                print(f"Attempting to download {url} -> {gz_dest}")
+                logger.info(f"Attempting to download {url} -> {gz_dest}")
                 try:
                     # Add a basic user agent
                     opener = urllib.request.build_opener()
@@ -146,16 +149,16 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
                     urllib.request.urlretrieve(url, gz_dest)
                     local_paths[key] = gz_dest
                 except Exception as e:
-                    print(f"Failed to download .gz version: {e}")
+                    logger.warning(f"Failed to download .gz version: {e}")
                     # Fallback to plain .xml
                     url = f"{base_url}/{filename}"
-                    print(f"Attempting to download {url} -> {dest}")
+                    logger.info(f"Attempting to download {url} -> {dest}")
                     try:
                         urllib.request.urlretrieve(url, dest)
                         local_paths[key] = dest
                     except Exception as e2:
-                        print(f"Error downloading {url}: {e2}")
-                        print(f"Please ensure you have internet access or provide a local path using '{key}_path' in terminology params.")
+                        logger.error(f"Error downloading {url}: {e2}")
+                        logger.error(f"Please ensure you have internet access or provide a local path using '{key}_path' in terminology params.")
                         raise e2
             else:
                 local_paths[key] = gz_dest if gz_dest.exists() else dest
@@ -165,7 +168,7 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
 
     # Parse Descriptors
     desc_path = local_paths["descriptor"]
-    print(f"Parsing {desc_path}")
+    logger.info(f"Parsing {desc_path}")
     for record_el in _iterparse_path_for_tag(desc_path, "DescriptorRecord"):
         ui = _text(record_el.find("DescriptorUI"))
         name_val = _text(record_el.find("DescriptorName/String"))
@@ -191,7 +194,7 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
 
     # Parse Supplementals
     supp_path = local_paths["supplemental"]
-    print(f"Parsing {supp_path}")
+    logger.info(f"Parsing {supp_path}")
     for record_el in _iterparse_path_for_tag(supp_path, "SupplementalRecord"):
         ui = _text(record_el.find("SupplementalRecordUI"))
         name_val = _text(record_el.find("SupplementalRecordName/String"))
@@ -240,7 +243,7 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
         treetop_names=TREETOP_NAMES
     )
 
-    print(f"Saving terminology {name} to {cache_path}")
+    logger.info(f"Saving terminology {name} to {cache_path}")
     with open(cache_path, "wb") as f:
         pickle.dump(resource, f)
 

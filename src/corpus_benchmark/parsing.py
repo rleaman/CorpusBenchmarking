@@ -1,3 +1,4 @@
+import logging
 import re
 
 from dataclasses import dataclass
@@ -5,6 +6,8 @@ from corpus_benchmark.models.corpus import LinkRelation
 from corpus_benchmark.models.corpus import MatchType
 
 from nltk.tokenize import sent_tokenize
+
+logger = logging.getLogger(__name__)
 
 def extract_sentences_from_texts(texts: list[str]) -> list[str]:
     sentences: list[str] = list()
@@ -29,14 +32,14 @@ class IdentifierFormat:
 
 
 def parse_identifier_format_list(id_format_list: list[list[str]]) -> list[IdentifierFormat]:
-    #print(f'parse_identifier_format_list: "{id_format_list}"')
+    logger.debug("Parsing %s identifier format definitions", len(id_format_list))
     if len(id_format_list) == 0:
         return []
     return [parse_identifier_format(id_format) for id_format in id_format_list]
 
 
 def parse_identifier_format(id_format: list[str]) -> IdentifierFormat:
-    #print(f'parse_identifier_format: "{id_format}"')
+    logger.debug("Parsing identifier format %s", id_format)
     if len(id_format) != 3:
         raise ValueError()
     delimiter = id_format[0]
@@ -52,6 +55,7 @@ def str_to_bool(val):
     elif val in ("n", "no", "f", "false", "off", "0"):
         return False
     else:
+        logger.warning("Invalid boolean value encountered: %s", val)
         raise ValueError(f"Invalid boolean value: {val}")
 
 def parse_qualifier_map(qualifier_map: dict[str, str]) -> dict[str, MatchType]:

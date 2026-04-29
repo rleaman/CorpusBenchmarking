@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import logging
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -33,6 +36,7 @@ class TerminologyResource:
         """
         concept = self.get_concept(ui)
         if concept is None:
+            logger.debug("No concept found for %s", ui)
             return []
         if concept.tree_numbers:
             return [concept]
@@ -42,4 +46,5 @@ class TerminologyResource:
             mapped = self.get_concept(mapped_id)
             if mapped and mapped.tree_numbers:
                 resolved.append(mapped)
+        logger.debug("Resolved %s to %s tree concepts", ui, len(resolved))
         return resolved

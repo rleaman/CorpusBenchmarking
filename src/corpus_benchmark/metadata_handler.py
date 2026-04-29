@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import datetime
 import json
+import logging
 from pathlib import Path
 import random
 import re
@@ -15,6 +16,8 @@ import xml.etree.ElementTree as ET
 from collections import Counter
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
+
+logger = logging.getLogger(__name__)
 
 # Configuration
 default_metadata_cache_filename = "data/metadata_cache.json"
@@ -38,7 +41,7 @@ class MetadataCache:
     def _load_cache(self):
         if self.cache_path.exists():
             try:
-                print(f"Loading metadata cache from {self.cache_path}")
+                logger.info(f"Loading metadata cache from {self.cache_path}")
                 with open(self.cache_path, "r", encoding="utf-8") as f:
                     self.records = json.load(f)
                     id_type_counts = Counter()
@@ -56,14 +59,14 @@ class MetadataCache:
                             id_type_counts[id_type] += 1
                         if not indexed:
                             not_indexed_count += 1
-                print(f"Loaded {len(self.id_index)} keys to {len(self.records)} records")
+                logger.info(f"Loaded {len(self.id_index)} keys to {len(self.records)} records")
                 for id_type, id_type_count in id_type_counts.items():
-                    print(f"  Loaded {id_type_count} keys of type {id_type}")
+                    logger.info(f"  Loaded {id_type_count} keys of type {id_type}")
                 if not_indexed_count > 0:                    
-                    print("WARN The number of unindexed records is {not_indexed_count}")
+                    logger.warning(f"The number of unindexed records is {not_indexed_count}")
             except (json.JSONDecodeError, TypeError) as e:
-                print(f"Warning: Could not decode cache at {self.cache_path}. Starting fresh.")
-                print(f"  Error was: {e}")
+                logger.warning(f"Could not decode cache at {self.cache_path}. Starting fresh.")
+                logger.warning(f"  Error was: {e}")
                 self.records = []
 
     def _make_key(self, id_type: DocumentIdentifierType, id_val: str) -> str:
@@ -137,7 +140,7 @@ class MetadataCache:
             if self._add_record(new_rec):
                 updated += 1
         if updated > 0:
-            print(f"Updated {updated} metadata records")
+            logger.info(f"Updated {updated} metadata records")
             self._save_cache()
 
     def _save_cache(self):
@@ -200,9 +203,9 @@ class PubMedFetcher(MetadataFetcher):
 
                 for article in root.findall("./PubmedArticle"):
                     results.append(self._parse_article(article))
-                print(f"PubMed Fetcher: Processed chunk {i+1}/{len(chunks)}")
+                logger.info("PubMed Fetcher: processed chunk %s/%s", i + 1, len(chunks))
             except Exception as e:
-                print(f"PubMed Fetcher Error: {e}")
+                logger.error("PubMed Fetcher error: %s", e)
         return results
 
     def _parse_article(self, element: ET.Element) -> Dict[str, Any]:
@@ -266,9 +269,9 @@ class PMCFetcher(MetadataFetcher):
 
                 for docsum in root.findall("./DocSum"):
                     results.append(self._parse_docsum(docsum))
-                print(f"PMC Fetcher: Processed chunk {i+1}/{len(chunks)}")
+                logger.info("PMC Fetcher: processed chunk %s/%s", i + 1, len(chunks))
             except Exception as e:
-                print(f"PMC Fetcher Error: {e}")
+                logger.error("PMC Fetcher error: %s", e)
         return results
 
     def _parse_docsum(self, element: ET.Element) -> Dict[str, Any]:
@@ -347,7 +350,7 @@ class CrossrefDOIFetcher(MetadataFetcher):
         for i, chunk in enumerate(chunks):
             records = self._fetch_chunk(chunk)
             results.extend(records)
-            print(f"Crossref DOI Fetcher: Processed chunk {i+1}/{len(chunks)}")
+            logger.info("Crossref DOI Fetcher: processed chunk %s/%s", i + 1, len(chunks))
 
         return results
 
@@ -424,22 +427,24 @@ class CrossrefDOIFetcher(MetadataFetcher):
                 if e.code in (429, 503):
                     retry_after = self._parse_retry_after(e.headers.get("Retry-After"))
                     sleep_for = retry_after if retry_after is not None else self._backoff_seconds(attempt)
-                    print(f"Crossref DOI Fetcher: rate limited ({e.code}); retrying after {sleep_for:.1f}s")
+                    logger.warning(
+                        "Crossref DOI Fetcher rate limited (%s); retrying after %.1fs", e.code, sleep_for
+                    )
                     time.sleep(sleep_for)
                     continue
 
                 if e.code == 404:
                     return None
 
-                print(f"Crossref DOI Fetcher HTTP Error {e.code}: {e.reason}")
+                logger.error("Crossref DOI Fetcher HTTP Error %s: %s", e.code, e.reason)
                 return None
 
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
                 if attempt >= self.MAX_RETRIES:
-                    print(f"Crossref DOI Fetcher Error: {e}")
+                    logger.error("Crossref DOI Fetcher error: %s", e)
                     return None
                 sleep_for = self._backoff_seconds(attempt)
-                print(f"Crossref DOI Fetcher transient error: {e}; retrying after {sleep_for:.1f}s")
+                logger.warning("Crossref DOI Fetcher transient error: %s; retrying after %.1fs", e, sleep_for)
                 time.sleep(sleep_for)
 
         return None
@@ -511,7 +516,7 @@ class CrossrefDOIFetcher(MetadataFetcher):
 
         journal = self._first(msg.get("short-container-title"))
         if not journal:
-            print("Using full journal")
+            logger.debug("Crossref DOI Fetcher falling back to full journal title")
             journal = self._first(msg.get("container-title"))
 
         return {

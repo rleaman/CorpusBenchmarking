@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import collections
 from typing import Dict, Iterable, List
 
@@ -7,6 +8,8 @@ from corpus_benchmark.context import MetricTarget, get_identifiers
 from corpus_benchmark.models.terminologies import TerminologyResource
 from corpus_benchmark.registry import register_terminology_metric
 from corpus_benchmark.results import SubsetMetricResult
+
+logger = logging.getLogger(__name__)
 
 PRECISION = 8
 

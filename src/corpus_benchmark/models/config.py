@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from collections import Counter
+import logging
 from dataclasses import dataclass, field
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -22,6 +25,7 @@ class AcquisitionSpec:
         # Support both 'source_url' (single) and 'source_urls' (list) for convenience
         if "source_url" in data:
             urls.append(data["source_url"])
+        logger.debug("Parsed acquisition spec with %s source URLs", len(urls))
         return cls(
             source_urls=urls,
             format=data.get("format"),
@@ -76,10 +80,16 @@ class WorkspaceConfig:
     corpora_download_dir: str = "corpora/"
     terminology_dir: str = "data/terminologies/"
 
+@dataclass(slots=True)
+class LoggingConfig:
+    level: str = "INFO"
+    format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    filename: str | None = None
 
 @dataclass(slots=True)
 class BatteryConfig:
     workspace: WorkspaceConfig = field(default_factory=WorkspaceConfig)
+    logging: LoggingConfig = field(default_factory=LoggingConfig)
     corpora: dict[str, BenchmarkConfig] = field(default_factory=dict)
     terminologies: dict[str, LoaderSpec] = field(default_factory=dict)
     bundles: dict[str, DatasetBundle] = field(default_factory=dict)
@@ -93,4 +103,4 @@ class BatteryConfig:
         non_unique = {name for name, count in metric_result_name_counts.items() if count > 1}
         if len(non_unique) > 0:
             raise ValueError(f"Metric result names must be unique: {non_unique}")
-
+        logger.debug("Validated battery config with %s metrics", len(self.metrics))

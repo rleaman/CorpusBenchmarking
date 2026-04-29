@@ -1,5 +1,10 @@
 """Corpus loaders."""
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.debug("Imported corpus_benchmark.loaders package")
+
 # Import loaders so they register themselves.
 from corpus_benchmark.loaders.bioc_loader import load_bioc_xml, load_pubtator
 from corpus_benchmark.loaders.standoff_loader import load_JNLPBA_standoff, load_AnatEM_standoff

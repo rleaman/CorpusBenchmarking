@@ -3,8 +3,11 @@ from __future__ import annotations
 from abc import abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
+import logging
 from typing import Optional
 import re
+
+logger = logging.getLogger(__name__)
 
 NIL_RESOURCE = "<NIL>"
 ALL_CORPUS_SUBSET = "<ALL>"
@@ -170,6 +173,7 @@ class BenchmarkCorpus:
         for subset in self.subsets.values():
             all_documents.extend(subset.documents)
         self.subsets[ALL_CORPUS_SUBSET] = CorpusSubset(ALL_CORPUS_SUBSET, all_documents)
+        logger.debug("Constructed ALL corpus subset with %s documents", len(all_documents))
 
 
 @dataclass(slots=True)
