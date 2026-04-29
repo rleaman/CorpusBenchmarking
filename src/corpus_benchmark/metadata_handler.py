@@ -47,7 +47,6 @@ class MetadataCache:
                     id_type_counts = Counter()
                     not_indexed_count = 0
                     for rec in self.records:
-                        added = self._add_record(rec)
                         indexed = False
                         ids = rec["identifiers"]
                         for id_type in DocumentIdentifierType:
