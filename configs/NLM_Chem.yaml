@@ -15,7 +15,7 @@ loader:
       test: corpora/NLM_Chem/BC7T2-NLMChem-corpus-test.BioC.xml
     label_infon_key: type
     id_format_list: [[",", "distributive", "False"]]
-    nil_labels: { "-" }
+    nil_labels: [ "-" ]
     label_map: {"Chemical": "Chemical", "MeSH_Indexing_Chemical": null}
     doc_id_map:
         pmid: ["__HEADER_INFON__", "article-id_pmid"]

@@ -50,6 +50,7 @@ def load_bioc_xml(
     id_format_list: list[list[str]] = [],
     qualifier_map: dict[str, str] = {},
     nil_labels: set[str] = set(),
+    default_resource: str | None = None,
     resource_delimiter: str = ":",
     **kwargs,
 ) -> BenchmarkCorpus:
@@ -69,6 +70,7 @@ def load_bioc_xml(
         parse_identifier_format_list(id_format_list),
         parse_qualifier_map(qualifier_map),
         nil_labels,
+        default_resource,
         resource_delimiter,
         **kwargs,
     )
@@ -99,7 +101,7 @@ class Loader:
         self.label_map = label_map
         self.id_format_list = id_format_list
         self.qualifier_map = qualifier_map
-        self.nil_labels = nil_labels
+        self.nil_labels = set(str(label) for label in nil_labels)
         self.default_resource = default_resource
         self.resource_delimiter = resource_delimiter
 
@@ -243,10 +245,11 @@ class BioCXMLLoader(Loader):
         id_format_list: list[IdentifierFormat] = [],
         qualifier_map: dict[str, MatchType] = {},
         nil_labels: set[str] = set(),
+        default_resource: str | None = None,
         resource_delimiter=":",
         **kwargs,
     ):
-        super().__init__(label_map, id_format_list, qualifier_map, nil_labels, None, resource_delimiter)
+        super().__init__(label_map, id_format_list, qualifier_map, nil_labels, default_resource, resource_delimiter)
         self.doc_id_fetcher = DocIDExtractor(self, doc_id_map)
         self.passage_id_infon_key = passage_id_infon_key
         self.label_infon_key = label_infon_key

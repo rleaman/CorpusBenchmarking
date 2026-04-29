@@ -18,7 +18,8 @@ loader:
     id_infon_key: MESH
     id_format_list: [["|", "distributive", "False"]]
     qualifier_map: {}
-    nil_labels: { -1 }
+    nil_labels: [ -1 ]
+    default_resource: MESH
     doc_id_map:
         pmid: "__DOCUMENT_ID__"
 

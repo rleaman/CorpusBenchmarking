@@ -32,12 +32,13 @@ def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> Met
 
 def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_config:BenchmarkConfig) -> BenchmarkCorpus: 
     # 1. Try to load from cache
-    if benchmark_config.cache_filename:
+    cache_path = Path(benchmark_config.cache_filename) if benchmark_config.cache_filename else None
+    if cache_path and cache_path.exists():
         try:
-            logger.info(f"Loading corpus \"{benchmark_name}\" from cache at {benchmark_config.cache_filename}")
-            return BenchmarkCorpus.from_json(benchmark_config.cache_filename)
+            logger.info(f"Loading corpus \"{benchmark_name}\" from cache at {cache_path}")
+            return BenchmarkCorpus.from_json(cache_path)
         except Exception as e:
-            logger.warning(f"Could not load cache at {benchmark_config.cache_filename} for corpus \"{benchmark_name}\". Starting fresh. Error was {e}")
+            logger.warning(f"Could not load cache at {cache_path} for corpus \"{benchmark_name}\". Starting fresh. Error was {e}")
     # 2. Make sure files downloaded
     logger.info(f"Loading corpus {benchmark_name}")
     workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
@@ -49,9 +50,8 @@ def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_confi
     loader = LOADERS[loader_name]
     benchmark_corpus = loader(**benchmark_config.loader.params)
     # 4. Try to save to cache
-    if benchmark_config.cache_filename:
-        logger.info(f"Saving corpus \"{benchmark_name}\" to cache at {benchmark_config.cache_filename}")
-        cache_path = Path(benchmark_config.cache_filename)
+    if cache_path:
+        logger.info(f"Saving corpus \"{benchmark_name}\" to cache at {cache_path}")
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         benchmark_corpus.to_json(cache_path)
     return benchmark_corpus

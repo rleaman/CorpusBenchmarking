@@ -1040,10 +1040,9 @@
         }
       ],
       "details": {
-        "n_input_ids": 29562,
-        "n_missing_ids": 84,
+        "n_input_ids": 29334,
+        "n_missing_ids": 83,
         "missing_ids": [
-          "-1",
           "C000873",
           "C005435",
           "C008281",

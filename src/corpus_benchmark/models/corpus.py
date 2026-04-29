@@ -31,8 +31,7 @@ class LinkRelation(str, Enum):
     ALTERNATIVE = "alternative"  # optional: true either/or ambiguity
 
 
-JsonDict = dict[str, Any]
-PathLike = str | Path
+str | Path = str | Path
 
 
 def _enum_value(value: Enum | str | None) -> str | None:
@@ -55,7 +54,7 @@ def _enum_or_none(enum_type: type[Enum], value: str | None) -> Enum | None:
         raise ValueError(f"Invalid {enum_type.__name__} value {value!r}; expected one of: {allowed}") from exc
 
 
-def _open_text_for_read(path: PathLike) -> TextIO:
+def _open_text_for_read(path: str | Path) -> TextIO:
     """Open JSON or JSON.GZ paths for text reading."""
     path = Path(path)
     if path.suffix == ".gz":
@@ -63,7 +62,7 @@ def _open_text_for_read(path: PathLike) -> TextIO:
     return path.open("r", encoding="utf-8")
 
 
-def _open_text_for_write(path: PathLike) -> TextIO:
+def _open_text_for_write(path: str | Path) -> TextIO:
     """Open JSON or JSON.GZ paths for text writing, creating parent directories."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -88,12 +87,12 @@ class Link:
         pass
 
     @abstractmethod
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert the link to a JSON-serializable dictionary."""
         pass
 
     @staticmethod
-    def from_dict(data: JsonDict | None) -> Link | None:
+    def from_dict(data: dict[str, Any] | None) -> Link | None:
         """Reconstruct a Link from its JSON representation."""
         if data is None:
             return None
@@ -119,7 +118,7 @@ class IdentifierLink(Link):
     def get_identifier_links(self) -> list[IdentifierLink]:
         return [self]
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "type": "identifier",
             "match_type": _enum_value(self.match_type),
@@ -128,7 +127,7 @@ class IdentifierLink(Link):
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> IdentifierLink:
+    def from_dict(data: dict[str, Any]) -> IdentifierLink:
         return IdentifierLink(
             match_type=_enum_or_none(MatchType, data.get("match_type")),
             identifier=data.get("identifier"),
@@ -158,7 +157,7 @@ class CompositeLink(Link):
             identifier_links.extend(link.get_identifier_links())
         return identifier_links
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "type": "composite",
             "match_type": _enum_value(self.match_type),
@@ -167,7 +166,7 @@ class CompositeLink(Link):
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> CompositeLink:
+    def from_dict(data: dict[str, Any]) -> CompositeLink:
         return CompositeLink(
             match_type=_enum_or_none(MatchType, data.get("match_type")),
             relation=_enum_or_none(LinkRelation, data.get("relation")) or LinkRelation.RELATED_SET,
@@ -183,11 +182,11 @@ class AnnotationSpan:
     start: int
     end: int
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {"start": self.start, "end": self.end}
 
     @staticmethod
-    def from_dict(data: JsonDict) -> AnnotationSpan:
+    def from_dict(data: dict[str, Any]) -> AnnotationSpan:
         return AnnotationSpan(start=int(data["start"]), end=int(data["end"]))
 
 
@@ -205,7 +204,7 @@ class Annotation:
             return []
         return self.link.get_identifier_links()
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "mention_id": self.mention_id,
             "text": self.text,
@@ -216,7 +215,7 @@ class Annotation:
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> Annotation:
+    def from_dict(data: dict[str, Any]) -> Annotation:
         return Annotation(
             mention_id=str(data["mention_id"]),
             text=str(data.get("text", "")),
@@ -235,7 +234,7 @@ class Passage:
     annotations: list[Annotation] = field(default_factory=list)
     infons: dict[str, str] = field(default_factory=dict)
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "passage_id": self.passage_id,
             "text": self.text,
@@ -245,7 +244,7 @@ class Passage:
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> Passage:
+    def from_dict(data: dict[str, Any]) -> Passage:
         return Passage(
             passage_id=str(data["passage_id"]),
             text=str(data.get("text", "")),
@@ -297,7 +296,7 @@ class Document:
     identifiers: dict[DocumentIdentifierType, str] = field(default_factory=dict)
     infons: dict[str, str] = field(default_factory=dict)
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "document_id": self.document_id,
             "passages": [passage.to_dict() for passage in self.passages],
@@ -306,7 +305,7 @@ class Document:
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> Document:
+    def from_dict(data: dict[str, Any]) -> Document:
         identifiers: dict[DocumentIdentifierType, str] = {}
         for key, value in data.get("identifiers", {}).items():
             identifier_type = DocumentIdentifierType(key)
@@ -325,14 +324,14 @@ class CorpusSubset:
     name: str
     documents: list[Document]
 
-    def to_dict(self) -> JsonDict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "documents": [document.to_dict() for document in self.documents],
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> CorpusSubset:
+    def from_dict(data: dict[str, Any]) -> CorpusSubset:
         return CorpusSubset(
             name=str(data["name"]),
             documents=[Document.from_dict(document) for document in data.get("documents", [])],
@@ -361,7 +360,7 @@ class BenchmarkCorpus:
         """Return subsets that should be serialized, excluding the derived <ALL> subset."""
         return {name: subset for name, subset in self.subsets.items() if name != ALL_CORPUS_SUBSET}
 
-    def to_dict(self, *, include_all_subset: bool = False) -> JsonDict:
+    def to_dict(self, *, include_all_subset: bool = False) -> dict[str, Any]:
         """
         Convert the corpus to a JSON-serializable dictionary.
 
@@ -376,7 +375,7 @@ class BenchmarkCorpus:
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> BenchmarkCorpus:
+    def from_dict(data: dict[str, Any]) -> BenchmarkCorpus:
         schema_version = data.get("schema_version", 0)
         if schema_version not in (0, CORPUS_JSON_SCHEMA_VERSION):
             raise ValueError(
@@ -393,7 +392,7 @@ class BenchmarkCorpus:
 
     def to_json(
         self,
-        path: PathLike,
+        path: str | Path,
         *,
         include_all_subset: bool = False,
         indent: int | None = 2,
@@ -416,7 +415,7 @@ class BenchmarkCorpus:
             handle.write("\n")
 
     @staticmethod
-    def from_json(path: PathLike) -> BenchmarkCorpus:
+    def from_json(path: str | Path) -> BenchmarkCorpus:
         """Load a BenchmarkCorpus from a JSON or JSON.GZ cache file."""
         with _open_text_for_read(path) as handle:
             data = json.load(handle)
@@ -427,7 +426,7 @@ class BenchmarkCorpus:
 class BenchmarkBattery:
     corpora: dict[str, BenchmarkCorpus] = field(default_factory=dict)
 
-    def to_dict(self, *, include_all_subset: bool = False) -> JsonDict:
+    def to_dict(self, *, include_all_subset: bool = False) -> dict[str, Any]:
         return {
             "schema_version": CORPUS_JSON_SCHEMA_VERSION,
             "corpora": {
@@ -437,7 +436,7 @@ class BenchmarkBattery:
         }
 
     @staticmethod
-    def from_dict(data: JsonDict) -> BenchmarkBattery:
+    def from_dict(data: dict[str, Any]) -> BenchmarkBattery:
         schema_version = data.get("schema_version", 0)
         if schema_version not in (0, CORPUS_JSON_SCHEMA_VERSION):
             raise ValueError(
@@ -453,7 +452,7 @@ class BenchmarkBattery:
 
     def to_json(
         self,
-        path: PathLike,
+        path: str | Path,
         *,
         include_all_subset: bool = False,
         indent: int | None = 2,
@@ -471,7 +470,7 @@ class BenchmarkBattery:
             handle.write("\n")
 
     @staticmethod
-    def from_json(path: PathLike) -> BenchmarkBattery:
+    def from_json(path: str | Path) -> BenchmarkBattery:
         """Load a BenchmarkBattery from a JSON or JSON.GZ cache file."""
         with _open_text_for_read(path) as handle:
             data = json.load(handle)

@@ -184,11 +184,13 @@
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "null": 1.0
+        "MESH": 0.9922874,
+        "<NIL>": 0.0077126
       },
       "details": {
         "counts": {
-          "null": 29562
+          "MESH": 29334,
+          "<NIL>": 228
         },
         "total": 29562
       }
