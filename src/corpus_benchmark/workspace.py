@@ -3,12 +3,13 @@ import logging
 from typing import Any, Dict
 
 
-from corpus_benchmark.metadata_handler import (
-    MetadataCache,
-    MetadataFetcher,
+from corpus_benchmark.metadata.document_metadata import (
+    DocumentMetadataCache,
+    DocumentMetadataFetcher,
+)
+from corpus_benchmark.metadata.eUtils_document_fetchers import (
     PMCFetcher,
     PubMedFetcher,
-    CrossrefDOIFetcher,
 )
 from corpus_benchmark.models.corpus import DocumentIdentifierType
 from corpus_benchmark.acquisition import AcquisitionManager
@@ -24,18 +25,18 @@ logger = logging.getLogger(__name__)
 class GlobalWorkspace:
     """Manages persistent, cross-run resources like caches and downloaded files."""
 
-    metadata_cache: MetadataCache
+    metadata_cache: DocumentMetadataCache
     acquisition_manager: AcquisitionManager
     workspace_config: WorkspaceConfig
     terminologies: dict[str, TerminologyResource]
 
-    def __init__(self, metadata_cache: MetadataCache, workspace_config: WorkspaceConfig):
+    def __init__(self, metadata_cache: DocumentMetadataCache, workspace_config: WorkspaceConfig):
         self.metadata_cache = metadata_cache
         self.workspace_config = workspace_config
         self.acquisition_manager = AcquisitionManager(workspace_config)
         self.terminologies = {}
         # TODO Make the fetchers configurable
-        self.fetchers: dict[DocumentIdentifierType, MetadataFetcher] = {
+        self.fetchers: dict[DocumentIdentifierType, DocumentMetadataFetcher] = {
             DocumentIdentifierType.PMID: PubMedFetcher(),
             DocumentIdentifierType.PMCID: PMCFetcher(),
             # DocumentIdentifierType.DOI: CrossrefDOIFetcher(),

@@ -15,7 +15,7 @@ from corpus_benchmark.models.config import BatteryConfig, DatasetBundle, Benchma
 from corpus_benchmark.models.corpus import BenchmarkCorpus
 from corpus_benchmark.registry import LOADERS, TERMINOLOGY_LOADERS, SUBSET_METRICS, CROSS_METRICS, TERMINOLOGY_METRICS
 from corpus_benchmark.workspace import GlobalWorkspace
-from corpus_benchmark.metadata_handler import MetadataCache, default_metadata_cache_filename
+from corpus_benchmark.metadata.document_metadata import DocumentMetadataCache
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_confi
 
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
     workspace = GlobalWorkspace(
-        metadata_cache=MetadataCache(battery_config.workspace.metadata_cache_filename),
+        metadata_cache=DocumentMetadataCache(battery_config.workspace.metadata_cache_filename),
         workspace_config=battery_config.workspace,
     )
 
@@ -72,9 +72,9 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
         loader = TERMINOLOGY_LOADERS[loader_name]
         workspace.terminologies[term_name] = loader(workspace.workspace_config, **term_config.params)
 
+    # Load corpora
     corpora: dict[str, BenchmarkCorpus] = dict()
     contexts: dict[str, BenchmarkContext] = dict()
-
     for benchmark_name, benchmark_config in battery_config.corpora.items():
         benchmark_corpus = _load_corpus(workspace, benchmark_name, benchmark_config)
         document_count = sum(len(corpus_subset.documents) for corpus_subset in benchmark_corpus.subsets.values())
@@ -85,11 +85,13 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
         contexts[benchmark_name] = BenchmarkContext(
             workspace=workspace, annotation_filters=benchmark_config.annotation_filters
         )
+    
+    # TODO: pre-cache any necessary document metadata 
+    # TODO: pre-cache any necessary journal metadata 
 
-    results: list[Any] = []
-
+    # Run metrics
     logger.info("Metrics configured: %s", [metric_spec.metric_name for metric_spec in battery_config.metrics])
-
+    results: list[Any] = []
     for metric_spec in battery_config.metrics:
         if not metric_spec.enabled:
             continue
