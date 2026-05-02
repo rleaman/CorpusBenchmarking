@@ -78,7 +78,7 @@ class BenchmarkConfig:
 @dataclass(slots=True)
 class WorkspaceConfig:
     """Global configuration for the benchmarking workspace and caches."""
-    metadata_cache_filename: str = "data/metadata_cache.json"
+    document_store_filename: str = "data/metadata.sqlite"
     corpora_download_dir: str = "corpora/"
     terminology_dir: str = "data/terminologies/"
 

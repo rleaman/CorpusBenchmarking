@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import json
 from pathlib import Path
 from typing import Any
 
@@ -12,10 +11,17 @@ import corpus_benchmark.metrics  # noqa: F401
 # NOTE: "noqa: F401" means "Ignore error 'Module imported but not used'"
 from corpus_benchmark.context import BenchmarkContext, MetricTarget
 from corpus_benchmark.models.config import BatteryConfig, DatasetBundle, BenchmarkConfig
-from corpus_benchmark.models.corpus import BenchmarkCorpus
-from corpus_benchmark.registry import LOADERS, TERMINOLOGY_LOADERS, SUBSET_METRICS, CROSS_METRICS, TERMINOLOGY_METRICS
+from corpus_benchmark.models.corpus import BenchmarkCorpus, DocumentIdentifierType
+from corpus_benchmark.parsing import normalize_doi, normalize_pmid, normalize_pmcid
+from corpus_benchmark.registry import (
+    LOADERS,
+    TERMINOLOGY_LOADERS,
+    SUBSET_METRICS,
+    CROSS_METRICS,
+    TERMINOLOGY_METRICS,
+)
 from corpus_benchmark.workspace import GlobalWorkspace
-from corpus_benchmark.metadata.document_metadata import DocumentMetadataCache
+from corpus_benchmark.metadata.record_store import RecordStore
 
 logger = logging.getLogger(__name__)
 
@@ -30,15 +36,16 @@ def _resolve_bundle(bundle: DatasetBundle, corpora: dict, contexts: dict) -> Met
         components.append((subset, context))
     return MetricTarget(name=bundle.name, components=components)
 
-def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_config:BenchmarkConfig) -> BenchmarkCorpus: 
+
+def _load_corpus(workspace: GlobalWorkspace, benchmark_name: str, benchmark_config: BenchmarkConfig) -> BenchmarkCorpus:
     # 1. Try to load from cache
     cache_path = Path(benchmark_config.cache_filename) if benchmark_config.cache_filename else None
     if cache_path and cache_path.exists():
         try:
-            logger.info(f"Loading corpus \"{benchmark_name}\" from cache at {cache_path}")
+            logger.info(f'Loading corpus "{benchmark_name}" from cache at {cache_path}')
             return BenchmarkCorpus.from_json(cache_path)
         except Exception as e:
-            logger.warning(f"Could not load cache at {cache_path} for corpus \"{benchmark_name}\". Starting fresh. Error was {e}")
+            logger.warning(f'Could not load cache at {cache_path} for corpus "{benchmark_name}". Starting fresh. Error was {e}')
     # 2. Make sure files downloaded
     logger.info(f"Loading corpus {benchmark_name}")
     workspace.acquisition_manager.ensure_corpus_ready(benchmark_name, benchmark_config)
@@ -51,110 +58,192 @@ def _load_corpus(workspace: GlobalWorkspace, benchmark_name:str, benchmark_confi
     benchmark_corpus = loader(**benchmark_config.loader.params)
     # 4. Try to save to cache
     if cache_path:
-        logger.info(f"Saving corpus \"{benchmark_name}\" to cache at {cache_path}")
+        logger.info(f'Saving corpus "{benchmark_name}" to cache at {cache_path}')
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         benchmark_corpus.to_json(cache_path)
     return benchmark_corpus
 
+
+def _create_document_record_store(document_store_filename: str) -> RecordStore:
+    document_store_path = Path(document_store_filename)
+    document_store_path.parent.mkdir(parents=True, exist_ok=True)
+    document_store = RecordStore(
+        document_store_path,
+        store_name="documents",
+        identifier_types={
+            DocumentIdentifierType.PMID,
+            DocumentIdentifierType.PMCID,
+            DocumentIdentifierType.DOI,
+        },
+        fields={
+            "pub_year",
+            "journal",
+            "journal_id",
+            "mesh_topics",
+        },
+        field_policies={
+            "pub_year": "strict",
+            "journal": "strict",
+            "journal_id": "strict",
+            "mesh_topics": "set_union",
+        },
+        identifier_normalizers={
+            DocumentIdentifierType.PMID: normalize_pmid,
+            DocumentIdentifierType.PMCID: normalize_pmcid,
+            DocumentIdentifierType.DOI: normalize_doi,
+        },
+    )
+    return document_store
+
+
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
+    document_store = _create_document_record_store(battery_config.workspace.document_store_filename)
     workspace = GlobalWorkspace(
-        metadata_cache=DocumentMetadataCache(battery_config.workspace.metadata_cache_filename),
+        document_store=document_store,
         workspace_config=battery_config.workspace,
     )
+    try:
+        # Initialize terminologies
+        for term_name, term_config in battery_config.terminologies.items():
+            logger.info("Loading terminology %s", term_name)
+            loader_name = term_config.name
+            if loader_name not in TERMINOLOGY_LOADERS:
+                available = ", ".join(sorted(TERMINOLOGY_LOADERS)) or "<none>"
+                raise ValueError(f"Unknown terminology loader '{loader_name}'. Available loaders: {available}")
+            loader = TERMINOLOGY_LOADERS[loader_name]
+            workspace.terminologies[term_name] = loader(workspace.workspace_config, **term_config.params)
 
-    # Initialize terminologies
-    for term_name, term_config in battery_config.terminologies.items():
-        logger.info("Loading terminology %s", term_name)
-        loader_name = term_config.name
-        if loader_name not in TERMINOLOGY_LOADERS:
-            available = ", ".join(sorted(TERMINOLOGY_LOADERS)) or "<none>"
-            raise ValueError(f"Unknown terminology loader '{loader_name}'. Available loaders: {available}")
-        loader = TERMINOLOGY_LOADERS[loader_name]
-        workspace.terminologies[term_name] = loader(workspace.workspace_config, **term_config.params)
+        # Load corpora
+        corpora: dict[str, BenchmarkCorpus] = dict()
+        contexts: dict[str, BenchmarkContext] = dict()
+        for benchmark_name, benchmark_config in battery_config.corpora.items():
+            benchmark_corpus = _load_corpus(workspace, benchmark_name, benchmark_config)
+            document_count = sum(len(corpus_subset.documents) for corpus_subset in benchmark_corpus.subsets.values())
+            logger.info(
+                "Loaded %s documents in %s subsets",
+                document_count,
+                len(benchmark_corpus.subsets),
+            )
+            for filter_name, filter in benchmark_config.annotation_filters.items():
+                logger.debug(
+                    'Runner annotation filter "%s" has definition "%s"',
+                    filter_name,
+                    filter,
+                )
+            corpora[benchmark_name] = benchmark_corpus
+            contexts[benchmark_name] = BenchmarkContext(
+                workspace=workspace,
+                annotation_filters=benchmark_config.annotation_filters,
+            )
 
-    # Load corpora
-    corpora: dict[str, BenchmarkCorpus] = dict()
-    contexts: dict[str, BenchmarkContext] = dict()
-    for benchmark_name, benchmark_config in battery_config.corpora.items():
-        benchmark_corpus = _load_corpus(workspace, benchmark_name, benchmark_config)
-        document_count = sum(len(corpus_subset.documents) for corpus_subset in benchmark_corpus.subsets.values())
-        logger.info("Loaded %s documents in %s subsets", document_count, len(benchmark_corpus.subsets))
-        for filter_name, filter in benchmark_config.annotation_filters.items():
-            logger.debug('Runner annotation filter "%s" has definition "%s"', filter_name, filter)
-        corpora[benchmark_name] = benchmark_corpus
-        contexts[benchmark_name] = BenchmarkContext(
-            workspace=workspace, annotation_filters=benchmark_config.annotation_filters
+        # TODO: pre-cache any necessary document metadata
+        # TODO: pre-cache any necessary journal metadata
+
+        # Run metrics
+        logger.info(
+            "Metrics configured: %s",
+            [metric_spec.metric_name for metric_spec in battery_config.metrics],
         )
-    
-    # TODO: pre-cache any necessary document metadata 
-    # TODO: pre-cache any necessary journal metadata 
+        results: list[Any] = []
+        for metric_spec in battery_config.metrics:
+            if not metric_spec.enabled:
+                continue
 
-    # Run metrics
-    logger.info("Metrics configured: %s", [metric_spec.metric_name for metric_spec in battery_config.metrics])
-    results: list[Any] = []
-    for metric_spec in battery_config.metrics:
-        if not metric_spec.enabled:
-            continue
-
-        logger.info("Calculating metric %s", metric_spec.result_name)
-        if metric_spec.metric_name in SUBSET_METRICS:
-            metric = SUBSET_METRICS[metric_spec.metric_name]
-            for bundle_name in metric_spec.target_bundles:
-                bundle = battery_config.bundles[bundle_name]
-                target = _resolve_bundle(bundle, corpora, contexts)
-
-                # Execute metric
-                result = metric(target, metric_spec.result_name, **getattr(metric_spec, "params", {}))
-                results.append(result)
-        elif metric_spec.metric_name in CROSS_METRICS:
-            metric = CROSS_METRICS[metric_spec.metric_name]
-            suite = battery_config.comparison_suites[metric_spec.comparison_suite]
-            for bundle1_name, bundle2_name in suite.bundle_pairs:
-                bundle1 = battery_config.bundles[bundle1_name]
-                bundle2 = battery_config.bundles[bundle2_name]
-
-                target1 = _resolve_bundle(bundle1, corpora, contexts)
-                target2 = _resolve_bundle(bundle2, corpora, contexts)
-
-                # Execute cross-metric (requires metrics designed for two targets)
-                result = metric(target1, target2, metric_spec.result_name, **getattr(metric_spec, "params", {}))
-                results.append(result)
-        elif metric_spec.metric_name in TERMINOLOGY_METRICS:
-            metric = TERMINOLOGY_METRICS[metric_spec.metric_name]
-            params = getattr(metric_spec, "params", {})
-            term_name = params.get("terminology_name")
-            if not term_name or term_name not in workspace.terminologies:
-                # Fallback to the first loaded terminology if only one exists
-                if len(workspace.terminologies) == 1:
-                    term_name = list(workspace.terminologies.keys())[0]
-                    terminology = workspace.terminologies[term_name]
-                else:
-                    available = ", ".join(sorted(workspace.terminologies)) or "<none>"
-                    raise ValueError(
-                        f"Metric {metric_spec.metric_name} requires a terminology_name param matching a loaded terminology. "
-                        f"Available terminologies: {available}"
+            logger.info("Calculating metric %s", metric_spec.result_name)
+            if metric_spec.metric_name in SUBSET_METRICS:
+                metric = SUBSET_METRICS[metric_spec.metric_name]
+                for bundle_name in metric_spec.target_bundles:
+                    logger.info(
+                        "Calculating metric %s on bundle %s",
+                        metric_spec.result_name,
+                        bundle_name,
                     )
+                    bundle = battery_config.bundles[bundle_name]
+                    target = _resolve_bundle(bundle, corpora, contexts)
+                    logger.debug("... bundle resolved")
+
+                    # Execute metric
+                    result = metric(
+                        target,
+                        metric_spec.result_name,
+                        **getattr(metric_spec, "params", {}),
+                    )
+                    logger.debug("... metric calculated")
+                    results.append(result)
+            elif metric_spec.metric_name in CROSS_METRICS:
+                metric = CROSS_METRICS[metric_spec.metric_name]
+                suite = battery_config.comparison_suites[metric_spec.comparison_suite]
+                for bundle1_name, bundle2_name in suite.bundle_pairs:
+                    logger.info(
+                        "Calculating metric %s on bundles %s and %s",
+                        metric_spec.result_name,
+                        bundle1_name,
+                        bundle2_name,
+                    )
+                    bundle1 = battery_config.bundles[bundle1_name]
+                    bundle2 = battery_config.bundles[bundle2_name]
+                    target1 = _resolve_bundle(bundle1, corpora, contexts)
+                    target2 = _resolve_bundle(bundle2, corpora, contexts)
+                    logger.debug("... bundles resolved")
+
+                    # Execute cross-metric (requires metrics designed for two targets)
+                    result = metric(
+                        target1,
+                        target2,
+                        metric_spec.result_name,
+                        **getattr(metric_spec, "params", {}),
+                    )
+                    logger.debug("... metric calculated")
+                    results.append(result)
+            elif metric_spec.metric_name in TERMINOLOGY_METRICS:
+                metric = TERMINOLOGY_METRICS[metric_spec.metric_name]
+                params = getattr(metric_spec, "params", {})
+                term_name = params.get("terminology_name")
+                if not term_name or term_name not in workspace.terminologies:
+                    # Fallback to the first loaded terminology if only one exists
+                    if len(workspace.terminologies) == 1:
+                        term_name = list(workspace.terminologies.keys())[0]
+                        terminology = workspace.terminologies[term_name]
+                    else:
+                        available = ", ".join(sorted(workspace.terminologies)) or "<none>"
+                        raise ValueError(
+                            f"Metric {metric_spec.metric_name} requires a terminology_name param matching a loaded terminology. " f"Available terminologies: {available}"
+                        )
+                else:
+                    terminology = workspace.terminologies[term_name]
+
+                for bundle_name in metric_spec.target_bundles:
+                    logger.info(
+                        "Calculating metric %s on bundle %s",
+                        metric_spec.result_name,
+                        bundle_name,
+                    )
+                    bundle = battery_config.bundles[bundle_name]
+                    target = _resolve_bundle(bundle, corpora, contexts)
+                    logger.debug("... bundle resolved")
+                    result = metric(
+                        target,
+                        metric_spec.result_name,
+                        terminology=terminology,
+                        **params,
+                    )
+                    logger.debug("... metric calculated")
+                    results.append(result)
             else:
-                terminology = workspace.terminologies[term_name]
+                available_metrics = []
+                available_metrics.extend(SUBSET_METRICS)
+                available_metrics.extend(CROSS_METRICS)
+                available_metrics.extend(TERMINOLOGY_METRICS)
+                available = ", ".join(sorted(available_metrics)) or "<none>"
+                raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
 
-            for bundle_name in metric_spec.target_bundles:
-                bundle = battery_config.bundles[bundle_name]
-                target = _resolve_bundle(bundle, corpora, contexts)
-                result = metric(target, metric_spec.result_name, terminology=terminology, **params)
-                results.append(result)
-        else:
-            available_metrics = []
-            available_metrics.extend(SUBSET_METRICS)
-            available_metrics.extend(CROSS_METRICS)
-            available_metrics.extend(TERMINOLOGY_METRICS)
-            available = ", ".join(sorted(available_metrics)) or "<none>"
-            raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
+        # Display context usage
+        logger.info("Context usage:")
+        for benchmark_name, benchmark_context in contexts.items():
+            logger.info("%s:", benchmark_name)
+            for context_key, usage_count in benchmark_context.usage_counts.items():
+                logger.info("  %s: %s", context_key, usage_count)
 
-    # Display context usage
-    logger.info("Context usage:")
-    for benchmark_name, benchmark_context in contexts.items():
-        logger.info("%s:", benchmark_name)
-        for context_key, usage_count in benchmark_context.usage_counts.items():
-            logger.info("  %s: %s", context_key, usage_count)
-
-    return results
+        return results
+    finally:
+        document_store.close()

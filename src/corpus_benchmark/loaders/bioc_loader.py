@@ -18,8 +18,8 @@ from corpus_benchmark.models.corpus import (
     IdentifierLink,
     CompositeLink,
     NIL,
-    MatchType,
 )
+from corpus_benchmark.models.types import MatchType
 from corpus_benchmark.registry import register_loader
 from corpus_benchmark.parsing import parse_identifier_format_list, parse_qualifier_map, IdentifierFormat
 from corpus_benchmark.loaders.splits import apply_document_split
@@ -117,35 +117,30 @@ class Loader:
         return self.parse_identifier(identifier_text.strip(), self.id_format_list)
 
     def parse_identifier(self, identifier_text: str, identifier_format_list: list[IdentifierFormat] | None) -> Link:
-        logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; identifier_format_list = \"{identifier_format_list}\"")
+        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format_list = "{identifier_format_list}"')
         if identifier_format_list is None or len(identifier_format_list) == 0:
             return self.parse_atomic_identifier(identifier_text)
         identifier_format = identifier_format_list[0]
-        logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; identifier_format = \"{identifier_format}\"")
+        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format = "{identifier_format}"')
         remaining_identifier_formats = identifier_format_list[1:]
         match_type = None
-        logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; identifier_format.qualifier_allowed = \"{identifier_format.qualifier_allowed}\" type(identifier_format.qualifier_allowed) = \"{type(identifier_format.qualifier_allowed)}\"")
+        logger.debug(
+            f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format.qualifier_allowed = "{identifier_format.qualifier_allowed}" type(identifier_format.qualifier_allowed) = "{type(identifier_format.qualifier_allowed)}"'
+        )
         if identifier_format.qualifier_allowed:
-            #mapping_debug = [
+            # mapping_debug = [
             #    (qualifier_text, match_type, identifier_text.startswith(qualifier_text))
             #    for qualifier_text, match_type in self.qualifier_map.items()
-            #]
+            # ]
             # logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; mapping_debug = \"{mapping_debug}\"")
-            mapping = [
-                (len(qualifier_text), match_type)
-                for qualifier_text, match_type in self.qualifier_map.items()
-                if identifier_text.startswith(qualifier_text)
-            ]
+            mapping = [(len(qualifier_text), match_type) for qualifier_text, match_type in self.qualifier_map.items() if identifier_text.startswith(qualifier_text)]
             if len(mapping) > 0:
                 mapping.sort(reverse=True)
                 match_length, match_type = mapping[0]
                 identifier_text = identifier_text[match_length:]
-        logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; match_type = \"{match_type}\"")
-        identifier_elements = [
-            self.parse_identifier(element_text.strip(), remaining_identifier_formats)
-            for element_text in identifier_text.split(identifier_format.delimiter)
-        ]
-        logger.debug(f"Loader.parse_identifier(): identifier_text = \"{identifier_text}\"; identifier_elements = \"{identifier_elements}\"")
+        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; match_type = "{match_type}"')
+        identifier_elements = [self.parse_identifier(element_text.strip(), remaining_identifier_formats) for element_text in identifier_text.split(identifier_format.delimiter)]
+        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_elements = "{identifier_elements}"')
         if len(identifier_elements) == 1:
             link = identifier_elements[0]
             link.match_type = match_type
@@ -153,14 +148,14 @@ class Loader:
         return CompositeLink(relation=identifier_format.relation, components=identifier_elements, match_type=match_type)
 
     def parse_atomic_identifier(self, identifier_text) -> IdentifierLink:
-        logger.debug(f"Loader.parse_atomic_identifier(): identifier_text = \"{identifier_text}\"")
+        logger.debug(f'Loader.parse_atomic_identifier(): identifier_text = "{identifier_text}"')
         identifier_text = identifier_text.strip()
         if identifier_text in self.nil_labels:
             return NIL
         if self.resource_delimiter in identifier_text:
             fields = identifier_text.split(self.resource_delimiter)
             if len(fields) != 2:
-                raise ValueError(f"Identifier \"{identifier_text}\" cannot be split into exactly 2 fields using the configured delimiter \"{self.resource_delimiter}\"")
+                raise ValueError(f'Identifier "{identifier_text}" cannot be split into exactly 2 fields using the configured delimiter "{self.resource_delimiter}"')
             resource, accession = fields
         elif not self.default_resource is None:
             resource = self.default_resource
@@ -170,17 +165,18 @@ class Loader:
             accession = identifier_text
         return IdentifierLink(resource=resource, identifier=accession)
 
+
 class DocIDExtractor:
 
     def __init__(self, loader: Loader, doc_id_map: dict[str, str] = {}):
         self.loader = loader
-        if not isinstance(loader,BioCXMLLoader) and not isinstance(loader, BioCPubtatorLoader):
+        if not isinstance(loader, BioCXMLLoader) and not isinstance(loader, BioCPubtatorLoader):
             raise ValueError(f"Unknown loader type: {type(loader)}")
         self.doc_id_map = doc_id_map
 
     def get_IDs(self, doc) -> dict[DocumentIdentifierType, str]:
         raw_ids = dict()
-        if isinstance(self.loader,BioCXMLLoader):
+        if isinstance(self.loader, BioCXMLLoader):
             raw_ids.update(self.get_BioCXML_IDs(doc))
         elif isinstance(self.loader, BioCPubtatorLoader):
             raw_ids.update(self.get_Pubtator_IDs(doc))
@@ -192,9 +188,8 @@ class DocIDExtractor:
                 id_type_enum = DocumentIdentifierType(id_type.lower())
                 ids[id_type_enum] = id_type_enum.normalize(doc_id)
             except ValueError:
-                logger.warning(f"Unknown identifier type '{id_type}' configured in YAML.")   
-        return ids         
-
+                logger.warning(f"Unknown identifier type '{id_type}' configured in YAML.")
+        return ids
 
     def get_BioCXML_IDs(self, doc) -> dict[str, str]:
         ids = dict()
@@ -203,7 +198,7 @@ class DocIDExtractor:
                 # Case 1: Simple string match for Document ID
                 case "__DOCUMENT_ID__":
                     doc_id = str(doc.id)
-                
+
                 # Case 2: List/Tuple with ["__HEADER_INFON__", "key"]
                 case ["__HEADER_INFON__", key] if len(doc.passages) > 0:
                     val = doc.passages[0].infons.get(key)
@@ -220,17 +215,16 @@ class DocIDExtractor:
 
             if doc_id:
                 ids[id_type] = doc_id
-                
+
         return ids
 
     def get_Pubtator_IDs(self, doc) -> dict[str, str]:
         ids = dict()
         for id_type, location in self.doc_id_map.items():
             if location != "__DOCUMENT_ID__":
-                raise ValueError(f"Pubtator format only supports location=\"__DOCUMENT_ID__\": {location}")
+                raise ValueError(f'Pubtator format only supports location="__DOCUMENT_ID__": {location}')
             ids[id_type] = str(doc.pmid)
         return ids
-
 
 
 class BioCXMLLoader(Loader):
@@ -291,7 +285,7 @@ class BioCXMLLoader(Loader):
                 passages=passages,
                 infons=doc.infons,
             )
-        
+
         logger.info(f"\tLoaded {len(collection.documents)} documents")
         for id_type, count in id_type_counts.items():
             percentage = 100.0 * count / len(collection.documents)
@@ -427,13 +421,7 @@ class BioCPubtatorLoader(Loader):
                     abstract_passage.annotations.append(mention)
             ids = self.doc_id_fetcher.get_IDs(doc)
             id_type_counts.update(ids.keys())
-            documents.append(
-                Document(
-                    document_id=pmid,
-                    identifiers=ids,
-                    passages=[title_passage, abstract_passage]
-                )
-            )
+            documents.append(Document(document_id=pmid, identifiers=ids, passages=[title_passage, abstract_passage]))
         logger.info(f"\tLoaded {len(collection)} documents")
         for id_type, count in id_type_counts.items():
             percentage = 100.0 * count / len(collection)

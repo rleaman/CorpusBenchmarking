@@ -7,8 +7,10 @@ import gzip
 import json
 import logging
 from pathlib import Path
-import re
 from typing import Any, Optional, TextIO
+
+from corpus_benchmark.models.types import MatchType, LinkRelation
+from corpus_benchmark.parsing import normalize_doi, normalize_pmid, normalize_pmcid
 
 logger = logging.getLogger(__name__)
 
@@ -16,19 +18,6 @@ NIL_RESOURCE = "<NIL>"
 ALL_CORPUS_SUBSET = "<ALL>"
 CORPUS_JSON_SCHEMA_VERSION = 1
 
-
-class MatchType(str, Enum):
-    EXACT = "exact"
-    RELATED = "related"
-    APPROXIMATE = "approximate"
-    NIL = "NIL"
-
-
-class LinkRelation(str, Enum):
-    DISTRIBUTIVE = "distributive"  # e.g. "endothelial and epithelial cells"
-    INTERSECTIVE = "intersective"  # e.g. "inherited muscle disorder"
-    RELATED_SET = "related_set"  # e.g. CellLink-style related match set
-    ALTERNATIVE = "alternative"  # optional: true either/or ambiguity
 
 def _enum_value(value: Enum | str | None) -> str | None:
     """Return the JSON-safe value for an enum-like field."""
@@ -260,26 +249,14 @@ class DocumentIdentifierType(str, Enum):
         if not value:
             return value
 
-        value = str(value).strip()
-
         if self == DocumentIdentifierType.PMCID:
-            # Ensure it is uppercase and starts with 'PMC'
-            value = value.upper()
-            if value.startswith("PMC"):
-                return value
-            return f"PMC{value}"
+            return normalize_pmcid(value)
 
         if self == DocumentIdentifierType.DOI:
-            # Strip common DOI resolver URLs and 'doi:' prefixes
-            # Handles: https://doi.org/10... | http://dx.doi.org/10... | doi:10...
-            value = re.sub(r"^(https?://)?(dx\.)?doi\.org/", "", value, flags=re.IGNORECASE)
-            value = re.sub(r"^doi:\s*", "", value, flags=re.IGNORECASE)
-            return value
+            return normalize_doi(value)
 
         if self == DocumentIdentifierType.PMID:
-            # Strip accidental 'PMID:' prefixes if they somehow got included
-            value = re.sub(r"^pmid:\s*", "", value, flags=re.IGNORECASE)
-            return value
+            return normalize_pmid(value)
 
         # Any future types pass through stripped
         return value
@@ -374,16 +351,9 @@ class BenchmarkCorpus:
     def from_dict(data: dict[str, Any]) -> BenchmarkCorpus:
         schema_version = data.get("schema_version", 0)
         if schema_version not in (0, CORPUS_JSON_SCHEMA_VERSION):
-            raise ValueError(
-                f"Unsupported BenchmarkCorpus JSON schema_version={schema_version!r}; "
-                f"this code supports {CORPUS_JSON_SCHEMA_VERSION}."
-            )
+            raise ValueError(f"Unsupported BenchmarkCorpus JSON schema_version={schema_version!r}; " f"this code supports {CORPUS_JSON_SCHEMA_VERSION}.")
 
-        subsets = {
-            name: CorpusSubset.from_dict(subset_data)
-            for name, subset_data in data.get("subsets", {}).items()
-            if name != ALL_CORPUS_SUBSET
-        }
+        subsets = {name: CorpusSubset.from_dict(subset_data) for name, subset_data in data.get("subsets", {}).items() if name != ALL_CORPUS_SUBSET}
         return BenchmarkCorpus(subsets=subsets, metadata=dict(data.get("metadata", {})))
 
     def to_json(
@@ -425,26 +395,15 @@ class BenchmarkBattery:
     def to_dict(self, *, include_all_subset: bool = False) -> dict[str, Any]:
         return {
             "schema_version": CORPUS_JSON_SCHEMA_VERSION,
-            "corpora": {
-                name: corpus.to_dict(include_all_subset=include_all_subset)
-                for name, corpus in self.corpora.items()
-            },
+            "corpora": {name: corpus.to_dict(include_all_subset=include_all_subset) for name, corpus in self.corpora.items()},
         }
 
     @staticmethod
     def from_dict(data: dict[str, Any]) -> BenchmarkBattery:
         schema_version = data.get("schema_version", 0)
         if schema_version not in (0, CORPUS_JSON_SCHEMA_VERSION):
-            raise ValueError(
-                f"Unsupported BenchmarkBattery JSON schema_version={schema_version!r}; "
-                f"this code supports {CORPUS_JSON_SCHEMA_VERSION}."
-            )
-        return BenchmarkBattery(
-            corpora={
-                name: BenchmarkCorpus.from_dict(corpus_data)
-                for name, corpus_data in data.get("corpora", {}).items()
-            }
-        )
+            raise ValueError(f"Unsupported BenchmarkBattery JSON schema_version={schema_version!r}; " f"this code supports {CORPUS_JSON_SCHEMA_VERSION}.")
+        return BenchmarkBattery(corpora={name: BenchmarkCorpus.from_dict(corpus_data) for name, corpus_data in data.get("corpora", {}).items()})
 
     def to_json(
         self,

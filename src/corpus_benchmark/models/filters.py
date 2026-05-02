@@ -8,11 +8,14 @@ from corpus_benchmark.models.corpus import (
     Annotation,
     CompositeLink,
     Link,
+)
+from corpus_benchmark.models.types import (
     LinkRelation,
     MatchType,
 )
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass(slots=True)
 class AnnotationFilter:
@@ -87,9 +90,7 @@ class AnnotationFilter:
             return LinkRelation(value)
         except ValueError as e:
             valid = ", ".join(x.value for x in LinkRelation)
-            raise ValueError(
-                f"Invalid LinkRelation '{value}'. Valid values: {valid}"
-            ) from e
+            raise ValueError(f"Invalid LinkRelation '{value}'. Valid values: {valid}") from e
 
     @staticmethod
     def _parse_match_type(value: str | MatchType) -> MatchType:
@@ -99,9 +100,7 @@ class AnnotationFilter:
             return MatchType(value)
         except ValueError as e:
             valid = ", ".join(x.value for x in MatchType)
-            raise ValueError(
-                f"Invalid MatchType '{value}'. Valid values: {valid}"
-            ) from e
+            raise ValueError(f"Invalid MatchType '{value}'. Valid values: {valid}") from e
 
     def accepts(self, annotation: Annotation) -> bool:
         """

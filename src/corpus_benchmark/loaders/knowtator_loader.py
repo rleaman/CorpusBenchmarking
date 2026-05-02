@@ -13,9 +13,9 @@ from corpus_benchmark.models.corpus import (
     Document,
     DocumentIdentifierType,
     IdentifierLink,
-    MatchType,
     Passage,
 )
+from corpus_benchmark.models.types import MatchType
 from corpus_benchmark.registry import register_loader
 
 logger = logging.getLogger(__name__)
@@ -126,13 +126,11 @@ class CraftKnowtatorLoader:
                 return candidate
         return None
 
-
     def _parse_knowtator_file(self, path: Path, ontology_name: str, text: str) -> list[Annotation]:
         root = ET.parse(path).getroot()
         if root.tag == "knowtator-project":
             return self._parse_knowtator2(root, ontology_name, text, path)
         return self._parse_knowtator1(root, ontology_name, text, path)
-
 
     def _parse_knowtator1(self, root: ET.Element, ontology_name: str, text: str, path: Path) -> list[Annotation]:
         class_mentions = {}
@@ -171,7 +169,6 @@ class CraftKnowtatorLoader:
             )
         return annotations
 
-
     def _parse_knowtator2(self, root: ET.Element, ontology_name: str, text: str, path: Path) -> list[Annotation]:
         annotations = []
         for annotation_el in root.findall(".//annotation"):
@@ -206,7 +203,6 @@ class CraftKnowtatorLoader:
         if label is None:
             return None
         return str(label)
-
 
     def _make_annotation(
         self,

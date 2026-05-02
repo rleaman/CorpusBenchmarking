@@ -1,5 +1,5 @@
 workspace:
-    metadata_cache_filename: "data/metadata_cache.json"
+    document_store_filename: "data/metadata.sqlite"
 
 corpora:
     AnatEM: configs/AnatEM.yaml
