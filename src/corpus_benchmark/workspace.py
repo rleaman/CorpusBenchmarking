@@ -7,7 +7,7 @@ from corpus_benchmark.metadata.document_metadata import (
     DocumentMetadataFetcher,
 )
 from corpus_benchmark.metadata.record_store import RecordStore, StoredRecord
-from corpus_benchmark.metadata.eUtils_document_fetchers import (
+from corpus_benchmark.metadata.eutils_document_fetchers import (
     PMCFetcher,
     PubMedFetcher,
 )

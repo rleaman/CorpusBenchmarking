@@ -7,10 +7,10 @@ import gzip
 import json
 import logging
 from pathlib import Path
+import re
 from typing import Any, Optional, TextIO
 
 from corpus_benchmark.models.types import MatchType, LinkRelation
-from corpus_benchmark.parsing import normalize_doi, normalize_pmid, normalize_pmcid
 
 logger = logging.getLogger(__name__)
 
@@ -249,14 +249,30 @@ class DocumentIdentifierType(str, Enum):
         if not value:
             return value
 
+        if self == DocumentIdentifierType.PMID:
+            value = str(value).strip()
+            if not value.isdigit():
+                raise ValueError(f"PMID should contain only digits: {value!r}")
+            # Strip 'PMID:' prefixes if they somehow got included
+            value = re.sub(r"^pmid:\s*", "", value, flags=re.IGNORECASE)
+            return value
+
         if self == DocumentIdentifierType.PMCID:
-            return normalize_pmcid(value)
+            # Ensure it is uppercase and starts with 'PMC'
+            value = str(value).strip().upper()
+            if value.isdigit():
+                value = f"PMC{value}"
+            if not value.startswith("PMC"):
+                raise ValueError(f"PMCID should look like PMC123456: {value!r}")
+            return value
 
         if self == DocumentIdentifierType.DOI:
-            return normalize_doi(value)
-
-        if self == DocumentIdentifierType.PMID:
-            return normalize_pmid(value)
+            value = str(value).strip().lower()
+            # Strip common DOI resolver URLs and 'doi:' prefixes
+            # Handles: https://doi.org/10... | http://dx.doi.org/10... | doi:10...
+            value = re.sub(r"^(https?://)?(dx\.)?doi\.org/", "", value, flags=re.IGNORECASE)
+            value = re.sub(r"^doi:\s*", "", value, flags=re.IGNORECASE)
+            return value
 
         # Any future types pass through stripped
         return value

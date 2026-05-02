@@ -11,7 +11,6 @@ import yaml
 from corpus_benchmark.models.config import BatteryConfig, WorkspaceConfig, BenchmarkConfig, LoaderSpec, AcquisitionSpec, MetricSpec, DatasetBundle, SubsetRef, ComparisonSuite, LoggingConfig
 from corpus_benchmark.models.filters import AnnotationFilter
 from corpus_benchmark.runner import run_benchmark
-from corpus_benchmark.results import SubsetMetricResult, CrossSubsetMetricResult
 
 logger = logging.getLogger(__name__)
 
@@ -98,23 +97,12 @@ def load_battery_config(path: str | Path) -> BatteryConfig:
         output_path=raw_config.get("output_path"),
     )
 
-def serialize_results(results) -> dict[str, list[dict[str, Any]]]:
+def group_results(results, result_dicts: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     results_dict: dict[str, list[dict[str, Any]]] = dict()
-    for result in results:
-        if isinstance(result, SubsetMetricResult):
-            key = result.subset_name
-        elif isinstance(result, CrossSubsetMetricResult):
-            key = f"({result.subset_name1}, {result.subset_name2})"
-        else:
-            ValueError(f"Unknown result type: result = {result}, type(result) = {type(result)}")
+    for result, result_dict in zip(results, result_dicts):
+        key = result.result_key()
         if not key in results_dict:
             results_dict[key] = list()
-        result_dict = {
-            "metric_name": result.metric_name,
-            "value": result.value,
-        }
-        if len(result.details) > 0:
-            result_dict["details"] = result.details
         results_dict[key].append(result_dict)
     return results_dict
 
@@ -131,7 +119,8 @@ def main() -> None:
     logger.info(f"Loaded {len(battery_config.corpora)} corpora, {len(battery_config.metrics)} metrics")
 
     results = run_benchmark(battery_config)
-    payload = serialize_results(results)
+    result_dicts = [r.to_dict() for r in results]
+    payload = group_results(results, result_dicts)
 
     if battery_config.output_path:
         output_path = Path(battery_config.output_path)

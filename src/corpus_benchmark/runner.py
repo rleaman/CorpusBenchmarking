@@ -12,7 +12,6 @@ import corpus_benchmark.metrics  # noqa: F401
 from corpus_benchmark.context import BenchmarkContext, MetricTarget
 from corpus_benchmark.models.config import BatteryConfig, DatasetBundle, BenchmarkConfig
 from corpus_benchmark.models.corpus import BenchmarkCorpus, DocumentIdentifierType
-from corpus_benchmark.parsing import normalize_doi, normalize_pmid, normalize_pmcid
 from corpus_benchmark.registry import (
     LOADERS,
     TERMINOLOGY_LOADERS,
@@ -88,9 +87,9 @@ def _create_document_record_store(document_store_filename: str) -> RecordStore:
             "mesh_topics": "set_union",
         },
         identifier_normalizers={
-            DocumentIdentifierType.PMID: normalize_pmid,
-            DocumentIdentifierType.PMCID: normalize_pmcid,
-            DocumentIdentifierType.DOI: normalize_doi,
+            DocumentIdentifierType.PMID: DocumentIdentifierType.PMID.normalize,
+            DocumentIdentifierType.PMCID: DocumentIdentifierType.PMCID.normalize,
+            DocumentIdentifierType.DOI: DocumentIdentifierType.DOI.normalize,
         },
     )
     return document_store
@@ -153,7 +152,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
             if metric_spec.metric_name in SUBSET_METRICS:
                 metric = SUBSET_METRICS[metric_spec.metric_name]
                 for bundle_name in metric_spec.target_bundles:
-                    logger.info(
+                    logger.debug(
                         "Calculating metric %s on bundle %s",
                         metric_spec.result_name,
                         bundle_name,
@@ -174,7 +173,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
                 metric = CROSS_METRICS[metric_spec.metric_name]
                 suite = battery_config.comparison_suites[metric_spec.comparison_suite]
                 for bundle1_name, bundle2_name in suite.bundle_pairs:
-                    logger.info(
+                    logger.debug(
                         "Calculating metric %s on bundles %s and %s",
                         metric_spec.result_name,
                         bundle1_name,
@@ -213,7 +212,7 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
                     terminology = workspace.terminologies[term_name]
 
                 for bundle_name in metric_spec.target_bundles:
-                    logger.info(
+                    logger.debug(
                         "Calculating metric %s on bundle %s",
                         metric_spec.result_name,
                         bundle_name,
@@ -238,11 +237,11 @@ def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
                 raise ValueError(f"Unknown metric '{metric_spec.metric_name}'. Available metrics: {available}")
 
         # Display context usage
-        logger.info("Context usage:")
+        logger.debug("Context usage:")
         for benchmark_name, benchmark_context in contexts.items():
-            logger.info("%s:", benchmark_name)
+            logger.debug("%s:", benchmark_name)
             for context_key, usage_count in benchmark_context.usage_counts.items():
-                logger.info("  %s: %s", context_key, usage_count)
+                logger.debug("  %s: %s", context_key, usage_count)
 
         return results
     finally:
