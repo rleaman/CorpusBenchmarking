@@ -9,7 +9,7 @@ from corpus_benchmark.metadata.document_fetcher import (
     DocumentMetadataFetcher,
 )
 from corpus_benchmark.metadata.eutils_client import EUtilsClient
-from corpus_benchmark.metadata.record_store import RecordStore, StoredRecord
+from corpus_benchmark.metadata.json_record_store import JsonRecordStore, StoredRecord
 from corpus_benchmark.acquisition import AcquisitionManager
 from corpus_benchmark.models.config import LoaderSpec
 from corpus_benchmark.models.config import WorkspaceConfig
@@ -19,32 +19,23 @@ from corpus_benchmark.registry import DOCUMENT_FETCHERS
 
 logger = logging.getLogger(__name__)
 
-METADATA_UPDATE_LOG_FREQUENCY = 100
-
 
 class GlobalWorkspace:
     """Manages persistent, cross-run resources like caches and downloaded files."""
 
-    document_store: RecordStore
+    document_store: JsonRecordStore
     doc_store_preloaded: bool
     acquisition_manager: AcquisitionManager
     workspace_config: WorkspaceConfig
     terminologies: dict[str, TerminologyResource]
 
-    def __init__(self, document_store: RecordStore, workspace_config: WorkspaceConfig):
+    def __init__(self, document_store: JsonRecordStore, workspace_config: WorkspaceConfig):
         self.document_store = document_store
         self.doc_store_preloaded = False
         self.workspace_config = workspace_config
         self.acquisition_manager = AcquisitionManager(workspace_config)
         self.terminologies = {}
         self.fetchers = self._build_document_fetchers(workspace_config.document_fetchers)
-
-    def preload_document_store(self):
-        if self.doc_store_preloaded:
-            return
-        logger.debug("Preloading document store")
-        self.document_store.preload()
-        logger.debug("... done")
 
     def _build_document_fetchers(self, configured_fetchers: dict[str, list[LoaderSpec]]) -> dict[DocumentIdentifierType, list[DocumentMetadataFetcher]]:
         register_builtins()
@@ -93,9 +84,7 @@ class GlobalWorkspace:
 
     def _add_document_records(self, new_records: list[Dict[str, Any]]) -> None:
         updated = 0
-        for record_index, new_record in enumerate(new_records):
-            if record_index % METADATA_UPDATE_LOG_FREQUENCY == 0:
-                logger.info(f"Updating metadata records: {record_index+1} of {len(new_records)}")
+        for new_record in new_records:
             identifiers = new_record.get("identifiers", {})
             data = {key: value for key, value in new_record.items() if key != "identifiers"}
             self.document_store.upsert(identifiers=identifiers, data=data)

@@ -2,7 +2,7 @@ logging:
     level: INFO
 
 workspace:
-    document_store_filename: "data/metadata.sqlite"
+    document_store_filename: "data/metadata.json"
     document_fetchers:
       pmid:
         - name: pubmed_eutils

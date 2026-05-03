@@ -242,7 +242,6 @@ def get_metadata_for_target(target: MetricTarget) -> Dict[str, Dict[str, Any]]:
     Returns a dictionary mapping document_id to its metadata record.
     """
     workspace = get_workspace(target)
-    workspace.preload_document_store()
     metadata = dict()
     for subset, context in target.components:
         subset_metadata = context.get_or_compute(f"metadata({subset.name})", lambda: workspace.get_document_metadata(subset.documents))
