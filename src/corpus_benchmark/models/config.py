@@ -30,7 +30,7 @@ class AcquisitionSpec:
     converter: str | None = None
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'AcquisitionSpec':
+    def from_dict(cls, data: dict[str, Any]) -> "AcquisitionSpec":
         urls = data.get("source_urls", [])
         # Support both 'source_url' (single) and 'source_urls' (list) for convenience
         if "source_url" in data:
@@ -42,39 +42,47 @@ class AcquisitionSpec:
             converter=data.get("converter"),
         )
 
+
 @dataclass(slots=True)
 class SubsetRef:
     """Explicit pointer to a specific subset within a specific corpus."""
+
     corpus_name: str
     subset_name: str
+
 
 @dataclass(slots=True)
 class DatasetBundle:
     """A logical grouping of subsets to be treated as a single unit by a metric."""
+
     name: str
     subsets: list[SubsetRef] = field(default_factory=list)
+
 
 @dataclass(slots=True)
 class ComparisonSuite:
     """A named collection defining pairs of DatasetBundles to compare."""
+
     name: str
     bundle_pairs: list[tuple[str, str]] = field(default_factory=list)
+
 
 @dataclass(slots=True)
 class MetricSpec:
     metric_name: str
     result_name: str | None = None
-    
+
     # Replaced 'subsets' with explicit bundle or comparison suite references
     target_bundles: list[str] | None = None
     comparison_suite: str | None = None
-    
+
     enabled: bool = True
     params: dict[str, Any] = field(default_factory=dict)
-    
+
     def __post_init__(self):
         if self.result_name is None:
             self.result_name = self.metric_name
+
 
 @dataclass(slots=True)
 class BenchmarkConfig:
@@ -88,7 +96,8 @@ class BenchmarkConfig:
 @dataclass(slots=True)
 class WorkspaceConfig:
     """Global configuration for the benchmarking workspace and caches."""
-    document_store_filename: str = "data/metadata.sqlite"
+
+    document_store_filename: str = "data/metadata.json"
     corpora_download_dir: str = "corpora/"
     terminology_dir: str = "data/terminologies/"
     document_fetchers: dict[str, list[LoaderSpec]] = field(
@@ -104,9 +113,7 @@ class WorkspaceConfig:
             id_type_value = getattr(id_type, "value", str(id_type)).lower()
             if isinstance(specs, (LoaderSpec, str, dict)):
                 specs = [specs]
-            normalized_fetchers[id_type_value] = [
-                _coerce_loader_spec(spec) for spec in specs
-            ]
+            normalized_fetchers[id_type_value] = [_coerce_loader_spec(spec) for spec in specs]
         self.document_fetchers = normalized_fetchers
 
     def validate(self) -> None:
@@ -130,41 +137,29 @@ class WorkspaceConfig:
                 id_type = DocumentIdentifierType(str(raw_id_type).lower())
             except ValueError as exc:
                 allowed = ", ".join(item.value for item in DocumentIdentifierType)
-                raise ValueError(
-                    f"Unknown workspace.document_fetchers identifier type "
-                    f"{raw_id_type!r}. Expected one of: {allowed}"
-                ) from exc
+                raise ValueError(f"Unknown workspace.document_fetchers identifier type " f"{raw_id_type!r}. Expected one of: {allowed}") from exc
 
             for fetcher_spec in fetcher_specs:
                 if fetcher_spec.name not in DOCUMENT_FETCHERS:
                     available = ", ".join(sorted(DOCUMENT_FETCHERS)) or "<none>"
-                    raise ValueError(
-                        f"Unknown document fetcher {fetcher_spec.name!r} for "
-                        f"identifier type {id_type.value!r}. Available document "
-                        f"fetchers: {available}"
-                    )
+                    raise ValueError(f"Unknown document fetcher {fetcher_spec.name!r} for " f"identifier type {id_type.value!r}. Available document " f"fetchers: {available}")
 
                 fetcher_cls = DOCUMENT_FETCHERS[fetcher_spec.name]
                 try:
                     fetcher = fetcher_cls(**fetcher_spec.params)
                 except TypeError as exc:
-                    raise ValueError(
-                        f"Invalid params for document fetcher "
-                        f"{fetcher_spec.name!r}: {exc}"
-                    ) from exc
+                    raise ValueError(f"Invalid params for document fetcher " f"{fetcher_spec.name!r}: {exc}") from exc
 
                 if fetcher.supported_id_type != id_type:
-                    raise ValueError(
-                        f"Document fetcher {fetcher_spec.name!r} supports "
-                        f"{fetcher.supported_id_type.value!r}, but it was "
-                        f"configured for {id_type.value!r}."
-                    )
+                    raise ValueError(f"Document fetcher {fetcher_spec.name!r} supports " f"{fetcher.supported_id_type.value!r}, but it was " f"configured for {id_type.value!r}.")
+
 
 @dataclass(slots=True)
 class LoggingConfig:
     level: str = "INFO"
     format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     filename: str | None = None
+
 
 @dataclass(slots=True)
 class BatteryConfig:
@@ -173,7 +168,7 @@ class BatteryConfig:
     corpora: dict[str, BenchmarkConfig] = field(default_factory=dict)
     terminologies: dict[str, LoaderSpec] = field(default_factory=dict)
     bundles: dict[str, DatasetBundle] = field(default_factory=dict)
-    comparison_suites: dict[str, ComparisonSuite] = field(default_factory=dict)    
+    comparison_suites: dict[str, ComparisonSuite] = field(default_factory=dict)
     metrics: list[MetricSpec] = field(default_factory=list)
     output_path: str | None = None
 
@@ -202,19 +197,13 @@ class BatteryConfig:
             loader_name = corpus_config.loader.name
             if loader_name not in LOADERS:
                 available = ", ".join(sorted(LOADERS)) or "<none>"
-                raise ValueError(
-                    f"Corpus {corpus_name!r} uses unknown loader "
-                    f"{loader_name!r}. Available loaders: {available}"
-                )
+                raise ValueError(f"Corpus {corpus_name!r} uses unknown loader " f"{loader_name!r}. Available loaders: {available}")
 
         for term_name, term_config in self.terminologies.items():
             loader_name = term_config.name
             if loader_name not in TERMINOLOGY_LOADERS:
                 available = ", ".join(sorted(TERMINOLOGY_LOADERS)) or "<none>"
-                raise ValueError(
-                    f"Terminology {term_name!r} uses unknown loader "
-                    f"{loader_name!r}. Available terminology loaders: {available}"
-                )
+                raise ValueError(f"Terminology {term_name!r} uses unknown loader " f"{loader_name!r}. Available terminology loaders: {available}")
 
         for bundle_name, bundle in self.bundles.items():
             if not bundle.subsets:
@@ -222,10 +211,7 @@ class BatteryConfig:
             for ref in bundle.subsets:
                 if ref.corpus_name not in self.corpora:
                     available = ", ".join(sorted(self.corpora)) or "<none>"
-                    raise ValueError(
-                        f"Bundle {bundle_name!r} references unknown corpus "
-                        f"{ref.corpus_name!r}. Available corpora: {available}"
-                    )
+                    raise ValueError(f"Bundle {bundle_name!r} references unknown corpus " f"{ref.corpus_name!r}. Available corpora: {available}")
 
         for suite_name, suite in self.comparison_suites.items():
             if not suite.bundle_pairs:
@@ -234,11 +220,7 @@ class BatteryConfig:
                 for bundle_name in (bundle1, bundle2):
                     if bundle_name not in self.bundles:
                         available = ", ".join(sorted(self.bundles)) or "<none>"
-                        raise ValueError(
-                            f"Comparison suite {suite_name!r} references "
-                            f"unknown bundle {bundle_name!r}. Available bundles: "
-                            f"{available}"
-                        )
+                        raise ValueError(f"Comparison suite {suite_name!r} references " f"unknown bundle {bundle_name!r}. Available bundles: " f"{available}")
 
         for metric_spec in self.metrics:
             if not metric_spec.enabled:
@@ -249,49 +231,32 @@ class BatteryConfig:
                 self._validate_metric_target_bundles(metric_spec)
             elif metric_name in CROSS_METRICS:
                 if not metric_spec.comparison_suite:
-                    raise ValueError(
-                        f"Cross metric {metric_name!r} requires comparison_suite."
-                    )
+                    raise ValueError(f"Cross metric {metric_name!r} requires comparison_suite.")
                 if metric_spec.comparison_suite not in self.comparison_suites:
                     available = ", ".join(sorted(self.comparison_suites)) or "<none>"
                     raise ValueError(
-                        f"Metric {metric_name!r} references unknown comparison "
-                        f"suite {metric_spec.comparison_suite!r}. Available "
-                        f"comparison suites: {available}"
+                        f"Metric {metric_name!r} references unknown comparison " f"suite {metric_spec.comparison_suite!r}. Available " f"comparison suites: {available}"
                     )
             elif metric_name in TERMINOLOGY_METRICS:
                 self._validate_metric_target_bundles(metric_spec)
                 term_name = metric_spec.params.get("terminology_name")
                 if term_name is not None and term_name not in self.terminologies:
                     available = ", ".join(sorted(self.terminologies)) or "<none>"
-                    raise ValueError(
-                        f"Metric {metric_name!r} references unknown terminology "
-                        f"{term_name!r}. Available terminologies: {available}"
-                    )
+                    raise ValueError(f"Metric {metric_name!r} references unknown terminology " f"{term_name!r}. Available terminologies: {available}")
                 if term_name is None and len(self.terminologies) != 1:
-                    raise ValueError(
-                        f"Metric {metric_name!r} requires params.terminology_name "
-                        "unless exactly one terminology is configured."
-                    )
+                    raise ValueError(f"Metric {metric_name!r} requires params.terminology_name " "unless exactly one terminology is configured.")
             else:
                 available_metrics = []
                 available_metrics.extend(SUBSET_METRICS)
                 available_metrics.extend(CROSS_METRICS)
                 available_metrics.extend(TERMINOLOGY_METRICS)
                 available = ", ".join(sorted(available_metrics)) or "<none>"
-                raise ValueError(
-                    f"Unknown metric {metric_name!r}. Available metrics: {available}"
-                )
+                raise ValueError(f"Unknown metric {metric_name!r}. Available metrics: {available}")
 
     def _validate_metric_target_bundles(self, metric_spec: MetricSpec) -> None:
         if not metric_spec.target_bundles:
-            raise ValueError(
-                f"Metric {metric_spec.metric_name!r} requires target_bundles."
-            )
+            raise ValueError(f"Metric {metric_spec.metric_name!r} requires target_bundles.")
         for bundle_name in metric_spec.target_bundles:
             if bundle_name not in self.bundles:
                 available = ", ".join(sorted(self.bundles)) or "<none>"
-                raise ValueError(
-                    f"Metric {metric_spec.metric_name!r} references unknown "
-                    f"bundle {bundle_name!r}. Available bundles: {available}"
-                )
+                raise ValueError(f"Metric {metric_spec.metric_name!r} references unknown " f"bundle {bundle_name!r}. Available bundles: {available}")

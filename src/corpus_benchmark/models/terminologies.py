@@ -36,15 +36,18 @@ class TerminologyResource:
         """
         concept = self.get_concept(ui)
         if concept is None:
-            logger.debug("No concept found for %s", ui)
+            logger.warning("No concept found for %s", ui)
             return []
         if concept.tree_numbers:
             return [concept]
-        
+
         resolved = []
         for mapped_id in concept.mapped_ui_ids:
             mapped = self.get_concept(mapped_id)
             if mapped and mapped.tree_numbers:
                 resolved.append(mapped)
-        logger.debug("Resolved %s to %s tree concepts", ui, len(resolved))
+        if len(resolved) == 0:
+            logger.warning("Resolved %s to %s tree concepts", ui, len(resolved))
+        else:
+            logger.debug("Resolved %s to %s tree concepts", ui, len(resolved))
         return resolved

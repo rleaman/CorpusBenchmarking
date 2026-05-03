@@ -27,6 +27,9 @@ def _wrap_with_logging(kind: str, name: str, func: Callable[..., Any]) -> Callab
     return wrapped
 
 
+# TODO Change function "register_loader" to "register_corpus_loader"
+
+
 def register_loader(name: str):
     """Register a corpus loader under a stable symbolic name."""
 
