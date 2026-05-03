@@ -1,26 +1,25 @@
-import datetime
 import logging
 import random
 import re
-import time
 from typing import Any, Dict, List
-import urllib.request
 import xml.etree.ElementTree as ET
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
-from corpus_benchmark.metadata.document_metadata import DocumentMetadataFetcher
+from corpus_benchmark.metadata.document_fetcher import DocumentMetadataFetcher
+from corpus_benchmark.metadata.eutils_client import EUtilsClient
+from corpus_benchmark.registry import register_document_fetcher
 
 logger = logging.getLogger(__name__)
 
 CHUNK_SIZE = 250
-WAIT_SECONDS = 0.4
-PUBMED_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id="
-PMC_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id="
 
+
+@register_document_fetcher("pubmed_eutils")
 class PubMedFetcher(DocumentMetadataFetcher):
     """Queries NCBI eUtils for metadata using PubMed IDs."""
 
-    last_request: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
+    def __init__(self, client: EUtilsClient | None = None, **client_params: Any):
+        self.client = client or EUtilsClient(**client_params)
 
     @property
     def supported_id_type(self) -> DocumentIdentifierType:
@@ -35,16 +34,15 @@ class PubMedFetcher(DocumentMetadataFetcher):
         chunks = [pmids[i : i + CHUNK_SIZE] for i in range(0, len(pmids), CHUNK_SIZE)]
 
         for i, chunk in enumerate(chunks):
-            diff = (datetime.datetime.now() - self.last_request).total_seconds()
-            if diff < WAIT_SECONDS:
-                time.sleep(WAIT_SECONDS - diff)
-
-            url = PUBMED_BASE_URL + ",".join(chunk)
             try:
-                with urllib.request.urlopen(url) as response:
-                    root = ET.fromstring(response.read())
-                self.last_request = datetime.datetime.now()
-
+                root = self.client.get_xml(
+                    "efetch",
+                    {
+                        "db": "pubmed",
+                        "id": ",".join(chunk),
+                        "retmode": "xml",
+                    },
+                )
                 for article in root.findall("./PubmedArticle"):
                     results.append(self._parse_article(article))
                 logger.info("PubMed Fetcher: processed chunk %s/%s", i + 1, len(chunks))
@@ -61,30 +59,40 @@ class PubMedFetcher(DocumentMetadataFetcher):
         if not journal:
             journal = element.findtext("./MedlineCitation/Article/Journal/Title")
 
-        year = element.findtext("./MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")
+        year = element.findtext(
+            "./MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"
+        )
         if not year:
-            medline_date = element.findtext("./MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate")
+            medline_date = element.findtext(
+                "./MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate"
+            )
             year = medline_date[:4] if medline_date else None
 
         pmid = DocumentIdentifierType.PMID.normalize(pmid)
         identifiers = {DocumentIdentifierType.PMID: pmid}
         if not pmc is None:
-            identifiers[DocumentIdentifierType.PMCID] = DocumentIdentifierType.PMCID.normalize(pmc)
+            identifiers[DocumentIdentifierType.PMCID] = (
+                DocumentIdentifierType.PMCID.normalize(pmc)
+            )
         if not doi is None:
-            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(doi)
+            identifiers[DocumentIdentifierType.DOI] = (
+                DocumentIdentifierType.DOI.normalize(doi)
+            )
         record = {
             "identifiers": identifiers,
             "journal": journal,
             "pub_year": year,
         }
-        #print(f"PubMedFetcher._parse_article() returning: {record}")
+        # print(f"PubMedFetcher._parse_article() returning: {record}")
         return record
 
 
+@register_document_fetcher("pmc_eutils")
 class PMCFetcher(DocumentMetadataFetcher):
     """Queries NCBI eUtils for metadata using PMC IDs."""
 
-    last_request: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=WAIT_SECONDS)
+    def __init__(self, client: EUtilsClient | None = None, **client_params: Any):
+        self.client = client or EUtilsClient(**client_params)
 
     @property
     def supported_id_type(self) -> DocumentIdentifierType:
@@ -94,23 +102,25 @@ class PMCFetcher(DocumentMetadataFetcher):
         if not pmcids:
             return []
 
-        # Normalize: API expects numeric IDs without "PMC" prefix
+        # Normalize: API expects numeric IDs without "PMC" prefix.
         pmcids = [DocumentIdentifierType.PMCID.normalize(pmcid) for pmcid in pmcids]
         numeric_ids = [pmcid[3:] for pmcid in pmcids]
         results = []
-        chunks = [numeric_ids[i : i + CHUNK_SIZE] for i in range(0, len(numeric_ids), CHUNK_SIZE)]
+        chunks = [
+            numeric_ids[i : i + CHUNK_SIZE]
+            for i in range(0, len(numeric_ids), CHUNK_SIZE)
+        ]
 
         for i, chunk in enumerate(chunks):
-            diff = (datetime.datetime.now() - self.last_request).total_seconds()
-            if diff < WAIT_SECONDS:
-                time.sleep(WAIT_SECONDS - diff)
-
-            url = PMC_BASE_URL + ",".join(chunk)
             try:
-                with urllib.request.urlopen(url) as response:
-                    root = ET.fromstring(response.read())
-                self.last_request = datetime.datetime.now()
-
+                root = self.client.get_xml(
+                    "esummary",
+                    {
+                        "db": "pmc",
+                        "id": ",".join(chunk),
+                        "retmode": "xml",
+                    },
+                )
                 for docsum in root.findall("./DocSum"):
                     results.append(self._parse_docsum(docsum))
                 logger.info("PMC Fetcher: processed chunk %s/%s", i + 1, len(chunks))
@@ -135,14 +145,16 @@ class PMCFetcher(DocumentMetadataFetcher):
 
         identifiers = {DocumentIdentifierType.PMCID: pmcid}
         if not pmid is None:
-            identifiers[DocumentIdentifierType.PMID] = DocumentIdentifierType.PMID.normalize(pmid)
+            identifiers[DocumentIdentifierType.PMID] = (
+                DocumentIdentifierType.PMID.normalize(pmid)
+            )
         if not doi is None:
-            identifiers[DocumentIdentifierType.DOI] = DocumentIdentifierType.DOI.normalize(doi)
+            identifiers[DocumentIdentifierType.DOI] = (
+                DocumentIdentifierType.DOI.normalize(doi)
+            )
         record = {
             "identifiers": identifiers,
             "journal": journal,
             "pub_year": year,
         }
         return record
-
-

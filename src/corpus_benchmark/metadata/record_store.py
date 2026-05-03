@@ -78,36 +78,31 @@ class RecordStore:
         self.db_path = Path(db_path)
         self.store_name = store_name
 
-        self.identifier_types = {
-            self._canonical_identifier_type(t) for t in identifier_types
-        }
+        self.identifier_types = {self._canonical_identifier_type(t) for t in identifier_types}
         self.fields = set(fields)
         self.allow_unknown_fields = allow_unknown_fields
 
         self.field_policies = dict(field_policies or {})
         for field, policy in self.field_policies.items():
             if policy not in self.VALID_FIELD_POLICIES:
-                raise ValueError(
-                    f"Invalid merge policy {policy!r} for field {field!r}. "
-                    f"Expected one of {sorted(self.VALID_FIELD_POLICIES)}."
-                )
+                raise ValueError(f"Invalid merge policy {policy!r} for field {field!r}. " f"Expected one of {sorted(self.VALID_FIELD_POLICIES)}.")
 
         unknown_policy_fields = set(self.field_policies) - self.fields
         if unknown_policy_fields and not allow_unknown_fields:
-            raise ValueError(
-                f"Field policies were provided for undeclared fields: "
-                f"{sorted(unknown_policy_fields)}"
-            )
+            raise ValueError(f"Field policies were provided for undeclared fields: " f"{sorted(unknown_policy_fields)}")
 
-        self.identifier_normalizers: dict[str, Normalizer] = {
-            self._canonical_identifier_type(k): v
-            for k, v in (identifier_normalizers or {}).items()
-        }
+        self.identifier_normalizers: dict[str, Normalizer] = {self._canonical_identifier_type(k): v for k, v in (identifier_normalizers or {}).items()}
 
         self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys = ON")
         self._create_schema()
+
+        # Optional in-memory indexes populated by preload().
+        # When these are not None, get()/get_by_record_id()/iteration avoid
+        # per-record SQLite reads for records already known to this store.
+        self._record_cache_by_id: dict[int, StoredRecord] | None = None
+        self._record_cache_by_identifier: dict[tuple[str, str], StoredRecord] | None = None
 
     def close(self) -> None:
         self.conn.close()
@@ -199,10 +194,7 @@ class RecordStore:
             id_type = self._canonical_identifier_type(raw_type)
 
             if id_type not in self.identifier_types:
-                raise UnknownIdentifierTypeError(
-                    f"Identifier type {raw_type!r} is not allowed for store "
-                    f"{self.store_name!r}. Allowed types: {sorted(self.identifier_types)}"
-                )
+                raise UnknownIdentifierTypeError(f"Identifier type {raw_type!r} is not allowed for store " f"{self.store_name!r}. Allowed types: {sorted(self.identifier_types)}")
 
             if raw_values is None:
                 continue
@@ -230,10 +222,7 @@ class RecordStore:
 
         unknown = set(data) - self.fields
         if unknown:
-            raise UnknownFieldError(
-                f"Unknown metadata fields for store {self.store_name!r}: "
-                f"{sorted(unknown)}. Allowed fields: {sorted(self.fields)}"
-            )
+            raise UnknownFieldError(f"Unknown metadata fields for store {self.store_name!r}: " f"{sorted(unknown)}. Allowed fields: {sorted(self.fields)}")
 
     @staticmethod
     def _json_dumps(data: JsonDict) -> str:
@@ -251,6 +240,17 @@ class RecordStore:
         identifiers: Mapping[str, set[str]],
     ) -> set[int]:
         record_ids: set[int] = set()
+
+        # If the store has been preloaded, identifier resolution can be done
+        # entirely in memory. This is useful during read-heavy workflows and
+        # also speeds up upsert() calls that add information to cached records.
+        if self._record_cache_by_identifier is not None:
+            for id_type, values in identifiers.items():
+                for id_value in values:
+                    record = self._record_cache_by_identifier.get((id_type, id_value))
+                    if record is not None:
+                        record_ids.add(record.record_id)
+            return record_ids
 
         for id_type, values in identifiers.items():
             for id_value in values:
@@ -349,9 +349,7 @@ class RecordStore:
                     pass
                 else:
                     raise MetadataConflictError(
-                        f"Conflicting value for field {key!r} in store "
-                        f"{self.store_name!r}: existing={existing_value!r}, "
-                        f"incoming={incoming_value!r}"
+                        f"Conflicting value for field {key!r} in store " f"{self.store_name!r}: existing={existing_value!r}, " f"incoming={incoming_value!r}"
                     )
 
             elif policy == "set_union":
@@ -394,6 +392,145 @@ class RecordStore:
     def _merge_append(cls, existing_value: Any, incoming_value: Any) -> list[Any]:
         return cls._as_list(existing_value) + cls._as_list(incoming_value)
 
+    @property
+    def is_preloaded(self) -> bool:
+        """Return True if this store is currently using in-memory caches."""
+        return self._record_cache_by_id is not None and self._record_cache_by_identifier is not None
+
+    def clear_cache(self) -> None:
+        """Disable and discard the in-memory preload cache."""
+        self._record_cache_by_id = None
+        self._record_cache_by_identifier = None
+
+    def load_all(self) -> list[StoredRecord]:
+        """
+        Load all records in this store using two SQLite queries.
+
+        This avoids the N+1 query pattern of loading each record and its
+        identifiers separately. It is the fastest path for bulk-loading a
+        store before many lookups.
+        """
+        record_rows = self.conn.execute(
+            """
+            SELECT record_id, data_json
+            FROM records
+            WHERE store_name = ?
+            ORDER BY record_id
+            """,
+            (self.store_name,),
+        ).fetchall()
+
+        identifier_rows = self.conn.execute(
+            """
+            SELECT record_id, id_type, id_value
+            FROM identifiers
+            WHERE store_name = ?
+            ORDER BY record_id, id_type, id_value
+            """,
+            (self.store_name,),
+        ).fetchall()
+
+        identifiers_by_record_id: dict[int, dict[str, list[str]]] = {}
+        for row in identifier_rows:
+            record_id = int(row["record_id"])
+            identifiers_by_record_id.setdefault(record_id, {}).setdefault(row["id_type"], []).append(row["id_value"])
+
+        records: list[StoredRecord] = []
+        for row in record_rows:
+            record_id = int(row["record_id"])
+            records.append(
+                StoredRecord(
+                    record_id=record_id,
+                    store_name=self.store_name,
+                    identifiers=identifiers_by_record_id.get(record_id, {}),
+                    data=self._json_loads(row["data_json"]),
+                )
+            )
+
+        return records
+
+    def preload(self) -> None:
+        """
+        Load all records and identifiers into in-memory indexes.
+
+        After calling this method, get(), get_by_record_id(), values(), and
+        items() will avoid SQLite reads for existing records. SQLite remains
+        the authoritative backing store for writes; upsert() and delete_record()
+        keep the in-memory cache synchronized for changes made through this
+        RecordStore instance.
+
+        If another process or RecordStore instance modifies the same database
+        after preload(), call preload() again or clear_cache() to avoid stale
+        reads.
+        """
+        records = self.load_all()
+
+        by_id: dict[int, StoredRecord] = {}
+        by_identifier: dict[tuple[str, str], StoredRecord] = {}
+
+        for record in records:
+            by_id[record.record_id] = record
+            for id_type, values in record.identifiers.items():
+                for id_value in values:
+                    by_identifier[(id_type, id_value)] = record
+
+        self._record_cache_by_id = by_id
+        self._record_cache_by_identifier = by_identifier
+
+    def _load_record_from_db(self, record_id: int) -> StoredRecord:
+        """Load one record from SQLite, ignoring any in-memory cache."""
+        data = self._load_data_json(record_id)
+        identifiers = self._load_identifiers(record_id)
+        return StoredRecord(
+            record_id=record_id,
+            store_name=self.store_name,
+            identifiers=identifiers,
+            data=data,
+        )
+
+    def _cache_record(self, record: StoredRecord) -> None:
+        """Insert or replace one record in the in-memory caches, if enabled."""
+        if not self.is_preloaded:
+            return
+
+        assert self._record_cache_by_id is not None
+        assert self._record_cache_by_identifier is not None
+
+        # Remove stale identifier mappings for the previous version of this
+        # record before adding the refreshed mappings.
+        old_record = self._record_cache_by_id.get(record.record_id)
+        if old_record is not None:
+            for id_type, values in old_record.identifiers.items():
+                for id_value in values:
+                    self._record_cache_by_identifier.pop((id_type, id_value), None)
+
+        self._record_cache_by_id[record.record_id] = record
+        for id_type, values in record.identifiers.items():
+            for id_value in values:
+                self._record_cache_by_identifier[(id_type, id_value)] = record
+
+    def _remove_cached_record(self, record_id: int) -> None:
+        """Remove one record from the in-memory caches, if enabled."""
+        if not self.is_preloaded:
+            return
+
+        assert self._record_cache_by_id is not None
+        assert self._record_cache_by_identifier is not None
+
+        old_record = self._record_cache_by_id.pop(record_id, None)
+        if old_record is None:
+            return
+
+        for id_type, values in old_record.identifiers.items():
+            for id_value in values:
+                self._record_cache_by_identifier.pop((id_type, id_value), None)
+
+    def _refresh_cached_record(self, record_id: int) -> StoredRecord:
+        """Reload one record from SQLite and update the cache if enabled."""
+        record = self._load_record_from_db(record_id)
+        self._cache_record(record)
+        return record
+
     def upsert(
         self,
         *,
@@ -421,10 +558,7 @@ class RecordStore:
             matching_record_ids = self._find_record_ids_for_identifiers(normalized_ids)
 
             if len(matching_record_ids) > 1:
-                raise IdentifierConflictError(
-                    f"Incoming identifiers match multiple records in store "
-                    f"{self.store_name!r}: {sorted(matching_record_ids)}"
-                )
+                raise IdentifierConflictError(f"Incoming identifiers match multiple records in store " f"{self.store_name!r}: {sorted(matching_record_ids)}")
 
             if not matching_record_ids:
                 merged_data = self._merge_data({}, incoming_data)
@@ -458,6 +592,12 @@ class RecordStore:
                 for id_value in values:
                     self._insert_identifier(record_id, id_type, id_value)
 
+        # If the store has been preloaded, get_by_record_id() would otherwise
+        # return the stale cached version. Refresh this record from SQLite and
+        # update the in-memory indexes.
+        if self.is_preloaded:
+            return self._refresh_cached_record(record_id)
+
         return self.get_by_record_id(record_id)
 
     def _insert_identifier(self, record_id: int, id_type: str, id_value: str) -> None:
@@ -485,10 +625,7 @@ class RecordStore:
             if existing_record_id == record_id:
                 return
 
-            raise IdentifierConflictError(
-                f"Identifier {id_type}:{id_value} already belongs to record "
-                f"{existing_record_id}, not record {record_id}."
-            )
+            raise IdentifierConflictError(f"Identifier {id_type}:{id_value} already belongs to record " f"{existing_record_id}, not record {record_id}.")
 
         self.conn.execute(
             """
@@ -507,12 +644,12 @@ class RecordStore:
         id_type_norm = self._canonical_identifier_type(id_type)
 
         if id_type_norm not in self.identifier_types:
-            raise UnknownIdentifierTypeError(
-                f"Identifier type {id_type!r} is not allowed for store "
-                f"{self.store_name!r}."
-            )
+            raise UnknownIdentifierTypeError(f"Identifier type {id_type!r} is not allowed for store " f"{self.store_name!r}.")
 
         id_value_norm = self._normalize_identifier_value(id_type_norm, id_value)
+
+        if self._record_cache_by_identifier is not None:
+            return self._record_cache_by_identifier.get((id_type_norm, id_value_norm))
 
         row = self.conn.execute(
             """
@@ -532,30 +669,21 @@ class RecordStore:
 
     def get_by_record_id(self, record_id: int) -> StoredRecord:
         """Return a record by its internal SQLite record id."""
-        data = self._load_data_json(record_id)
-        identifiers = self._load_identifiers(record_id)
+        if self._record_cache_by_id is not None:
+            try:
+                return self._record_cache_by_id[record_id]
+            except KeyError:
+                raise KeyError(f"No record {record_id} in preloaded store {self.store_name!r}.") from None
 
-        return StoredRecord(
-            record_id=record_id,
-            store_name=self.store_name,
-            identifiers=identifiers,
-            data=data,
-        )
+        return self._load_record_from_db(record_id)
 
     def __iter__(self) -> Iterator[StoredRecord]:
         """Iterate over all records in this logical store."""
-        rows = self.conn.execute(
-            """
-            SELECT record_id
-            FROM records
-            WHERE store_name = ?
-            ORDER BY record_id
-            """,
-            (self.store_name,),
-        ).fetchall()
+        if self._record_cache_by_id is not None:
+            yield from self._record_cache_by_id.values()
+            return
 
-        for row in rows:
-            yield self.get_by_record_id(int(row["record_id"]))
+        yield from self.load_all()
 
     def values(self) -> Iterator[StoredRecord]:
         """Alias for iterating over all known records."""
@@ -589,3 +717,5 @@ class RecordStore:
                 """,
                 (self.store_name, record_id),
             )
+
+        self._remove_cached_record(record_id)

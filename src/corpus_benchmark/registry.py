@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 LOADERS: dict[str, Callable[..., Any]] = {}
 TERMINOLOGY_LOADERS: dict[str, Callable[..., Any]] = {}
 CONVERTERS: dict[str, Callable[..., Any]] = {}
+DOCUMENT_FETCHERS: dict[str, type[Any]] = {}
 SUBSET_METRICS: dict[str, Callable[..., Any]] = {}
 CROSS_METRICS: dict[str, Callable[..., Any]] = {}
 TERMINOLOGY_METRICS: dict[str, Callable[..., Any]] = {}
@@ -64,6 +65,23 @@ def register_converter(name: str):
         wrapped = _wrap_with_logging("converter", name, func)
         CONVERTERS[name] = wrapped
         return wrapped
+
+    return decorator
+
+
+def register_document_fetcher(name: str):
+    """Register a document metadata fetcher class under a stable symbolic name."""
+
+    def decorator(fetcher_cls: type[Any]) -> type[Any]:
+        if name in DOCUMENT_FETCHERS:
+            raise ValueError(f"Document fetcher '{name}' is already registered.")
+        logger.debug(
+            "Registering document fetcher '%s' from %s",
+            name,
+            fetcher_cls.__module__,
+        )
+        DOCUMENT_FETCHERS[name] = fetcher_cls
+        return fetcher_cls
 
     return decorator
 

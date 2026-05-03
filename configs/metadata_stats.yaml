@@ -1,5 +1,14 @@
+logging:
+    level: INFO
+
 workspace:
     document_store_filename: "data/metadata.sqlite"
+    document_fetchers:
+      pmid:
+        - name: pubmed_eutils
+      pmcid:
+        - name: pmc_eutils
+      doi: []
 
 corpora:
     AnatEM: configs/AnatEM.yaml

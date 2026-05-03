@@ -1,3 +1,6 @@
+logging:
+    level: INFO
+
 corpora:
     AnatEM: configs/AnatEM.yaml
     BC5CDR: configs/BC5CDR.yaml

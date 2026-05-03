@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-import json
 import logging
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-from collections import Counter
+from typing import Any, Dict, List
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
 
 logger = logging.getLogger(__name__)
 
-# TODO Add a registration function for the document Fetchers: which fetchers support which identifier types
 # TODO Add configuration so user can specify which document fetcher to use
 # TODO Make sure each fetcher documents clearly how many API calls are made per batch
 # TODO Add a representation and metadata for journals

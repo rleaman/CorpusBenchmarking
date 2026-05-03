@@ -113,6 +113,7 @@ def main() -> None:
         raise SystemExit(2)
 
     battery_config = load_battery_config(Path(sys.argv[1]))
+    battery_config.validate()
     setup_logging(battery_config.logging)
 
     logger.info(f"Loading battery config from {sys.argv[1]}")

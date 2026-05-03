@@ -4,11 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-# Ensure built-in loaders and metrics are registered.
-import corpus_benchmark.loaders  # noqa: F401
-import corpus_benchmark.metrics  # noqa: F401
-
-# NOTE: "noqa: F401" means "Ignore error 'Module imported but not used'"
+from corpus_benchmark.builtins import register_builtins
 from corpus_benchmark.context import BenchmarkContext, MetricTarget
 from corpus_benchmark.models.config import BatteryConfig, DatasetBundle, BenchmarkConfig
 from corpus_benchmark.models.corpus import BenchmarkCorpus, DocumentIdentifierType
@@ -96,6 +92,9 @@ def _create_document_record_store(document_store_filename: str) -> RecordStore:
 
 
 def run_benchmark(battery_config: BatteryConfig) -> list[Any]:
+    register_builtins()
+    battery_config.validate()
+
     document_store = _create_document_record_store(battery_config.workspace.document_store_filename)
     workspace = GlobalWorkspace(
         document_store=document_store,

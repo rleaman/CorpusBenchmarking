@@ -9,10 +9,12 @@ import urllib.parse
 import urllib.request
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
-from corpus_benchmark.metadata.document_metadata import DocumentMetadataFetcher
+from corpus_benchmark.metadata.document_fetcher import DocumentMetadataFetcher
+from corpus_benchmark.registry import register_document_fetcher
 
 logger = logging.getLogger(__name__)
 
+@register_document_fetcher("crossref_doi")
 class CrossrefDOIFetcher(DocumentMetadataFetcher):
     """Queries the Crossref REST API for metadata using DOIs.
 
