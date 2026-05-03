@@ -136,10 +136,13 @@ def test_save_and_autoload_round_trip_records(tmp_path) -> None:
     }
     assert by_pmcid.data == {"journal": "Example Journal"}
 
-    assert reloaded.upsert(
-        identifiers={DocumentIdentifierType.DOI: "10.1000/example"},
-        data={"pub_year": "2024"},
-    ).record_id == 2
+    assert (
+        reloaded.upsert(
+            identifiers={DocumentIdentifierType.DOI: "10.1000/example"},
+            data={"pub_year": "2024"},
+        ).record_id
+        == 2
+    )
 
 
 def test_new_empty_skips_autoload_and_can_overwrite_existing_file(tmp_path) -> None:

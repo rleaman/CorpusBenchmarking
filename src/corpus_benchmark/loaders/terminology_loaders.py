@@ -40,6 +40,23 @@ def _text(elem: Optional[ET.Element]) -> Optional[str]:
     return text or None
 
 
+def _normalize_mesh_ui(ui: Optional[str]) -> Optional[str]:
+    if ui is None:
+        return None
+    normalized = ui.strip().lstrip("*").strip()
+    return normalized or None
+
+
+def _repair_mapped_ui_ids(resource: TerminologyResource) -> int:
+    repaired = 0
+    for concept in resource.concepts.values():
+        normalized_ids = _unique_preserve_order(_normalize_mesh_ui(ui) for ui in concept.mapped_ui_ids)
+        if normalized_ids != concept.mapped_ui_ids:
+            concept.mapped_ui_ids = normalized_ids
+            repaired += 1
+    return repaired
+
+
 def _iterparse_path_for_tag(path: pathlib.Path, tag: str) -> Iterator[ET.Element]:
     """Yield record elements one at a time using streaming parse, handling gzip if needed."""
     if path.suffix == ".gz":
@@ -106,7 +123,13 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
     if cache_path.exists():
         logger.info(f"Loading cached terminology {name} from {cache_path}")
         with open(cache_path, "rb") as f:
-            return pickle.load(f)
+            resource = pickle.load(f)
+        repaired = _repair_mapped_ui_ids(resource)
+        if repaired:
+            logger.info("Normalized mapped MeSH UI IDs for %s cached concepts", repaired)
+            with open(cache_path, "wb") as f:
+                pickle.dump(resource, f)
+        return resource
 
     logger.info(f"Building terminology {name}")
 
@@ -186,11 +209,11 @@ def load_mesh_xml(workspace_config: WorkspaceConfig, **params) -> TerminologyRes
             continue
 
         synonyms = _extract_synonyms(record_el)
-        mapped_descriptor_ids = _unique_preserve_order(_text(el) for el in record_el.findall("HeadingMappedToList/HeadingMappedTo/DescriptorReferredTo/DescriptorUI") if _text(el))
+        heading_mapped_descriptor_els = record_el.findall("HeadingMappedToList/HeadingMappedTo/DescriptorReferredTo/DescriptorUI")
+        mapped_descriptor_ids = _unique_preserve_order(_normalize_mesh_ui(_text(el)) for el in heading_mapped_descriptor_els)
         if not mapped_descriptor_ids:
-            mapped_descriptor_ids = _unique_preserve_order(
-                _text(el) for el in record_el.findall("IndexingInformationList/IndexingInformation/DescriptorReferredTo/DescriptorUI") if _text(el)
-            )
+            indexing_descriptor_els = record_el.findall("IndexingInformationList/IndexingInformation/DescriptorReferredTo/DescriptorUI")
+            mapped_descriptor_ids = _unique_preserve_order(_normalize_mesh_ui(_text(el)) for el in indexing_descriptor_els)
 
         scope_note = _text(record_el.find("ConceptList/Concept[@PreferredConceptYN='Y']/ScopeNote")) or _text(record_el.find("ConceptList/Concept/ScopeNote"))
 

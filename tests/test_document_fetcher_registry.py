@@ -7,7 +7,7 @@ import pytest
 from corpus_benchmark import registry
 from corpus_benchmark.builtins import register_builtins
 from corpus_benchmark.metadata.document_fetcher import DocumentMetadataFetcher
-from corpus_benchmark.metadata.record_store import RecordStore
+from corpus_benchmark.metadata.json_record_store import JsonRecordStore
 from corpus_benchmark.models.config import BatteryConfig, LoaderSpec, MetricSpec, WorkspaceConfig
 from corpus_benchmark.models.corpus import Document, DocumentIdentifierType
 from corpus_benchmark.workspace import GlobalWorkspace
@@ -57,9 +57,8 @@ class DOIFetcher(DocumentMetadataFetcher):
 
 
 def make_document_store(tmp_path):
-    return RecordStore(
-        tmp_path / "metadata.sqlite",
-        store_name="documents",
+    return JsonRecordStore(
+        tmp_path / "metadata.json",
         identifier_types={
             DocumentIdentifierType.PMID,
             DocumentIdentifierType.PMCID,
@@ -89,9 +88,7 @@ def test_register_builtins_populates_document_fetcher_registry() -> None:
 
 
 def test_workspace_config_validate_rejects_unknown_fetcher() -> None:
-    config = WorkspaceConfig(
-        document_fetchers={"pmid": [LoaderSpec("missing_test_fetcher")]}
-    )
+    config = WorkspaceConfig(document_fetchers={"pmid": [LoaderSpec("missing_test_fetcher")]})
 
     with pytest.raises(ValueError, match="Unknown document fetcher"):
         config.validate()
@@ -99,9 +96,7 @@ def test_workspace_config_validate_rejects_unknown_fetcher() -> None:
 
 def test_workspace_config_validate_rejects_identifier_type_mismatch(monkeypatch) -> None:
     monkeypatch.setitem(registry.DOCUMENT_FETCHERS, "test_doi_fetcher", DOIFetcher)
-    config = WorkspaceConfig(
-        document_fetchers={"pmid": [LoaderSpec("test_doi_fetcher")]}
-    )
+    config = WorkspaceConfig(document_fetchers={"pmid": [LoaderSpec("test_doi_fetcher")]})
 
     with pytest.raises(ValueError, match="supports 'doi'"):
         config.validate()
@@ -133,7 +128,7 @@ def test_workspace_uses_configured_fetcher_fallbacks(monkeypatch, tmp_path) -> N
     monkeypatch.setitem(registry.DOCUMENT_FETCHERS, "test_fallback_pmid", FallbackPMIDFetcher)
 
     config = WorkspaceConfig(
-        document_store_filename=str(tmp_path / "metadata.sqlite"),
+        document_store_filename=str(tmp_path / "metadata.json"),
         corpora_download_dir=str(tmp_path / "corpora"),
         terminology_dir=str(tmp_path / "terminologies"),
         document_fetchers={
@@ -143,16 +138,16 @@ def test_workspace_uses_configured_fetcher_fallbacks(monkeypatch, tmp_path) -> N
             ]
         },
     )
-    with make_document_store(tmp_path) as store:
-        workspace = GlobalWorkspace(document_store=store, workspace_config=config)
-        metadata = workspace.get_document_metadata(
-            [
-                Document(
-                    document_id="doc-1",
-                    identifiers={DocumentIdentifierType.PMID: "123"},
-                )
-            ]
-        )
+    store = make_document_store(tmp_path)
+    workspace = GlobalWorkspace(document_store=store, workspace_config=config)
+    metadata = workspace.get_document_metadata(
+        [
+            Document(
+                document_id="doc-1",
+                identifiers={DocumentIdentifierType.PMID: "123"},
+            )
+        ]
+    )
 
     assert metadata["doc-1"]["journal"] == "Fallback Journal"
     assert metadata["doc-1"]["pub_year"] == "2025"
@@ -163,7 +158,7 @@ def test_workspace_uses_fallback_when_primary_fetcher_raises(monkeypatch, tmp_pa
     monkeypatch.setitem(registry.DOCUMENT_FETCHERS, "test_fallback_pmid", FallbackPMIDFetcher)
 
     config = WorkspaceConfig(
-        document_store_filename=str(tmp_path / "metadata.sqlite"),
+        document_store_filename=str(tmp_path / "metadata.json"),
         corpora_download_dir=str(tmp_path / "corpora"),
         terminology_dir=str(tmp_path / "terminologies"),
         document_fetchers={
@@ -173,15 +168,15 @@ def test_workspace_uses_fallback_when_primary_fetcher_raises(monkeypatch, tmp_pa
             ]
         },
     )
-    with make_document_store(tmp_path) as store:
-        workspace = GlobalWorkspace(document_store=store, workspace_config=config)
-        metadata = workspace.get_document_metadata(
-            [
-                Document(
-                    document_id="doc-1",
-                    identifiers={DocumentIdentifierType.PMID: "123"},
-                )
-            ]
-        )
+    store = make_document_store(tmp_path)
+    workspace = GlobalWorkspace(document_store=store, workspace_config=config)
+    metadata = workspace.get_document_metadata(
+        [
+            Document(
+                document_id="doc-1",
+                identifiers={DocumentIdentifierType.PMID: "123"},
+            )
+        ]
+    )
 
     assert metadata["doc-1"]["journal"] == "Fallback Journal"
