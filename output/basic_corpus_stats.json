@@ -267,68 +267,78 @@
     {
       "metric_name": "label_distribution",
       "value": {
-        "cell_line": 0.06069607,
-        "chemical": 0.11845337,
-        "gene": 0.61726736,
-        "anatomy": 0.06877768,
-        "species": 0.08369193,
-        "cell_type": 0.05111358
+        "cell_line": 0.05628662,
+        "chemical": 0.10984797,
+        "gene": 0.57417609,
+        "anatomy": 0.06378112,
+        "species": 0.07761188,
+        "GO term": 0.07067217,
+        "cell_type": 0.04740028,
+        "bioassay": 0.00022386
       },
       "details": {
         "counts": {
           "cell_line": 5783,
           "chemical": 11286,
-          "gene": 58812,
+          "gene": 58992,
           "anatomy": 6553,
           "species": 7974,
-          "cell_type": 4870
+          "GO term": 7261,
+          "cell_type": 4870,
+          "bioassay": 23
         },
-        "total": 95278
+        "total": 102742
       }
     },
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 5.24596444,
-        "stdev": 3.10359161,
+        "mean": 5.50738744,
+        "stdev": 3.41776242,
         "min": 1,
         "median": 4.0,
-        "max": 49,
-        "count": 95278
+        "max": 52,
+        "count": 102742
       }
     },
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 12.10335064,
-        "stdev": 70.70621212,
+        "mean": 12.34570662,
+        "stdev": 70.18946984,
         "min": 1,
         "median": 3.0,
         "max": 4002,
-        "count": 8476
+        "count": 8944
       }
     },
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "null": 0.05641011,
-        "CHEBI": 0.09620034,
-        "Uniprot": 0.29448863,
-        "molecule": 0.00741802,
-        "PubChem": 0.00682341,
-        "subcellular": 0.00222248,
-        "NCBI gene": 0.21216906,
-        "NCBI taxon": 0.07751394,
-        "protein": 0.11954615,
-        "gene": 0.01919328,
-        "CL": 0.04520997,
-        "Uberon": 0.05721917,
-        "tissue": 0.00534176,
-        "organism": 0.00024369
+        "CVCL": 0.05237276,
+        "CHEBI": 0.08937692,
+        "Uniprot": 0.2736008,
+        "molecule": 0.00689187,
+        "PubChem": 0.00633943,
+        "subcellular": 0.00206484,
+        "NCBI gene": 0.19712009,
+        "NCBI taxon": 0.07201594,
+        "GO": 0.06620178,
+        "protein": 0.11106684,
+        "gene": 0.01783191,
+        "CL": 0.04200326,
+        "Uberon": 0.05316066,
+        "null": 3.623e-05,
+        "tissue": 0.00496287,
+        "cell": 0.00278935,
+        "BAO": 0.0002083,
+        "organism": 0.00022641,
+        "Corum": 0.00021735,
+        "Rfam": 0.00151241
       },
       "details": {
         "counts": {
-          "null": 5787,
+          "CVCL": 5783,
           "CHEBI": 9869,
           "Uniprot": 30211,
           "molecule": 761,
@@ -336,21 +346,27 @@
           "subcellular": 228,
           "NCBI gene": 21766,
           "NCBI taxon": 7952,
+          "GO": 7310,
           "protein": 12264,
           "gene": 1969,
           "CL": 4638,
           "Uberon": 5870,
+          "null": 4,
           "tissue": 548,
-          "organism": 25
+          "cell": 308,
+          "BAO": 23,
+          "organism": 25,
+          "Corum": 24,
+          "Rfam": 167
         },
-        "total": 102588
+        "total": 110420
       }
     },
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 6.95612178,
-        "stdev": 5.28109277,
+        "mean": 7.50105863,
+        "stdev": 5.56784458,
         "min": 0,
         "median": 6,
         "max": 73,
@@ -360,45 +376,45 @@
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 4.51952982,
-        "stdev": 2.46196276,
+        "mean": 4.93334307,
+        "stdev": 2.64713275,
         "min": 0,
-        "median": 4,
-        "max": 22,
+        "median": 5,
+        "max": 25,
         "count": 13697
       }
     },
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 4.76863547,
-        "stdev": 2.6569018,
+        "mean": 5.15981602,
+        "stdev": 2.78699053,
         "min": 0,
-        "median": 4,
-        "max": 21,
+        "median": 5,
+        "max": 23,
         "count": 13697
       }
     },
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 1.44035739,
-        "stdev": 1.66763189,
+        "mean": 1.48172137,
+        "stdev": 1.57139444,
         "min": 1,
-        "median": 1.0,
-        "max": 77,
-        "count": 8618
+        "median": 1,
+        "max": 66,
+        "count": 9109
       }
     },
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.36241905,
-        "stdev": 1.1167467,
+        "mean": 1.35403291,
+        "stdev": 1.09330064,
         "min": 1,
-        "median": 1,
+        "median": 1.0,
         "max": 39,
-        "count": 9111
+        "count": 9968
       }
     }
   ],
@@ -671,123 +687,123 @@
   "CellLink_corpus": [
     {
       "metric_name": "document_count",
-      "value": 3005
+      "value": 2003
     },
     {
       "metric_name": "sentence_count",
-      "value": 14847
+      "value": 10069
     },
     {
       "metric_name": "token_count",
-      "value": 338445
+      "value": 227490
     },
     {
       "metric_name": "label_distribution",
       "value": {
-        "cell_phenotype": 0.82796709,
-        "cell_hetero": 0.07226545,
-        "cell_desc": 0.09976746
+        "cell_phenotype": 0.8292716,
+        "cell_hetero": 0.07093884,
+        "cell_vague": 0.09978956
       },
       "details": {
         "counts": {
-          "cell_phenotype": 18515,
-          "cell_hetero": 1616,
-          "cell_desc": 2231
+          "cell_phenotype": 12216,
+          "cell_hetero": 1045,
+          "cell_vague": 1470
         },
-        "total": 22362
+        "total": 14731
       }
     },
     {
       "metric_name": "mention_length_stats",
       "value": {
-        "mean": 14.62762722,
-        "stdev": 10.79365693,
+        "mean": 14.55413753,
+        "stdev": 10.72401919,
         "min": 1,
-        "median": 12.0,
+        "median": 12,
         "max": 230,
-        "count": 22362
+        "count": 14731
       }
     },
     {
       "metric_name": "identifier_redundancy_stats",
       "value": {
-        "mean": 19.55147646,
-        "stdev": 92.8674376,
+        "mean": 14.97483691,
+        "stdev": 67.28668838,
         "min": 1,
-        "median": 5,
-        "max": 2842,
-        "count": 1253
+        "median": 4,
+        "max": 1905,
+        "count": 1073
       }
     },
     {
       "metric_name": "identifier_resource_distribution",
       "value": {
-        "CL": 0.87974529,
-        "null": 0.11600947,
-        "<NIL>": 0.00424524
+        "CL": 0.87696042,
+        "null": 0.11855863,
+        "<NIL>": 0.00448096
       },
       "details": {
         "counts": {
-          "CL": 21552,
-          "null": 2842,
-          "<NIL>": 104
+          "CL": 14091,
+          "null": 1905,
+          "<NIL>": 72
         },
-        "total": 24498
+        "total": 16068
       }
     },
     {
       "metric_name": "annotations_per_document_stats",
       "value": {
-        "mean": 7.44159734,
-        "stdev": 8.97082489,
+        "mean": 7.3544683,
+        "stdev": 9.00494723,
         "min": 0,
         "median": 4,
-        "max": 70,
-        "count": 3005
+        "max": 59,
+        "count": 2003
       }
     },
     {
       "metric_name": "unique_mentions_per_document_stats",
       "value": {
-        "mean": 5.99900166,
-        "stdev": 7.30040668,
+        "mean": 6.00249626,
+        "stdev": 7.41185255,
         "min": 0,
         "median": 3,
-        "max": 59,
-        "count": 3005
+        "max": 58,
+        "count": 2003
       }
     },
     {
       "metric_name": "unique_identifiers_per_document_stats",
       "value": {
-        "mean": 4.10582363,
-        "stdev": 4.5559237,
+        "mean": 4.0908637,
+        "stdev": 4.64522908,
         "min": 0,
-        "median": 3,
-        "max": 41,
-        "count": 3005
+        "median": 2,
+        "max": 37,
+        "count": 2003
       }
     },
     {
       "metric_name": "variation_degree_stats",
       "value": {
-        "mean": 4.08462733,
-        "stdev": 35.87010845,
+        "mean": 3.73655103,
+        "stdev": 27.6990687,
         "min": 1,
-        "median": 2.0,
-        "max": 1801,
-        "count": 2576
+        "median": 2,
+        "max": 1219,
+        "count": 1989
       }
     },
     {
       "metric_name": "ambiguity_degree_stats",
       "value": {
-        "mean": 1.07323541,
-        "stdev": 0.46847109,
+        "mean": 1.06536697,
+        "stdev": 0.40749126,
         "min": 1,
         "median": 1.0,
-        "max": 18,
-        "count": 9804
+        "max": 14,
+        "count": 6976
       }
     }
   ],

@@ -46,9 +46,9 @@ bundles:
   CellLink_train:
     - corpus_name: CellLink
       subset_name: train
-  CellLink_test:
+  CellLink_dev:
     - corpus_name: CellLink
-      subset_name: test
+      subset_name: dev
   JNLPBA_train:
     - corpus_name: JNLPBA
       subset_name: train
@@ -80,7 +80,7 @@ comparison_suites:
   CRAFT_TrainVsTest:
     - ["CRAFT_train", "CRAFT_test"]
   CellLink_TrainVsTest:
-    - ["CellLink_train", "CellLink_test"]
+    - ["CellLink_train", "CellLink_dev"]
   JNLPBA_TrainVsTest:
     - ["JNLPBA_train", "JNLPBA_test"]
   NCBI_Disease_TrainVsTest:

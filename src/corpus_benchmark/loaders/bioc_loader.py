@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
-import re
 from collections import Counter
+from typing import List
+import os
 
 from bioc import biocxml, pubtator
 
@@ -114,19 +115,21 @@ class Loader:
     def get_identifier(self, identifier_text) -> Link | None:
         if identifier_text is None:
             return None
-        return self.parse_identifier(identifier_text.strip(), self.id_format_list)
+        link = self._parse_identifier(identifier_text.strip(), self.id_format_list)
+        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; link = "{link}"')
+        return link
 
-    def parse_identifier(self, identifier_text: str, identifier_format_list: list[IdentifierFormat] | None) -> Link:
-        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format_list = "{identifier_format_list}"')
+    def _parse_identifier(self, identifier_text: str, identifier_format_list: list[IdentifierFormat] | None) -> Link:
+        #logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format_list = "{identifier_format_list}"')
         if identifier_format_list is None or len(identifier_format_list) == 0:
-            return self.parse_atomic_identifier(identifier_text)
+            return self._parse_atomic_identifier(identifier_text)
         identifier_format = identifier_format_list[0]
-        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format = "{identifier_format}"')
+        #logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format = "{identifier_format}"')
         remaining_identifier_formats = identifier_format_list[1:]
         match_type = None
-        logger.debug(
-            f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format.qualifier_allowed = "{identifier_format.qualifier_allowed}" type(identifier_format.qualifier_allowed) = "{type(identifier_format.qualifier_allowed)}"'
-        )
+        #logger.debug(
+        #    f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_format.qualifier_allowed = "{identifier_format.qualifier_allowed}" type(identifier_format.qualifier_allowed) = "{type(identifier_format.qualifier_allowed)}"'
+        #)
         if identifier_format.qualifier_allowed:
             # mapping_debug = [
             #    (qualifier_text, match_type, identifier_text.startswith(qualifier_text))
@@ -138,17 +141,17 @@ class Loader:
                 mapping.sort(reverse=True)
                 match_length, match_type = mapping[0]
                 identifier_text = identifier_text[match_length:]
-        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; match_type = "{match_type}"')
-        identifier_elements = [self.parse_identifier(element_text.strip(), remaining_identifier_formats) for element_text in identifier_text.split(identifier_format.delimiter)]
-        logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_elements = "{identifier_elements}"')
+        #logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; match_type = "{match_type}"')
+        identifier_elements = [self._parse_identifier(element_text.strip(), remaining_identifier_formats) for element_text in identifier_text.split(identifier_format.delimiter)]
+        #logger.debug(f'Loader.parse_identifier(): identifier_text = "{identifier_text}"; identifier_elements = "{identifier_elements}"')
         if len(identifier_elements) == 1:
             link = identifier_elements[0]
             link.match_type = match_type
             return link
         return CompositeLink(relation=identifier_format.relation, components=identifier_elements, match_type=match_type)
 
-    def parse_atomic_identifier(self, identifier_text) -> IdentifierLink:
-        logger.debug(f'Loader.parse_atomic_identifier(): identifier_text = "{identifier_text}"')
+    def _parse_atomic_identifier(self, identifier_text) -> IdentifierLink:
+        #logger.debug(f'Loader.parse_atomic_identifier(): identifier_text = "{identifier_text}"')
         identifier_text = identifier_text.strip()
         if identifier_text in self.nil_labels:
             return NIL
@@ -254,6 +257,39 @@ class BioCXMLLoader(Loader):
         Load a BioC XML file and convert it into the internal corpus model.
         """
         logger.info(f"Loading subset {subset_name} from {path}")
+        if os.path.isfile(path):
+            documents, id_type_counts =  self._load_bioc_file(path)
+        elif os.path.isdir(path):
+            documents, id_type_counts =  self._load_bioc_dir(path)
+        else:
+            raise ValueError(f"The path '{path}' is neither a valid file nor a directory.")
+        return CorpusSubset(name=subset_name, documents=documents)
+
+    def _load_bioc_dir(self, dirname: str) -> List[Document]:
+        """
+        Iterates through all files in the given directory, 
+        calls load_document_file on each, and returns a combined list of Documents.
+        """
+        all_documents = []
+        all_id_type_counts = Counter()
+        
+        # Iterate over items in the directory
+        for item in os.listdir(dirname):
+            item_path = os.path.join(dirname, item)
+            
+            # Only process files (skips subdirectories)
+            if os.path.isfile(item_path):
+                documents, id_type_counts = self._load_bioc_file(item_path)
+                all_documents.extend(documents)
+                all_id_type_counts.update(id_type_counts)
+                
+        logger.info(f"\tLoaded {len(documents)} documents")
+        for id_type, count in id_type_counts.items():
+            percentage = 100.0 * count / len(documents)
+            logger.info(f"\tID type {id_type} present in {count} / {len(documents)} of documents ({percentage:.2f}%)")
+        return all_documents, all_id_type_counts
+
+    def _load_bioc_file(self, path: str) -> List[Document]:
         with open(path, "r", encoding="utf-8") as fp:
             collection = biocxml.load(fp)
 
@@ -286,11 +322,7 @@ class BioCXMLLoader(Loader):
                 infons=doc.infons,
             )
 
-        logger.info(f"\tLoaded {len(collection.documents)} documents")
-        for id_type, count in id_type_counts.items():
-            percentage = 100.0 * count / len(collection.documents)
-            logger.info(f"\tID type {id_type} present in {count} / {len(collection.documents)} of documents ({percentage:.2f}%)")
-        return CorpusSubset(name=subset_name, documents=list(documents.values()))
+        return list(documents.values()), id_type_counts
 
     def get_mention(self, ann):
         spans = []

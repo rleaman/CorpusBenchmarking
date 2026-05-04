@@ -51,8 +51,6 @@ bundles:
       subset_name: train
     - corpus_name: CellLink
       subset_name: dev
-    - corpus_name: CellLink
-      subset_name: test
   JNLPBA_corpus:
     - corpus_name: JNLPBA
       subset_name: train

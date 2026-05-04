@@ -219,6 +219,8 @@ class Passage:
     annotations: list[Annotation] = field(default_factory=list)
     infons: dict[str, str] = field(default_factory=dict)
 
+    # TODO Check that the text for each annotation matches the text at the spans
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "passage_id": self.passage_id,

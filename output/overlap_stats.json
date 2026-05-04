@@ -96,32 +96,32 @@
     },
     {
       "metric_name": "mention_overlap",
-      "value": 0.12720887,
+      "value": 0.13282504,
       "details": {
-        "len(BioID_train)": 7571,
-        "len(BioID_dev)": 2699,
-        "intersection": 1159,
-        "union": 9111
+        "len(BioID_train)": 8293,
+        "len(BioID_dev)": 2999,
+        "intersection": 1324,
+        "union": 9968
       }
     },
     {
       "metric_name": "mention_token_overlap",
-      "value": 0.18835859,
+      "value": 0.19891333,
       "details": {
-        "len(BioID_train)": 6005,
-        "len(BioID_dev)": 2386,
-        "intersection": 1330,
-        "union": 7061
+        "len(BioID_train)": 6427,
+        "len(BioID_dev)": 2620,
+        "intersection": 1501,
+        "union": 7546
       }
     },
     {
       "metric_name": "identifier_overlap",
-      "value": 0.13614913,
+      "value": 0.14177102,
       "details": {
-        "len(BioID_train)": 7076,
-        "len(BioID_dev)": 2554,
-        "intersection": 1154,
-        "union": 8476
+        "len(BioID_train)": 7462,
+        "len(BioID_dev)": 2750,
+        "intersection": 1268,
+        "union": 8944
       }
     }
   ],
@@ -209,45 +209,45 @@
       }
     }
   ],
-  "(CellLink_train, CellLink_test)": [
+  "(CellLink_train, CellLink_dev)": [
     {
       "metric_name": "token_overlap",
-      "value": 0.39027888,
+      "value": 0.33743784,
       "details": {
         "len(CellLink_train)": 14685,
-        "len(CellLink_test)": 11487,
-        "intersection": 7347,
-        "union": 18825
+        "len(CellLink_dev)": 7907,
+        "intersection": 5700,
+        "union": 16892
       }
     },
     {
       "metric_name": "mention_overlap",
-      "value": 0.12710952,
+      "value": 0.09131307,
       "details": {
         "len(CellLink_train)": 5410,
-        "len(CellLink_test)": 4007,
-        "intersection": 1062,
-        "union": 8355
+        "len(CellLink_dev)": 2203,
+        "intersection": 637,
+        "union": 6976
       }
     },
     {
       "metric_name": "mention_token_overlap",
-      "value": 0.35677233,
+      "value": 0.27899379,
       "details": {
         "len(CellLink_train)": 2526,
-        "len(CellLink_test)": 2182,
-        "intersection": 1238,
-        "union": 3470
+        "len(CellLink_dev)": 1389,
+        "intersection": 854,
+        "union": 3061
       }
     },
     {
       "metric_name": "identifier_overlap",
-      "value": 0.55887522,
+      "value": 0.40633737,
       "details": {
         "len(CellLink_train)": 904,
-        "len(CellLink_test)": 870,
-        "intersection": 636,
-        "union": 1138
+        "len(CellLink_dev)": 605,
+        "intersection": 436,
+        "union": 1073
       }
     }
   ],
