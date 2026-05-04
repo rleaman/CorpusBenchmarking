@@ -8,7 +8,6 @@ workspace:
         - name: pubmed_eutils
       pmcid:
         - name: pmc_eutils
-      doi: []
 
 corpora:
     AnatEM: configs/AnatEM.yaml

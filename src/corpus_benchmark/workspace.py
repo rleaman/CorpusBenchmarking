@@ -111,7 +111,8 @@ class GlobalWorkspace:
                     missing_ids[id_type].add(id_val)
 
         for id_type, missing_ids_by_type in missing_ids.items():
-            logger.info("Number of %s IDs to fetch: %s", id_type, len(missing_ids_by_type))
+            if len(missing_ids_by_type) > 0:
+                logger.info("Fetching %s IDs of type %s", len(missing_ids_by_type), id_type)
 
         # 2. Fetch missing items using configured primary/fallback fetchers and add new records to the store
         for id_type, id_set in missing_ids.items():
@@ -138,6 +139,7 @@ class GlobalWorkspace:
                     len(remaining_ids),
                     id_type,
                 )
+                logger.debug(f"IDs without metadata: {remaining_ids}")
 
         # 3. Get metadata for realzies
         doc_metadata = {}
