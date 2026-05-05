@@ -7,7 +7,9 @@ import pytest
 from corpus_benchmark import registry
 from corpus_benchmark.builtins import register_builtins
 from corpus_benchmark.metadata.document_fetcher import DocumentMetadataFetcher
-from corpus_benchmark.metadata.json_record_store import JsonRecordStore
+from corpus_benchmark.metadata.eutils_journal_fetchers import ABBREVIATION, ISSN, NLM_UNIQUE_ID
+from corpus_benchmark.metadata.journal_fetcher import JournalMetadataFetcher
+from corpus_benchmark.metadata.json_record_store import JsonRecordStore, normalize_issn, normalize_nlm_unique_id
 from corpus_benchmark.models.config import BatteryConfig, LoaderSpec, MetricSpec, WorkspaceConfig
 from corpus_benchmark.models.corpus import Document, DocumentIdentifierType
 from corpus_benchmark.workspace import GlobalWorkspace
@@ -56,6 +58,73 @@ class DOIFetcher(DocumentMetadataFetcher):
         return []
 
 
+class JournalAwarePMIDFetcher(DocumentMetadataFetcher):
+    @property
+    def supported_id_type(self) -> DocumentIdentifierType:
+        return DocumentIdentifierType.PMID
+
+    def fetch(self, identifiers: list[str]) -> list[dict[str, Any]]:
+        return [
+            {
+                "identifiers": {DocumentIdentifierType.PMID: identifier},
+                "journal": "Nat Immunol",
+                "pub_year": "2013",
+                "journal_metadata": {
+                    "identifiers": {NLM_UNIQUE_ID: "100941354"},
+                    "name": "Nature immunology",
+                    "abbreviation": "Nat Immunol",
+                },
+            }
+            for identifier in identifiers
+        ]
+
+
+class AbbreviationOnlyPMIDFetcher(DocumentMetadataFetcher):
+    @property
+    def supported_id_type(self) -> DocumentIdentifierType:
+        return DocumentIdentifierType.PMID
+
+    def fetch(self, identifiers: list[str]) -> list[dict[str, Any]]:
+        return [
+            {
+                "identifiers": {DocumentIdentifierType.PMID: identifier},
+                "journal": "Nat Immunol",
+                "pub_year": "2013",
+                "journal_metadata": {
+                    "identifiers": {},
+                    "name": "Nature immunology",
+                    "abbreviation": "Nat Immunol",
+                },
+            }
+            for identifier in identifiers
+        ]
+
+
+class StaticJournalFetcher(JournalMetadataFetcher):
+    def __init__(self, key: str):
+        self.key = key
+        self.calls: list[list[str]] = []
+
+    @property
+    def supported_key(self) -> str:
+        return self.key
+
+    def fetch(self, identifiers: list[str]) -> list[dict[str, Any]]:
+        self.calls.append(list(identifiers))
+        return [
+            {
+                "identifiers": {
+                    NLM_UNIQUE_ID: "100941354",
+                    ISSN: ["1529-2908", "1529-2916"],
+                },
+                "name": "Nature immunology",
+                "abbreviation": "Nat Immunol",
+                "name_variants": ["Nature Immun"],
+                "mesh_topics": ["Immune System", "Immunity", "Immunotherapy"],
+            }
+        ]
+
+
 def make_document_store(tmp_path):
     return JsonRecordStore(
         tmp_path / "metadata.json",
@@ -79,11 +148,33 @@ def make_document_store(tmp_path):
     )
 
 
+def make_journal_store(tmp_path):
+    return JsonRecordStore(
+        tmp_path / "journals.json",
+        identifier_types={
+            NLM_UNIQUE_ID,
+            ISSN,
+        },
+        fields={"name", "abbreviation", "name_variants", "mesh_topics"},
+        field_policies={
+            "name": "replace",
+            "abbreviation": "replace",
+            "name_variants": "set_union",
+            "mesh_topics": "set_union",
+        },
+        identifier_normalizers={
+            NLM_UNIQUE_ID: normalize_nlm_unique_id,
+            ISSN: normalize_issn,
+        },
+    )
+
+
 def test_register_builtins_populates_document_fetcher_registry() -> None:
     register_builtins()
 
     assert "pubmed_eutils" in registry.DOCUMENT_FETCHERS
     assert "pmc_eutils" in registry.DOCUMENT_FETCHERS
+    assert "pmc_eutils_efetch" in registry.DOCUMENT_FETCHERS
     assert "crossref_doi" in registry.DOCUMENT_FETCHERS
 
 
@@ -180,3 +271,76 @@ def test_workspace_uses_fallback_when_primary_fetcher_raises(monkeypatch, tmp_pa
     )
 
     assert metadata["doc-1"]["journal"] == "Fallback Journal"
+
+
+def test_workspace_creates_journal_record_and_links_document(monkeypatch, tmp_path) -> None:
+    monkeypatch.setitem(registry.DOCUMENT_FETCHERS, "test_journal_aware_pmid", JournalAwarePMIDFetcher)
+
+    config = WorkspaceConfig(
+        document_store_filename=str(tmp_path / "metadata.json"),
+        journal_store_filename=str(tmp_path / "journals.json"),
+        corpora_download_dir=str(tmp_path / "corpora"),
+        terminology_dir=str(tmp_path / "terminologies"),
+        document_fetchers={"pmid": [LoaderSpec("test_journal_aware_pmid")]},
+    )
+    document_store = make_document_store(tmp_path)
+    journal_store = make_journal_store(tmp_path)
+    nlm_fetcher = StaticJournalFetcher(NLM_UNIQUE_ID)
+    workspace = GlobalWorkspace(
+        document_store=document_store,
+        journal_store=journal_store,
+        workspace_config=config,
+    )
+    workspace.journal_fetchers = {NLM_UNIQUE_ID: nlm_fetcher}
+
+    metadata = workspace.get_document_metadata(
+        [
+            Document(
+                document_id="doc-1",
+                identifiers={DocumentIdentifierType.PMID: "123"},
+            )
+        ]
+    )
+
+    journal_record = journal_store.get(NLM_UNIQUE_ID, "100941354")
+    assert journal_record is not None
+    assert metadata["doc-1"]["journal_id"] == journal_record.record_id
+    assert document_store.get(DocumentIdentifierType.PMID, "123").data["journal_id"] == journal_record.record_id
+    assert journal_record.identifiers[ISSN] == ["15292908", "15292916"]
+    assert journal_record.data["mesh_topics"] == ["Immune System", "Immunity", "Immunotherapy"]
+    assert nlm_fetcher.calls == [["100941354"]]
+
+
+def test_workspace_resolves_journal_by_abbreviation_when_document_has_no_journal_id(monkeypatch, tmp_path) -> None:
+    monkeypatch.setitem(registry.DOCUMENT_FETCHERS, "test_abbreviation_only_pmid", AbbreviationOnlyPMIDFetcher)
+
+    config = WorkspaceConfig(
+        document_store_filename=str(tmp_path / "metadata.json"),
+        journal_store_filename=str(tmp_path / "journals.json"),
+        corpora_download_dir=str(tmp_path / "corpora"),
+        terminology_dir=str(tmp_path / "terminologies"),
+        document_fetchers={"pmid": [LoaderSpec("test_abbreviation_only_pmid")]},
+    )
+    document_store = make_document_store(tmp_path)
+    journal_store = make_journal_store(tmp_path)
+    abbreviation_fetcher = StaticJournalFetcher(ABBREVIATION)
+    workspace = GlobalWorkspace(
+        document_store=document_store,
+        journal_store=journal_store,
+        workspace_config=config,
+    )
+    workspace.journal_fetchers = {ABBREVIATION: abbreviation_fetcher}
+
+    metadata = workspace.get_document_metadata(
+        [
+            Document(
+                document_id="doc-1",
+                identifiers={DocumentIdentifierType.PMID: "123"},
+            )
+        ]
+    )
+
+    journal_record = journal_store.get(NLM_UNIQUE_ID, "100941354")
+    assert journal_record is not None
+    assert metadata["doc-1"]["journal_id"] == journal_record.record_id
+    assert abbreviation_fetcher.calls == [["Nat Immunol"]]

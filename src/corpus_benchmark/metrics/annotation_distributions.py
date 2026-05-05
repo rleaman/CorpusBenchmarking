@@ -12,9 +12,21 @@ logger = logging.getLogger(__name__)
 PRECISION = 8  # Number of decimal places
 
 
-def calculate_proportions(counts: Counter[str, int]) -> dict[str, float]:
+def calculate_proportions(counts: Counter[Any, int]) -> dict[str, float]:
     total = counts.total()
-    return {label: (round(count / total, PRECISION) if total else 0.0) for label, count in counts.items()}
+    return {
+        str(label) if label is not None else "null": (
+            round(count / total, PRECISION) if total else 0.0
+        )
+        for label, count in counts.items()
+    }
+
+
+def normalize_counts(counts: Counter[Any, int]) -> dict[str, int]:
+    return {
+        str(label) if label is not None else "null": count
+        for label, count in counts.items()
+    }
 
 
 @register_subset_metric("label_distribution")
@@ -26,7 +38,7 @@ def label_distribution(target: MetricTarget, result_name: str) -> SubsetMetricRe
         value=calculate_proportions(counts),
         subset_name=target.name,
         details={
-            "counts": dict(counts),
+            "counts": normalize_counts(counts),
             "total": counts.total(),
         },
     )
@@ -41,7 +53,7 @@ def identifier_resource_distribution(target: MetricTarget, result_name: str) -> 
         value=calculate_proportions(counts),
         subset_name=target.name,
         details={
-            "counts": dict(counts),
+            "counts": normalize_counts(counts),
             "total": counts.total(),
         },
     )
@@ -56,7 +68,7 @@ def match_type_distribution(target: MetricTarget, result_name: str) -> SubsetMet
         value=calculate_proportions(counts),
         subset_name=target.name,
         details={
-            "counts": dict(counts),
+            "counts": normalize_counts(counts),
             "total": counts.total(),
         },
     )

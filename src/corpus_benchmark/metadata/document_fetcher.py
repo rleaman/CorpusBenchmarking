@@ -25,5 +25,11 @@ class DocumentMetadataFetcher(ABC):
 
     @abstractmethod
     def fetch(self, identifiers: List[str]) -> List[Dict[str, Any]]:
-        """Returns standard records. Must include the 'identifiers' dict in the output."""
+        """
+        Return standard document records.
+
+        Records must include the ``identifiers`` dict in the output. They may
+        also include a ``journal_metadata`` dict; GlobalWorkspace consumes that
+        side payload when a journal record store is configured.
+        """
         pass

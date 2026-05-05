@@ -10,6 +10,7 @@ import urllib.request
 
 from corpus_benchmark.models.corpus import DocumentIdentifierType
 from corpus_benchmark.metadata.document_fetcher import DocumentMetadataFetcher
+from corpus_benchmark.metadata.eutils_journal_fetchers import ISSN
 from corpus_benchmark.registry import register_document_fetcher
 
 logger = logging.getLogger(__name__)
@@ -236,6 +237,7 @@ class CrossrefDOIFetcher(DocumentMetadataFetcher):
             "identifiers": identifiers,
             "journal": journal,
             "pub_year": self._issued_year(msg),
+            "journal_metadata": self._parse_journal_metadata(msg),
         }
 
     def _issued_year(self, msg: Dict[str, Any]) -> Optional[str]:
@@ -249,6 +251,33 @@ class CrossrefDOIFetcher(DocumentMetadataFetcher):
         if isinstance(value, list) and value:
             return value[0]
         return value
+
+    def _parse_journal_metadata(self, msg: Dict[str, Any]) -> Dict[str, Any]:
+        full_title = self._first(msg.get("container-title"))
+        abbreviation = self._first(msg.get("short-container-title"))
+        variants = []
+        for value in self._as_list(msg.get("container-title")) + self._as_list(msg.get("short-container-title")):
+            if value not in (full_title, abbreviation):
+                variants.append(value)
+
+        identifiers: dict[str, Any] = {}
+        issns = self._dedupe_preserve_order(msg.get("ISSN") or [])
+        if issns:
+            identifiers[ISSN] = issns
+
+        return {
+            "identifiers": identifiers,
+            "name": full_title,
+            "abbreviation": abbreviation,
+            "name_variants": variants,
+        }
+
+    def _as_list(self, value: Any) -> List[Any]:
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return value
+        return [value]
 
     def _first_assertion_value(self, msg: Dict[str, Any], name: str) -> Optional[str]:
         for assertion in msg.get("assertion", []) or []:

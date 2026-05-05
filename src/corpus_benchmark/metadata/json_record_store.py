@@ -705,6 +705,14 @@ def normalize_issn(value: str) -> str:
     return value
 
 
+def normalize_nlm_unique_id(value: str) -> str:
+    """Normalize NLM catalog unique IDs for lookup."""
+    value = value.strip()
+    if not value:
+        raise ValueError("NLM Unique ID cannot be empty.")
+    return value
+
+
 # ----------------------------------------------------------------------
 # Example store factories
 # ----------------------------------------------------------------------
@@ -761,13 +769,14 @@ def make_journal_store(path: str | Path, *, autoload: bool = True) -> JsonRecord
         identifier_types={"ISSN", "NLMUNIQUEID"},
         fields={"name", "abbreviation", "name_variants", "mesh_topics"},
         field_policies={
-            "name": "strict",
-            "abbreviation": "strict",
+            "name": "replace",
+            "abbreviation": "replace",
             "name_variants": "set_union",
             "mesh_topics": "set_union",
         },
         identifier_normalizers={
             "ISSN": normalize_issn,
+            "NLMUNIQUEID": normalize_nlm_unique_id,
         },
         autoload=autoload,
     )

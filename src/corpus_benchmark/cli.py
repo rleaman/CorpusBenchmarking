@@ -125,9 +125,9 @@ def main() -> None:
 
     if battery_config.output_path:
         output_path = Path(battery_config.output_path)
-        output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        output_path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
     else:
-        print(json.dumps(payload, indent=2))
+        print(json.dumps(payload, indent=2, sort_keys=True))
 
     logger.info("Done.")
 

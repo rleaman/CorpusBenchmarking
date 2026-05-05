@@ -1,380 +1,380 @@
 {
   "(AnatEM_train, AnatEM_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.35958122,
       "details": {
-        "len(AnatEM_train)": 11900,
-        "len(AnatEM_test)": 9527,
         "intersection": 5667,
+        "len(AnatEM_test)": 9527,
+        "len(AnatEM_train)": 11900,
         "union": 15760
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.35958122
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.15244245,
       "details": {
-        "len(AnatEM_train)": 2390,
-        "len(AnatEM_test)": 1715,
         "intersection": 543,
+        "len(AnatEM_test)": 1715,
+        "len(AnatEM_train)": 2390,
         "union": 3562
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.15244245
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.32533733,
       "details": {
-        "len(AnatEM_train)": 1485,
-        "len(AnatEM_test)": 1167,
         "intersection": 651,
+        "len(AnatEM_test)": 1167,
+        "len(AnatEM_train)": 1485,
         "union": 2001
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.32533733
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.0,
       "details": {
-        "len(AnatEM_train)": 0,
-        "len(AnatEM_test)": 0,
         "intersection": 0,
+        "len(AnatEM_test)": 0,
+        "len(AnatEM_train)": 0,
         "union": 0
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.0
     }
   ],
   "(BC5CDR_train, BC5CDR_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.41873234,
       "details": {
-        "len(BC5CDR_train)": 8721,
-        "len(BC5CDR_test)": 8850,
         "intersection": 5186,
+        "len(BC5CDR_test)": 8850,
+        "len(BC5CDR_train)": 8721,
         "union": 12385
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.41873234
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.19866552,
       "details": {
-        "len(BC5CDR_train)": 2802,
-        "len(BC5CDR_test)": 2767,
         "intersection": 923,
+        "len(BC5CDR_test)": 2767,
+        "len(BC5CDR_train)": 2802,
         "union": 4646
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.19866552
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.31460674,
       "details": {
-        "len(BC5CDR_train)": 2391,
-        "len(BC5CDR_test)": 2289,
         "intersection": 1120,
+        "len(BC5CDR_test)": 2289,
+        "len(BC5CDR_train)": 2391,
         "union": 3560
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.31460674
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.35850026,
       "details": {
-        "len(BC5CDR_train)": 1329,
-        "len(BC5CDR_test)": 1316,
         "intersection": 698,
+        "len(BC5CDR_test)": 1316,
+        "len(BC5CDR_train)": 1329,
         "union": 1947
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.35850026
     }
   ],
   "(BioID_train, BioID_dev)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.25174942,
       "details": {
-        "len(BioID_train)": 20940,
-        "len(BioID_dev)": 9112,
         "intersection": 6044,
+        "len(BioID_dev)": 9112,
+        "len(BioID_train)": 20940,
         "union": 24008
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.25174942
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.13282504,
       "details": {
-        "len(BioID_train)": 8293,
-        "len(BioID_dev)": 2999,
         "intersection": 1324,
+        "len(BioID_dev)": 2999,
+        "len(BioID_train)": 8293,
         "union": 9968
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.13282504
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.19891333,
       "details": {
-        "len(BioID_train)": 6427,
-        "len(BioID_dev)": 2620,
         "intersection": 1501,
+        "len(BioID_dev)": 2620,
+        "len(BioID_train)": 6427,
         "union": 7546
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.19891333
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.14177102,
       "details": {
-        "len(BioID_train)": 7462,
-        "len(BioID_dev)": 2750,
         "intersection": 1268,
+        "len(BioID_dev)": 2750,
+        "len(BioID_train)": 7462,
         "union": 8944
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.14177102
     }
   ],
   "(CHEMDNER_train, CHEMDNER_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.38358707,
       "details": {
-        "len(CHEMDNER_train)": 34451,
-        "len(CHEMDNER_test)": 31892,
         "intersection": 18393,
+        "len(CHEMDNER_test)": 31892,
+        "len(CHEMDNER_train)": 34451,
         "union": 47950
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.38358707
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.15021459,
       "details": {
-        "len(CHEMDNER_train)": 8519,
-        "len(CHEMDNER_test)": 7561,
         "intersection": 2100,
+        "len(CHEMDNER_test)": 7561,
+        "len(CHEMDNER_train)": 8519,
         "union": 13980
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.15021459
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.2614693,
       "details": {
-        "len(CHEMDNER_train)": 6462,
-        "len(CHEMDNER_test)": 5884,
         "intersection": 2559,
+        "len(CHEMDNER_test)": 5884,
+        "len(CHEMDNER_train)": 6462,
         "union": 9787
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.2614693
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.0,
       "details": {
-        "len(CHEMDNER_train)": 0,
-        "len(CHEMDNER_test)": 0,
         "intersection": 0,
+        "len(CHEMDNER_test)": 0,
+        "len(CHEMDNER_train)": 0,
         "union": 0
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.0
     }
   ],
   "(CRAFT_train, CRAFT_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.34182785,
       "details": {
-        "len(CRAFT_train)": 17536,
-        "len(CRAFT_test)": 11740,
         "intersection": 7458,
+        "len(CRAFT_test)": 11740,
+        "len(CRAFT_train)": 17536,
         "union": 21818
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.34182785
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.15544041,
       "details": {
-        "len(CRAFT_train)": 7500,
-        "len(CRAFT_test)": 4319,
         "intersection": 1590,
+        "len(CRAFT_test)": 4319,
+        "len(CRAFT_train)": 7500,
         "union": 10229
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.15544041
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.29267034,
       "details": {
-        "len(CRAFT_train)": 4578,
-        "len(CRAFT_test)": 2935,
         "intersection": 1701,
+        "len(CRAFT_test)": 2935,
+        "len(CRAFT_train)": 4578,
         "union": 5812
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.29267034
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.24578313,
       "details": {
-        "len(CRAFT_train)": 3568,
-        "len(CRAFT_test)": 2119,
         "intersection": 1122,
+        "len(CRAFT_test)": 2119,
+        "len(CRAFT_train)": 3568,
         "union": 4565
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.24578313
     }
   ],
   "(CellLink_train, CellLink_dev)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.33743784,
       "details": {
-        "len(CellLink_train)": 14685,
-        "len(CellLink_dev)": 7907,
         "intersection": 5700,
+        "len(CellLink_dev)": 7907,
+        "len(CellLink_train)": 14685,
         "union": 16892
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.33743784
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.09131307,
       "details": {
-        "len(CellLink_train)": 5410,
-        "len(CellLink_dev)": 2203,
         "intersection": 637,
+        "len(CellLink_dev)": 2203,
+        "len(CellLink_train)": 5410,
         "union": 6976
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.09131307
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.27899379,
       "details": {
-        "len(CellLink_train)": 2526,
-        "len(CellLink_dev)": 1389,
         "intersection": 854,
+        "len(CellLink_dev)": 1389,
+        "len(CellLink_train)": 2526,
         "union": 3061
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.27899379
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.40633737,
       "details": {
-        "len(CellLink_train)": 904,
-        "len(CellLink_dev)": 605,
         "intersection": 436,
+        "len(CellLink_dev)": 605,
+        "len(CellLink_train)": 904,
         "union": 1073
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.40633737
     }
   ],
   "(JNLPBA_train, JNLPBA_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.35854342,
       "details": {
-        "len(JNLPBA_train)": 13814,
-        "len(JNLPBA_test)": 7041,
         "intersection": 5504,
+        "len(JNLPBA_test)": 7041,
+        "len(JNLPBA_train)": 13814,
         "union": 15351
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.35854342
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.06649851,
       "details": {
-        "len(JNLPBA_train)": 18909,
-        "len(JNLPBA_test)": 4346,
         "intersection": 1450,
+        "len(JNLPBA_test)": 4346,
+        "len(JNLPBA_train)": 18909,
         "union": 21805
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.06649851
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.27547538,
       "details": {
-        "len(JNLPBA_train)": 5616,
-        "len(JNLPBA_test)": 2232,
         "intersection": 1695,
+        "len(JNLPBA_test)": 2232,
+        "len(JNLPBA_train)": 5616,
         "union": 6153
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.27547538
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.0,
       "details": {
-        "len(JNLPBA_train)": 0,
-        "len(JNLPBA_test)": 0,
         "intersection": 0,
+        "len(JNLPBA_test)": 0,
+        "len(JNLPBA_train)": 0,
         "union": 0
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.0
     }
   ],
   "(NCBI_Disease_train, NCBI_Disease_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.28182317,
       "details": {
-        "len(NCBI_Disease_train)": 8363,
-        "len(NCBI_Disease_test)": 3308,
         "intersection": 2566,
+        "len(NCBI_Disease_test)": 3308,
+        "len(NCBI_Disease_train)": 8363,
         "union": 9105
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.28182317
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.08964451,
       "details": {
-        "len(NCBI_Disease_train)": 1691,
-        "len(NCBI_Disease_test)": 424,
         "intersection": 174,
+        "len(NCBI_Disease_test)": 424,
+        "len(NCBI_Disease_train)": 1691,
         "union": 1941
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.08964451
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.218,
       "details": {
-        "len(NCBI_Disease_train)": 1365,
-        "len(NCBI_Disease_test)": 462,
         "intersection": 327,
+        "len(NCBI_Disease_test)": 462,
+        "len(NCBI_Disease_train)": 1365,
         "union": 1500
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.218
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.19632768,
       "details": {
-        "len(NCBI_Disease_train)": 647,
-        "len(NCBI_Disease_test)": 200,
         "intersection": 139,
+        "len(NCBI_Disease_test)": 200,
+        "len(NCBI_Disease_train)": 647,
         "union": 708
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.19632768
     }
   ],
   "(NLM_Chem_train, NLM_Chem_test)": [
     {
-      "metric_name": "token_overlap",
-      "value": 0.33162521,
       "details": {
-        "len(NLM_Chem_train)": 19315,
-        "len(NLM_Chem_test)": 14467,
         "intersection": 8413,
+        "len(NLM_Chem_test)": 14467,
+        "len(NLM_Chem_train)": 19315,
         "union": 25369
-      }
+      },
+      "metric_name": "token_overlap",
+      "value": 0.33162521
     },
     {
-      "metric_name": "mention_overlap",
-      "value": 0.11033394,
       "details": {
-        "len(NLM_Chem_train)": 3106,
-        "len(NLM_Chem_test)": 1815,
         "intersection": 489,
+        "len(NLM_Chem_test)": 1815,
+        "len(NLM_Chem_train)": 3106,
         "union": 4432
-      }
+      },
+      "metric_name": "mention_overlap",
+      "value": 0.11033394
     },
     {
-      "metric_name": "mention_token_overlap",
-      "value": 0.20498695,
       "details": {
-        "len(NLM_Chem_train)": 2532,
-        "len(NLM_Chem_test)": 1624,
         "intersection": 707,
+        "len(NLM_Chem_test)": 1624,
+        "len(NLM_Chem_train)": 2532,
         "union": 3449
-      }
+      },
+      "metric_name": "mention_token_overlap",
+      "value": 0.20498695
     },
     {
-      "metric_name": "identifier_overlap",
-      "value": 0.23784104,
       "details": {
-        "len(NLM_Chem_train)": 1257,
-        "len(NLM_Chem_test)": 830,
         "intersection": 401,
+        "len(NLM_Chem_test)": 830,
+        "len(NLM_Chem_train)": 1257,
         "union": 1686
-      }
+      },
+      "metric_name": "identifier_overlap",
+      "value": 0.23784104
     }
   ]
 }

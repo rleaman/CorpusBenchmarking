@@ -88,7 +88,7 @@ def _entropy(data):
 
 def _id_info(data):
     dist = _get(data, "identifier_resource_distribution") or {}
-    named = [k for k in dist if k not in ("null", "<NIL>", None)]
+    named = sorted([k for k in dist if k not in ("null", "<NIL>", None)])
     null_frac = dist.get("null", 0) + dist.get("<NIL>", 0)
     if not named:
         return dict(has_ids=False, partial=False, label="none", css_class="no")

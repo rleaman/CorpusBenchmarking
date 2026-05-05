@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
-from typing import Dict
+from typing import Dict, Any
 
 from corpus_benchmark.context import MetricTarget, get_documents
 from corpus_benchmark.registry import register_subset_metric
@@ -13,9 +13,21 @@ logger = logging.getLogger(__name__)
 
 PRECISION = 8  # Number of decimal places
 
-def calculate_proportions(counts: Counter[str, int]) -> Dict[str, float]:
+def calculate_proportions(counts: Counter[Any, int]) -> dict[str, float]:
     total = counts.total()
-    return {label: (round(count / total, PRECISION) if total else 0.0) for label, count in counts.items()}
+    return {
+        str(label) if label is not None else "null": (
+            round(count / total, PRECISION) if total else 0.0
+        )
+        for label, count in counts.items()
+    }
+
+
+def normalize_counts(counts: Counter[Any, int]) -> dict[str, int]:
+    return {
+        str(label) if label is not None else "null": count
+        for label, count in counts.items()
+    }
 
 
 @register_subset_metric("journal_distribution")
@@ -33,7 +45,7 @@ def journal_distribution(target: MetricTarget, result_name: str) -> SubsetMetric
         metric_name="journal_distribution",
         value=calculate_proportions(counts),
         subset_name=target.name,
-        details={"counts": dict(counts), "total": counts.total()},
+        details={"counts": normalize_counts(counts), "total": counts.total()},
     )
 
 
@@ -52,5 +64,5 @@ def publication_year_distribution(target: MetricTarget, result_name: str) -> Sub
         metric_name="publication_year_distribution",
         value=calculate_proportions(counts),
         subset_name=target.name,
-        details={"counts": dict(counts), "total": counts.total()},
+        details={"counts": normalize_counts(counts), "total": counts.total()},
     )

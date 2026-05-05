@@ -98,12 +98,13 @@ class WorkspaceConfig:
     """Global configuration for the benchmarking workspace and caches."""
 
     document_store_filename: str = "data/metadata.json"
+    journal_store_filename: str = "data/journals.json"
     corpora_download_dir: str = "corpora/"
     terminology_dir: str = "data/terminologies/"
     document_fetchers: dict[str, list[LoaderSpec]] = field(
         default_factory=lambda: {
             "pmid": [LoaderSpec("pubmed_eutils")],
-            "pmcid": [LoaderSpec("pmc_eutils")],
+            "pmcid": [LoaderSpec("pmc_eutils_efetch"), LoaderSpec("pmc_eutils")],
         }
     )
 
@@ -127,6 +128,10 @@ class WorkspaceConfig:
             raise ValueError("workspace.document_store_filename must not be empty.")
         if Path(self.document_store_filename).name == "":
             raise ValueError("workspace.document_store_filename must point to a file.")
+        if not str(self.journal_store_filename).strip():
+            raise ValueError("workspace.journal_store_filename must not be empty.")
+        if Path(self.journal_store_filename).name == "":
+            raise ValueError("workspace.journal_store_filename must point to a file.")
         if not str(self.corpora_download_dir).strip():
             raise ValueError("workspace.corpora_download_dir must not be empty.")
         if not str(self.terminology_dir).strip():

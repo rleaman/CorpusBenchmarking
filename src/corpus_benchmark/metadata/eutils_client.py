@@ -35,6 +35,12 @@ class EUtilsClient:
         self.max_retries = 3
 
     def get_xml(self, endpoint: str, params: dict[str, str]) -> ET.Element:
+        return self._request_xml(endpoint, params, method="GET")
+
+    def post_xml(self, endpoint: str, params: dict[str, str]) -> ET.Element:
+        return self._request_xml(endpoint, params, method="POST")
+
+    def _request_xml(self, endpoint: str, params: dict[str, str], *, method: str) -> ET.Element:
         query_params = dict(params)
         query_params["tool"] = self.tool
         if self.email:
@@ -42,11 +48,19 @@ class EUtilsClient:
         if self.api_key:
             query_params["api_key"] = self.api_key
 
-        url = f"{EUTILS_BASE_URL}/{endpoint}.fcgi?{urllib.parse.urlencode(query_params)}"
+        base_url = f"{EUTILS_BASE_URL}/{endpoint}.fcgi"
+        if method == "POST":
+            url = base_url
+            data = urllib.parse.urlencode(query_params).encode("utf-8")
+            request = urllib.request.Request(url, data=data, method="POST")
+        else:
+            url = f"{base_url}?{urllib.parse.urlencode(query_params)}"
+            request = urllib.request.Request(url, method="GET")
+
         for attempt in range(self.max_retries + 1):
             self._wait_for_rate_limit()
             try:
-                with urllib.request.urlopen(url, timeout=self.timeout) as response:
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:
                     self._mark_request()
                     return ET.fromstring(response.read())
             except urllib.error.HTTPError as e:
