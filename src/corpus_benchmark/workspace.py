@@ -349,6 +349,7 @@ class GlobalWorkspace:
             warning_key = tuple(sorted(matching_record_ids))
             if warning_key not in self._ambiguous_journal_match_warnings:
                 self._ambiguous_journal_match_warnings.add(warning_key)
+                # TODO Figure out why this error goes away if we rerun it
                 logger.warning(
                     "Journal metadata matched multiple journal records: %s",
                     sorted(matching_record_ids),
